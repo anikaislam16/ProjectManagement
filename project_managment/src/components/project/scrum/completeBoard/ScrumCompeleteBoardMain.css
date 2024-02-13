@@ -1,0 +1,16 @@
+.center-div::-webkit-scrollbar {
+  width: 5px; /* Width of the scrollbar */
+}
+
+.center-div::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+}
+
+.center-div::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the thumb */
+  border-radius: 10px; /* Rounded corners of the thumb */
+}
+
+.center-div::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the thumb on hover */
+}

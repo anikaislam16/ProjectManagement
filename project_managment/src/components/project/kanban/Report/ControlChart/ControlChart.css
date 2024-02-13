@@ -1,0 +1,81 @@
+.frm {
+    padding-top: 50px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-side {
+    padding-left: 100px;
+    width: 100%;
+    /* Adjust the width as needed */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 3px 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Add more styles as needed */
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .control-chart-form {
+        flex-direction: column;
+    }
+
+    .form-side {
+        width: 100%;
+    }
+}
+
+.center-div {
+    overflow: auto;
+}

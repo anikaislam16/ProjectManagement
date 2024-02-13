@@ -1,0 +1,74 @@
+.scustom__card {
+  background-color: var(--card-color);
+  border-radius: 3px;
+  box-shadow: 0px 2px var(--card-box-shadow);
+  margin-inline: auto;
+  padding-inline: 0.5rem;
+  padding-bottom: 0.4rem;
+  /* cursor: grab; */
+  color: var(--text-color);
+  margin-bottom: 10px;
+  max-height: 450px;
+  min-height: 50px;
+  /* position: relative; */
+}
+
+.scard__tags {
+  display: flex;
+  column-gap: 5px;
+  row-gap: 5px;
+  flex-wrap: wrap;
+  align-self: flex-start;
+}
+
+.scard__text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scar__more {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.scar__more:hover {
+  opacity: 1;
+  cursor: pointer;
+  transition: ease-in 100ms;
+}
+
+.scard__dropdown {
+  box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.12);
+  cursor: default;
+}
+
+.scard__dropdown>p {
+  border-bottom: 1px solid #f8f8f8;
+  cursor: pointer;
+}
+
+.scard__footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.scard__footer>div>svg {
+  height: 15px;
+  width: 15px;
+  color: rgb(116, 116, 116);
+  cursor: pointer;
+}
+
+.scard__footer div {
+  display: flex;
+  align-items: center;
+}
+
+.scard__footer span {
+  font-size: 12px;
+  color: rgb(116, 116, 116);
+  margin-inline: 2px;
+  font-weight: 500;
+}

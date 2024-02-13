@@ -1,0 +1,93 @@
+/* Navbar.css */
+.navbar {
+  background-color: #a7d7c5;
+  color: #ffffff00;
+  padding: 5px 20px;
+
+  display: flex;
+  justify-content: flex-end;
+  /* Align items to the right */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  /* Add a subtle shadow effect */
+  min-height: 50px;
+}
+
+.navbar-list {
+  list-style: none;
+  padding: 0;
+  justify-content: space-between;
+  display: flex;
+  /* Display list items as a flex container */
+}
+
+.navbar-item {
+  margin-left: 10px;
+  padding-left: 40px;
+  max-width: 400px;
+}
+
+.navbar-item a {
+  text-decoration: none;
+  color: #212529;
+  padding: 10px 20px;
+  /* Add padding for button-like appearance */
+  border: 1px solid #f1f6f6;
+  /* Thin border */
+  border-radius: 10px;
+  /* Rounded edges */
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+  /* Transition effect */
+}
+
+.navbar-item a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  /* Background color on hover */
+  color: #5a5cd8;
+  /* Text color on hover */
+  border-color: #f1f6f6;
+  /* Border color on hover */
+}
+
+/* Active link style */
+.navbar-item a.active {
+  font-weight: bold;
+  background-color: #79d6e2;
+  /* Background color for active link */
+  color: #fff;
+  /* Text color for active link */
+  border-color: #f1f6f6;
+  /* Border color for active link */
+}
+
+.navbar-item-left {
+  margin-left: 0;
+  /* Remove the left margin */
+  margin-right: 550px;
+  /* Push it to the leftmost position */
+  /* Add some right padding to separate it from the rest */
+}
+
+.custom-btn {
+  margin-left: 1rem;
+  background-color: #f5f5f5;
+  /* Set button background color to white */
+  color: black;
+  /* Set text color to white */
+  border: none;
+  /* Remove button border */
+  transition: background-color 0.3s ease-in-out;
+  padding: 0.46rem 1rem;
+  border-radius: 8px;
+  /* Add transition effect on hover */
+}
+
+.custom-btn:hover {
+  background-color: #dcdcdc;
+  /* Ash color on hover */
+}
+
+.custom-btn .btn-link {
+  text-decoration: none;
+  color: black;
+}

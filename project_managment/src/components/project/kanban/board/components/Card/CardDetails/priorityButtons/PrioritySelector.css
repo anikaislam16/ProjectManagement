@@ -1,0 +1,73 @@
+/* PrioritySelector.css */
+
+
+.priority-selector-high {
+  position: relative;
+  padding: 5px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: red;
+  color: black;
+  font-style: bold;
+}
+
+.priority-selector-low {
+  position: relative;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: yellow;
+  color: black;
+  font-style: bold;
+}
+
+.priority-selector-medium {
+  position: relative;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: orange;
+  color: black;
+  font-style: bold;
+}
+
+.options-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ae2626;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  visibility: hidden;
+  /* Hide the options container by default */
+}
+
+.option {
+  padding: 5px;
+  cursor: pointer;
+  width: 200px;
+  text-align: center;
+}
+
+.option-high {
+  background-color: red;
+  color: #fff;
+}
+
+.option-medium {
+  background-color: orange;
+  color: #fff;
+}
+
+.option-low {
+  background-color: yellow;
+  color: #fff;
+}

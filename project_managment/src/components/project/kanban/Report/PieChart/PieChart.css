@@ -1,0 +1,17 @@
+.select-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.select-label {
+  margin-right: 10px;
+}
+
+.select-box {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  /* Add more styles as needed */
+}

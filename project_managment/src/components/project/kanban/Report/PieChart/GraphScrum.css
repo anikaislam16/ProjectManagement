@@ -1,0 +1,16 @@
+.apexcharts-toolbar .apexcharts-pan-icon {
+  display: none !important;
+}
+.apexcharts-toolbar .apexcharts-zoom-icon .apexcharts-selected {
+  display: none !important;
+}
+
+.apexcharts-toolbar .apexcharts-reset-icon {
+  display: none !important;
+}
+.apexcharts-toolbar .apexcharts-zoomin-icon {
+  display: none !important;
+}
+.apexcharts-toolbar .apexcharts-zoomout-icon {
+  display: none !important;
+}

@@ -1,0 +1,20 @@
+/* InvitePopup.css */
+.modal-content {
+    border: 2px solid #17a2b8;
+    border-radius: 5px;
+}
+
+.modal-header {
+    background-color: #17a2b8;
+    color: #fff;
+    border-bottom: 1px solid #17a2b8;
+}
+
+.modal-footer {
+    border-top: 1px solid #17a2b8;
+}
+
+.btn-secondary {
+    background-color: #17a2b8;
+    color: #fff;
+}

@@ -1,0 +1,28 @@
+.editable {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.editable-form {
+  margin-top: 10px;
+}
+
+.editable__input {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-control {
+  margin-bottom: 10px;
+}
+
+.btn__control {
+  display: flex;
+  justify-content: space-between;
+}
+
+.close-icon {
+  font-size: 20px;
+  color: #ffffff;
+}

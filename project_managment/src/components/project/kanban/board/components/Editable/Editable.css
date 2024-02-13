@@ -1,0 +1,66 @@
+.editable {
+  height: auto;
+}
+
+.editable > p {
+  width: 200px;
+  /* display: flex; */
+  gap: 5px;
+  border-radius: 5px;
+  padding: 0.5rem;
+  transition: ease-in-out 200ms;
+  /* margin-inline: auto; */
+  margin-top: 10px;
+  margin-left: 15px;
+}
+.editable > p:hover {
+  background-color: #ccc;
+  color: #f7eded;
+  cursor: pointer;
+}
+
+.editable__input > textarea {
+  width: 200px;
+  height: 40px; /* Set your desired height */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  resize: none; /* Disable textarea resizing */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  margin: 10px;
+  outline: none;
+}
+
+.editable__input > textarea::-webkit-scrollbar {
+  width: 8px; /* Set your desired width for the scrollbar */
+}
+
+.editable__input > textarea::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.btn__control {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding-inline: 0.1rem;
+}
+.btn__control > button {
+  background-color: #0079bf;
+  height: 2rem;
+  color: white;
+  font-size: 15px;
+  border: none;
+  border-radius: 3px;
+  margin-bottom: 5px;
+}
+.btn__control > button:hover {
+  background-color: #026aa7;
+  cursor: pointer;
+}
+.close:hover {
+  cursor: pointer;
+}

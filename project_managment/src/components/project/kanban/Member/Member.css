@@ -1,0 +1,49 @@
+/* Add these styles to your CSS file or style block */
+.list-group-container {
+    max-height: 300px;
+    /* Set the maximum height as needed */
+    overflow-y: auto;
+    border: 1px solid #ffffff;
+    /* Add a border for better visibility */
+    border-radius: 5px;
+    /* Add border-radius for a rounded appearance */
+}
+
+.list-group {
+    list-style: none;
+    /* Remove default list styles */
+    padding: 0;
+    /* Remove default padding */
+    margin: 0;
+    /* Remove default margin */
+}
+
+.list-group-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    /* Add a bottom border for separation */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+    /* Remove bottom border for the last item */
+}
+
+.btn-danger {
+    /* Add your styles for the remove button */
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Hide the scrollbar */
+.list-group-container::-webkit-scrollbar {
+    width: 0;
+    background-color: transparent;
+}

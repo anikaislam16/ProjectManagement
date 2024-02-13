@@ -1,0 +1,54 @@
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.BoardMain {
+  height: 88vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  transition: all 350ms;
+}
+
+.app_outer {
+  flex: 1;
+  width: 100%;
+  overflow: auto; /* Change to 'auto' for both horizontal and vertical scrolling */
+}
+.app_outer::-webkit-scrollbar {
+  height: 15px; /* Thin scrollbar width */
+}
+
+.app_outer::-webkit-scrollbar-thumb {
+  background-color: #d0ece0; /* Scrollbar thumb color */
+  border-radius: 10px; /* Optional: Add border-radius for a rounded look */
+}
+
+.app_outer::-webkit-scrollbar-track {
+  background-color: #f2f2f2;
+  /* Scrollbar track color */
+}
+.app_boards {
+  margin-top: 20px;
+  min-width: fit-content;
+  display: flex;
+  gap: 30px;
+  padding-inline: 2rem;
+  color: var(--text-color);
+}
+
+.add__board > textarea,
+.card_detail > textarea {
+  border: 0.5px solid rgb(167, 167, 167) !important;
+  height: 2rem !important;
+}
+
+.card__values > p {
+  background: #ccc !important;
+}
+
+.cardinfo__editable {
+  width: fit-content;
+}

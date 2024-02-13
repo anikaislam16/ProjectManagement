@@ -1,0 +1,48 @@
+.board-container {
+  max-height: 450px;
+  margin: 20px;
+  margin-top: 0px;
+  border: 1px solid #ccc;
+  overflow-y: auto;
+}
+.board-container::-webkit-scrollbar {
+  width: 5px; /* Width of the scrollbar */
+}
+
+.board-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+}
+
+.board-container::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the thumb */
+  border-radius: 10px; /* Rounded corners of the thumb */
+}
+
+.board-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the thumb on hover */
+}
+.card-container {
+  overflow-y: auto;
+}
+.board-head {
+  margin: 20px;
+  margin-bottom: 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+.last-board {
+  margin-bottom: 100px;
+}
+.board-name {
+  font-weight: bold;
+}
+
+.dates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
