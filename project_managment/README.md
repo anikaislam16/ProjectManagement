@@ -17,6 +17,7 @@
 # --> Commands for initialization of Backend (api folder):
 
 cd api
+
 npm i
 
 # --> Command for starting server:
@@ -26,6 +27,7 @@ nodemon server
 # --> Commands for initialization of Frontend (project_managment folder):
 
 cd project_managment
+
 npm i
 
 # --> Command for starting the application in browser
