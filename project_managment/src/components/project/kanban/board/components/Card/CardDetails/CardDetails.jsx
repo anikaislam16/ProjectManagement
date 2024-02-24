@@ -42,8 +42,6 @@ export default function CardDetails(props) {
   // Add values as a dependency to ensure the effect runs after values change
 
   const Input = (props) => {
-
-
     return (
       <div className="container">
         <div className="title-area">
@@ -417,7 +415,7 @@ export default function CardDetails(props) {
     setValues((prevValues) => {
       if (prevValues && prevValues.task && Array.isArray(prevValues.task)) {
         const updatedTasks = prevValues.task.map((task) =>
-          task.id === id ? { ...task, taskName: updatedValue } : task
+          task._id === id ? { ...task, taskName: updatedValue } : task
         );
         return {
           ...prevValues,
@@ -432,7 +430,7 @@ export default function CardDetails(props) {
   };
 
   const updateTask = async (id) => {
-    const taskIndex = values.task.findIndex((item) => item.id === id);
+    const taskIndex = values.task.findIndex((item) => item._id === id);
     values.task[taskIndex].completed = !values.task[taskIndex].completed;
     const Iscomplete = values.task[taskIndex].completed;
     console.log(Iscomplete);
@@ -504,7 +502,7 @@ export default function CardDetails(props) {
 
       // Assuming taskId is part of your state
       // Filter out the deleted task from your state
-      const tempTag = values.tags.filter((item) => item.id !== id);
+      const tempTag = values.tags.filter((item) => item._id !== id);
       setValues({
         ...values,
         tags: tempTag,
@@ -587,7 +585,7 @@ export default function CardDetails(props) {
     const resultData = await response.json();
     const tagId = resultData.newSubDocumentId;
     values.tags.push({
-      id: tagId,
+      _id: tagId,
       tagName: value,
       color: color,
     });
@@ -658,25 +656,27 @@ export default function CardDetails(props) {
                     <span
                       className="d-flex justify-content-between align-items-center gap-2"
                       style={{ backgroundColor: item.color }}
+                      title={item.tagName} // Add title attribute for tooltip
                     >
                       {item.tagName.length > 10
-                        ? item.tagName.slice(0, 6) + "..."
+                        ? item.tagName.slice(0, 10) + "..."
                         : item.tagName}
                       <X
-                        onClick={() => removeTag(item.id)}
-                        style={{ width: "15px", height: "15px" }}
+                        onClick={() => removeTag(item._id)}
+                        style={{ width: "20px", height: "15px" }}
                       />
                     </span>
                   ))
                 ) : (
                   <span
-                    style={{ color: "#ccc" }}
+                    style={{ color: "#ccf" }}
                     className="d-flex justify-content-between align-items-center gap-2"
                   >
                     <i> No Labels</i>
                   </span>
                 )}
               </div>
+
               <div className="check__list mt-2">
                 <div className="d-flex align-items-end  justify-content-between">
                   <div className="d-flex align-items-center gap-2">
@@ -698,43 +698,13 @@ export default function CardDetails(props) {
                     </div>
                   </div>
                 </div>
-                <h6 className="text-2xl font-semibold mb-4">All PDFs</h6>
-                <div className="box-container">
-                  {pdfs.map((pdf) => (
-                    <div key={pdf._id} className="pdf-box">
-                      <div className="pdf-header">
-                        <p className="pdf-title">{pdf.title}</p>
-                        <button
-                          className="delete-button"
-                          onClick={(e) =>
-                            handleDeleteFile(
-                              pdf._id,
-                              props.bid,
-                              props.card._id,
-                              e
-                            )
-                          }
-                        // handleDownload(pdf._id, props.bid, props.card._id, e)
-                        >
-                          X
-                        </button>
-                      </div>
-                      <button
-                        className="bg-green-500 text-black py-2 px-4 rounded hover:bg-green-600"
-                        onClick={(e) => handleDownload(pdf._id, e)}
-                      >
-                        Download
-                      </button>
-                      {/* Add more details or styling as needed */}
-                    </div>
-                  ))}
-                </div>
+
                 <div className="my-2">
                   {values.task.length !== 0 ? (
                     values.task.map((item, index) => (
                       <div
                         className="task__list d-flex align-items-start gap-2"
-                        key={item.id}
+                        key={item._id}
                       >
                         {console.log(item)} {/* Log item to console */}
                         <input
@@ -742,15 +712,15 @@ export default function CardDetails(props) {
                           type="checkbox"
                           defaultChecked={item.completed}
                           onChange={() => {
-                            updateTask(item.id);
+                            updateTask(item._id);
                           }}
                         />
                         <KanbanEditableHeader
                           value={item}
-                          id={item.id}
+                          id={item._id}
                           initialValue={item.taskName}
                           onSave={handleTaskClick}
-                          onClose={() => { }}
+                          onClose={() => {}}
                         />
                         <Trash
                           onClick={() => {
@@ -775,6 +745,37 @@ export default function CardDetails(props) {
                     btnName={"Add task"}
                     onSubmit={addTask}
                   />
+                </div>
+                <h6 className="text-2xl font-semibold mb-4">All PDFs</h6>
+                <div className="box-container">
+                  {pdfs.map((pdf) => (
+                    <div key={pdf._id} className="pdf-box">
+                      <div className="pdf-header">
+                        <p className="pdf-title">{pdf.title}</p>
+                        <button
+                          className="delete-button"
+                          onClick={(e) =>
+                            handleDeleteFile(
+                              pdf._id,
+                              props.bid,
+                              props.card._id,
+                              e
+                            )
+                          }
+                          // handleDownload(pdf._id, props.bid, props.card._id, e)
+                        >
+                          X
+                        </button>
+                      </div>
+                      <button
+                        className="bg-green-500 text-black py-2 px-4 rounded hover:bg-green-600"
+                        onClick={(e) => handleDownload(pdf._id, e)}
+                      >
+                        Download
+                      </button>
+                      {/* Add more details or styling as needed */}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -830,7 +831,6 @@ export default function CardDetails(props) {
                     onChange={handleFileChange}
                     ref={fileInputRef}
                     className="border rounded p-2"
-
                   />
 
                   <button
@@ -842,7 +842,6 @@ export default function CardDetails(props) {
                     Upload
                   </button>
                 </form>
-
 
                 <button onClick={deleteCard}>
                   <span className="icon__sm">
