@@ -26,7 +26,7 @@ nodemon server
 
 ## --> Commands for initialization of Frontend (project_managment folder):
 
-cd project_managment
+cd project_management
 
 npm i
 
