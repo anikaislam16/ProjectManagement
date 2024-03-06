@@ -6,6 +6,10 @@ const ScrumProjectSchema = new mongoose.Schema({
     member_id: { type: mongoose.Schema.Types.ObjectId, ref: "Member" },
     role: String,
   }],
+  weekdays: {
+    type: [String], // Assuming you want an array of strings for weekdays
+    default: [],    // You can set a default value if needed
+  }
 });
 const ScrumProject = mongoose.model("ScrumProject", ScrumProjectSchema);
 

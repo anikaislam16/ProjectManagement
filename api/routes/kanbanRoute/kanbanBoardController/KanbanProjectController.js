@@ -39,6 +39,7 @@ const getProjectById = async (req, res) => {
 // Create a new Kanban project
 const createProject = async (req, res) => {
   const email = req.body.email;
+
   const existingMember = await Member.findOne({ email });
 
   const project = new KanbanProject({
@@ -47,7 +48,8 @@ const createProject = async (req, res) => {
       {
         member_id: existingMember._id,
         role: 'Admin',
-      },]
+      },],
+    weekdays: req.body.weekDays,
   });
 
   try {

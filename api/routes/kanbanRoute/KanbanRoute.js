@@ -51,16 +51,16 @@ router.route("/:id/:boardId").get(showCard)
   .post(addCard); //board id diye board e card push krbe.
 router
   .route("/:id/:boardId/:cardId")
-  .get(showCard) //baad
+  .get(showCard) //Card info pawa
   .delete(deleteCard);  //board id diye board select then card delete.
-router.route("/:id/:boardId/:cardId").put(updateCardName);
+router.route("/:id/:boardId/:cardId").put(updateCardName); //etai card er element k update kora hoi. jdi seta array type hoi, tobe push kora hoi, element.
 router
   .route("/:id/cards/reorderCards/:board1Id/:board2Id/:sourceIndex/:destinationIndex")
   .put(reorderCardsInDiffBoard);
 router
   .route("/:id/:boardId/cards/reorderCards/:sourceIndex/:destinationIndex")
   .put(reorderCardsInSameBoard);
-router.route("/:id/:boardId/:cardId/:subDocumentKey/:subDocumentId").put(updateCardField) //card er moddhe array time element gula update k update kora jai. board id r card id r card er subdocument er id diye.
+router.route("/:id/:boardId/:cardId/:subDocumentKey/:subDocumentId").put(updateCardField) //card er moddhe array type element gula update k update kora jai. board id r card id r card er subdocument er id diye.
   .post(deleteCardFieldbyMember)
   .delete(deleteCardField); //card er moddhe array type element er kono member delete kora jai.
 router.route("/member/member/:id/:memberId").delete(deleteMemberfromProject).post(addMemberInProject);

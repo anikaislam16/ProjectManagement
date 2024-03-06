@@ -59,9 +59,21 @@ const boardSchema = new mongoose.Schema({
         type: Date,
         default: null,
       },
-    },
-  ],
-
+      dependencies: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'boardSchema',
+          default: [],
+        },
+      ],
+      workflow: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'boardSchema',
+          default: [],
+        },
+      ],
+    }],
 });
 
 // Use mongoose.model only once, with the schema as the second parameter

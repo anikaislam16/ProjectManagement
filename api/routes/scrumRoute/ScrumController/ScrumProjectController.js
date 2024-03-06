@@ -44,7 +44,8 @@ const createProject = async (req, res) => {
       {
         member_id: existingMember._id,
         role: 'Product owner',
-      },]
+      },],
+    weekdays: req.body.weekDays,
   });
 
   try {

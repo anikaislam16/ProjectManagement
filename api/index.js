@@ -23,11 +23,11 @@ app.get("/", (req, res) => {
 });
 app.use(cors({ origin: true, credentials: true }));
 app.use(
-    cors({
-        origin: `http://localhost:${process.env.front_port}`,
-        methods: "GET,POST,PUT,DELETE",
-        credentials: true,
-    })
+  cors({
+    origin: `http://localhost:${process.env.front_port}`,
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
 );
 
 // Use the memberRoute for paths starting with "/members"

@@ -14,6 +14,10 @@ const kanbanProjectSchema = new mongoose.Schema({
   creationTime: {
     type: Date,
     default: () => new Date(),
+  },
+  weekdays: {
+    type: [String], // Assuming you want an array of strings for weekdays
+    default: [],    // You can set a default value if needed
   }
 });
 

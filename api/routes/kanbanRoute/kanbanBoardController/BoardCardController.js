@@ -135,7 +135,6 @@ const updateCardName = async (req, res) => {
   try {
     const { id, boardId, cardId } = req.params;
     const { fieldName, newValue } = req.body;
-
     // Find the board by ID
     const board = await KanbanBoard.findById(boardId);
     const boardName = board.name;
@@ -161,6 +160,7 @@ const updateCardName = async (req, res) => {
         // Get the _id of the last added sub-document
         const newSubDocumentId =
           cardToUpdate[fieldName][cardToUpdate[fieldName].length - 1]._id;
+
         // Respond with the updated card data and new sub-document ID
         if (fieldName === 'members') {
           const Memberdetails = await Member.findOne({ _id: newValue.member_id });
@@ -286,11 +286,19 @@ const deleteCardField = async (req, res) => {//lagbe
     const cardToUpdate = board.cards.find(
       (card) => card._id.toString() === cardId
     );
-
-    // Find the index of the task, label, or member to delete within the array
-    const indexToDelete = cardToUpdate[subDocumentKey].findIndex(
-      (item) => item._id.toString() === subDocumentId
-    );
+    let indexToDelete;
+    //for the array type element
+    if (subDocumentKey === 'dependencies' || 'workflow') {
+      indexToDelete = cardToUpdate[subDocumentKey].indexOf(subDocumentId);
+      console.log('dkfa', indexToDelete);
+    }
+    //for the object of array type element
+    else {
+      // Find the index of the task, label, or member to delete within the array
+      indexToDelete = cardToUpdate[subDocumentKey].findIndex(
+        (item) => item._id.toString() === subDocumentId
+      );
+    }
 
     // Check if the item was found
     if (indexToDelete !== -1) {
