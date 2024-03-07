@@ -7,7 +7,6 @@ import {
   Tag,
   Trash,
   User,
-  Move,
   X,
 } from "react-feather";
 import { v4 as uuidv4 } from "uuid";
@@ -36,11 +35,6 @@ export default function SprintCardDetails(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [pdfs, setPdf] = useState([]);
-  const [isOptionBarOpen, setIsOptionBarOpen] = useState(false);
-
-  const toggleOptionBar = () => {
-    setIsOptionBarOpen(!isOptionBarOpen);
-  };
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -315,13 +309,28 @@ export default function SprintCardDetails(props) {
     }
   };
   const deleteCard = () => {
+    //  try {
+    //   const response = await fetch(
+    //     `http://localhost:3010/projects/kanban/${projectId}/${targetId}/${cardId}/`,
+    //     {
+    //       method: "DELETE",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //     }
+    //   );
+
+    //   // Update the state with the new data
+
+    //   console.log("Card deleted successfully");
+    // } catch (error) {
+    //   console.error("Error deleting task:", error.message);
+    //   // Handle errors appropriately, for example, show a notification to the user
+    //   // You might want to use a state variable to store and display error messages
+    // }
     if (props.onClose) props.onClose(false);
     console.log(props.bid, values._id);
     props.removeCard(props.bid, values._id);
-  };
-  const moveCard = (board) => {
-    if (props.onClose) props.onClose(false);
-    props.onDrag(board, props.bid, props.index);
   };
   const addTag = async (value, color) => {
     // Make the API request to update the card item
@@ -640,7 +649,37 @@ export default function SprintCardDetails(props) {
                     </div>
                   </div>
                 </div>
-
+                <h6 className="text-2xl font-semibold mb-4">All PDFs</h6>
+                <div className="box-container">
+                  {pdfs &&
+                    pdfs.map((pdf) => (
+                      <div key={pdf._id} className="pdf-box">
+                        <div className="pdf-header">
+                          <p className="pdf-title">{pdf.title}</p>
+                          <button
+                            className="delete-button"
+                            onClick={(e) =>
+                              handleDeleteFile(
+                                pdf._id,
+                                props.bid,
+                                props.card._id,
+                                e
+                              )
+                            }
+                          // handleDownload(pdf._id, props.bid, props.card._id, e)
+                          >
+                            X
+                          </button>
+                        </div>
+                        <button
+                          className="bg-green-500 text-black py-2 px-4 rounded hover:bg-green-600"
+                          onClick={(e) => handleDownload(pdf._id, e)}
+                        >
+                          Download
+                        </button>
+                      </div>
+                    ))}
+                </div>
                 <div className="my-2">
                   {values.task.length !== 0 ? (
                     values.task.map((item, index) => (
@@ -663,7 +702,7 @@ export default function SprintCardDetails(props) {
                           initialValue={item.taskName}
                           initialPoint={item.point}
                           onSave={handleTaskClick}
-                          onClose={() => {}}
+                          onClose={() => { }}
                         />
                         <Trash
                           onClick={() => {
@@ -688,37 +727,6 @@ export default function SprintCardDetails(props) {
                     btnName={"Add task"}
                     onSubmit={addTask}
                   />
-                </div>
-                <h6 className="text-2xl font-semibold mb-4">All FILES</h6>
-                <div className="box-container">
-                  {pdfs &&
-                    pdfs.map((pdf) => (
-                      <div key={pdf._id} className="pdf-box">
-                        <div className="pdf-header">
-                          <p className="pdf-title">{pdf.title}</p>
-                          <button
-                            className="delete-button"
-                            onClick={(e) =>
-                              handleDeleteFile(
-                                pdf._id,
-                                props.bid,
-                                props.card._id,
-                                e
-                              )
-                            }
-                            // handleDownload(pdf._id, props.bid, props.card._id, e)
-                          >
-                            X
-                          </button>
-                        </div>
-                        <button
-                          className="bg-green-500 text-black py-2 px-4 rounded hover:bg-green-600"
-                          onClick={(e) => handleDownload(pdf._id, e)}
-                        >
-                          Download
-                        </button>
-                      </div>
-                    ))}
                 </div>
               </div>
             </div>
@@ -800,37 +808,6 @@ export default function SprintCardDetails(props) {
                   </span>
                   Delete Card
                 </button>
-                {props.completed && (
-                  <div className="option-bar">
-                    <button className="option-button" onClick={toggleOptionBar}>
-                      <span
-                        className="icon__sm"
-                        style={{ marginLeft: "2px", marginRight: "5px" }}
-                      >
-                        <Move />
-                      </span>
-                      Move Card
-                    </button>
-                    {isOptionBarOpen && (
-                      <div className="dropdown-content">
-                        <button
-                          onClick={() => {
-                            moveCard("Backlog");
-                          }}
-                        >
-                          To Backlog
-                        </button>
-                        <button
-                          onClick={() => {
-                            moveCard("Sprint");
-                          }}
-                        >
-                          To Current Sprint
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
           </div>

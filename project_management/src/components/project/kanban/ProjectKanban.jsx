@@ -6,6 +6,7 @@ const ProjectKanban = () => {
   const { projectId } = useParams();
   return (
     <div>
+      project :{projectId}
       <SidebarContextProvider>
         <Sidebar projectId={projectId} />
       </SidebarContextProvider>

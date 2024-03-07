@@ -62,9 +62,6 @@ const ScrumBoardInitializer = () => {
       const doneCards = cardsWithIndex.filter(
         (card) => card.progres === "done"
       );
-      const TestingCards = cardsWithIndex.filter(
-        (card) => card.progres === "testing"
-      );
 
       setData([
         {
@@ -84,11 +81,6 @@ const ScrumBoardInitializer = () => {
         },
         {
           id: "4",
-          name: "Testing/Review",
-          card: TestingCards,
-        },
-        {
-          id: "5",
           name: "Done",
           card: doneCards,
         },

@@ -8,7 +8,6 @@
   /* cursor: grab; */
   color: var(--text-color);
   margin-bottom: 10px;
-  width: 250px;
   /* position: relative; */
 }
 .card__tags {

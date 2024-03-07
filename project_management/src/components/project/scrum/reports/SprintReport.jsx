@@ -190,13 +190,7 @@ const SprintReport = () => {
                       <td>{issue.progres}</td>
                       <td>{issue.priority}</td>
                       <td>{issue.storyPoints}</td>
-                      <td>
-                        {
-                          new Date(issue.dueDate)
-                            .toLocaleDateString()
-                            .split("T")[0]
-                        }
-                      </td>
+                      <td>{new Date(issue.dueDate).toLocaleDateString().split('T')[0]}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -259,12 +253,8 @@ const SprintReport = () => {
                   <thead className="thead-dark">
                     <tr>
                       <th scope="col">Card Name</th>
-                      {BoardData.completed && (
-                        <>
-                          <th scope="col">Prev. Status</th>
-                          <th scope="col">Prev. Priority</th>
-                        </>
-                      )}
+                      <th scope="col">Prev. Status</th>
+                      <th scope="col">Prev. Priority</th>
 
                       <th scope="col">Progress</th>
                       <th scope="col">Priority</th>

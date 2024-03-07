@@ -9,6 +9,31 @@ const Types = () => {
   const [projectName, setProjectName] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
+  const [showWeekdays, setShowWeekdays] = useState(false);
+  const [selectedWeekdays, setSelectedWeekdays] = useState([]);
+  const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  const toggleShowWeekdays = () => {
+    setShowWeekdays(!showWeekdays);
+  };
+  const handleWeekdayChange = (weekday) => {
+    const isSelected = selectedWeekdays.includes(weekday);
+
+    if (isSelected) {
+      setSelectedWeekdays(selectedWeekdays.filter((day) => day !== weekday));
+    } else {
+      setSelectedWeekdays([...selectedWeekdays, weekday]);
+    }
+  };
+
+  const handleInputClick = () => {
+    toggleShowWeekdays();
+  };
+
+  const getSelectedWeekdaysString = () => {
+    return selectedWeekdays.join(', ');
+  };
+
   const handleTypeItemClick = (item) => {
     setShowModal(true);
     setSelectedType(item);
@@ -28,6 +53,7 @@ const Types = () => {
       if (user.message === "Session Expired") {
         navigate('/login', { state: user });
       }
+      console.log(selectedWeekdays);
       //  const time = new Date().toISOString().split('T')[0];
       const response = await fetch(
         `http://localhost:3010/projects/${selectedType}`,
@@ -36,7 +62,7 @@ const Types = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ projectName: projectName, ...user }),
+          body: JSON.stringify({ projectName: projectName, weekDays: selectedWeekdays, ...user }),
         }
       );
 
@@ -86,7 +112,6 @@ const Types = () => {
 
     setShowModal(false);
   };
-
   return (
     <div className="types-container">
       <div>
@@ -122,6 +147,29 @@ const Types = () => {
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
               />
+            </Form.Group>
+            <Form.Group controlId="weekdays">
+              <Form.Label>Choose Weekdays</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Click to choose weekdays"
+                value={getSelectedWeekdaysString()}
+                onClick={handleInputClick}
+                readOnly
+              />
+              {showWeekdays && (
+                <div>
+                  {weekdays.map((weekday) => (
+                    <Form.Check
+                      key={weekday}
+                      type="checkbox"
+                      label={weekday}
+                      checked={selectedWeekdays.includes(weekday)}
+                      onChange={() => handleWeekdayChange(weekday)}
+                    />
+                  ))}
+                </div>
+              )}
             </Form.Group>
           </Form>
         </Modal.Body>

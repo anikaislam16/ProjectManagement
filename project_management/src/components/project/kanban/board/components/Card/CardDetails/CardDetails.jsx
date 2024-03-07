@@ -8,6 +8,7 @@ import {
   User,
   X,
 } from "react-feather";
+import dependenciesImage from "./dependencies.png";
 import { v4 as uuidv4 } from "uuid";
 import Editable from "../../Editable/Editable";
 import Label from "../../Label/Label";
@@ -19,6 +20,7 @@ import PrioritySelector from "./priorityButtons/PrioritySelector";
 import EditableHeader from "./tasklist/EditableHeader";
 import CardMember from "./CardMember";
 import KanbanEditableHeader from "./tasklist/KanbanEditableHeader";
+import Dependencylist from "./Dependency/Dependencylist";
 export default function CardDetails(props) {
   const colors = ["#61bd4f", "#f2d600", "#ff9f1a", "#eb5a46", "#c377e0"];
   const fileInputRef = useRef(null);
@@ -26,20 +28,34 @@ export default function CardDetails(props) {
   const [values, setValues] = useState({ ...props.card });
   const [input, setInput] = useState(false);
   const [isMemberVisible, setIsMemberVisible] = useState(false);
-  const [text, setText] = useState(values.cardName);
+  const [isdependencyVisible, setIsdependencyVisible] = useState(false);
+  const [text, setText] = useState(null);
   const [labelShow, setLabelShow] = useState(false);
   const [pdfFile, setPDFFile] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [pdfs, setPdf] = useState([]);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      console.log({ ...result.card });
+      setValues({ ...result.card });
+      setText(result.card.cardName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    console.log(values);
-    console.log(values._id);
-  });
-  useEffect(() => {
-    if (props.updateCard) props.updateCard(props.bid, values._id, values);
-  }, [values]);
-  // Add values as a dependency to ensure the effect runs after values change
+    fetchData();
+  }, []);
 
   const Input = (props) => {
     return (
@@ -288,27 +304,12 @@ export default function CardDetails(props) {
       // You might want to use a state variable to store and display error messages
     }
   };
-  const addStartDate = async (date) => {
-    values.startDate = date;
-    const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fieldName: "startDate",
-          newValue: date,
-        }),
-      }
-    );
-    if (!response.ok) {
-      throw new Error(`Failed t update task :${response.statusText}`);
-    }
-    const resultData = await response.json();
-    console.log(date);
+  const addStartDate = async (startDate, dueDate) => {
+    values.startDate = startDate;
+    values.dueDate = dueDate;
+
     setValues({ ...values });
+    console.log(values);
   };
   const setPriority = async (priority) => {
     values.priority = priority;
@@ -540,7 +541,13 @@ export default function CardDetails(props) {
     props.removeCard(props.bid, values._id);
   };
   const updateFields = async (fieldName, value) => {
-    values[fieldName] = value;
+    let date = new Date(value);
+    if (fieldName === "dueDate") {
+      date.setHours(23, 59, 0, 0);
+      console.log(date);
+    }
+    values[fieldName] = date;
+
     const response = await fetch(
       `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
       {
@@ -550,7 +557,7 @@ export default function CardDetails(props) {
         },
         body: JSON.stringify({
           fieldName: fieldName,
-          newValue: value,
+          newValue: date,
         }),
       }
     );
@@ -563,7 +570,7 @@ export default function CardDetails(props) {
   const addTag = async (value, color) => {
     // Make the API request to update the card item
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
+      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.cardId}`,
       {
         method: "PUT",
         headers: {
@@ -602,18 +609,17 @@ export default function CardDetails(props) {
   };
 
   useEffect(() => {
-    document.addEventListener("keypress", handelClickListner);
-    return () => {
-      document.removeEventListener("keypress", handelClickListner);
-    };
-  });
-  useEffect(() => {
+    console.log(values);
     if (props.updateCard) props.updateCard(props.bid, values._id, values);
   }, [values]);
   const isUploadDisabled = !pdfFile;
   const MemberButtonClick = () => {
     if (isMemberVisible === false) setIsMemberVisible(true);
     else setIsMemberVisible(false);
+  };
+  const DependencyButtonClick = () => {
+    if (isdependencyVisible === false) setIsdependencyVisible(true);
+    else setIsdependencyVisible(false);
   };
   return (
     <Modal onClose={props.onClose}>
@@ -720,7 +726,7 @@ export default function CardDetails(props) {
                           id={item._id}
                           initialValue={item.taskName}
                           onSave={handleTaskClick}
-                          onClose={() => {}}
+                          onClose={() => { }}
                         />
                         <Trash
                           onClick={() => {
@@ -762,7 +768,7 @@ export default function CardDetails(props) {
                               e
                             )
                           }
-                          // handleDownload(pdf._id, props.bid, props.card._id, e)
+                        // handleDownload(pdf._id, props.bid, props.card._id, e)
                         >
                           X
                         </button>
@@ -801,12 +807,14 @@ export default function CardDetails(props) {
                   handleDate={updateFields}
                   initialDate={values.startDate}
                   value="startDate"
+                  cardId={props.card._id}
                 />
                 <StartDateButton
                   due="Due"
                   handleDate={updateFields}
                   initialDate={values.dueDate}
                   value="dueDate"
+                  cardId={props.card._id}
                 />
                 <PrioritySelector
                   initialPriority={values.priority}
@@ -823,7 +831,25 @@ export default function CardDetails(props) {
                 {isMemberVisible && (
                   <CardMember bid={props.bid} cardId={props.card._id} />
                 )}
-
+                <button onClick={DependencyButtonClick}>
+                  <span>
+                    {/* Assuming User is an icon component */}
+                    <img
+                      src={dependenciesImage}
+                      alt="Dependencies"
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </span>
+                  Dependencies
+                </button>
+                {isdependencyVisible && (
+                  <Dependencylist
+                    bid={props.bid}
+                    cardId={props.card._id}
+                    projectId={projectId}
+                    addStartDate={addStartDate}
+                  />
+                )}
                 <form className="space-y-4">
                   <input
                     type="file"

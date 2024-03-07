@@ -6,6 +6,7 @@ const ProjectScrum = () => {
   const { projectId } = useParams();
   return (
     <div>
+      project :{projectId}
       <SidebarContextScrumProvider>
         <SidebarScrum projectId={projectId} />
       </SidebarContextScrumProvider>

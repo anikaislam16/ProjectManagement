@@ -7,7 +7,7 @@
   border-radius: 8px;
   background-color: white;
   box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.1);
-  margin-left: 105px;
+  margin-left: 70px;
   position: fixed;
   // text-align: center;
   top: 80px;
@@ -15,10 +15,10 @@
   max-height: 100vh;
 }
 .center-div.sidebar-open {
-  margin-left: 180px;
+  margin-left: 190px;
 
   transition: margin-left 0.5s ease;
-  width: 88.5vw;
+  width: 85.5vw;
   overflow-y: auto;
 }
 .sidebar {
@@ -246,7 +246,7 @@
 }
 
 .sidebar.active {
-  width: 6rem;
+  width: 5rem;
   transition: 0.5s all;
 
   .logoContainer.active {
@@ -256,7 +256,6 @@
   }
 
   .burgerContainer.active {
-    margin-top: 20px;
     transition: 0.5s all;
     .burgerMenu {
       background-color: $white;
@@ -280,7 +279,6 @@
     }
   }
   .contentsContainer {
-    margin-left: 10px;
     li.active {
       background-color: transparent;
 
@@ -288,7 +286,6 @@
         background-color: $veryLightGreen1;
         padding: 5px; /* Add padding */
         /* Add margin */
-
         border-radius: 5px; /* Add rounded border */
       }
     }

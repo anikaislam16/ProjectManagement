@@ -492,10 +492,7 @@ function PieChart() {
   }
 
   return (
-    <div
-      className={`center-div ${open ? "sidebar-open" : ""}`}
-      style={{ paddingBottom: "80px" }}
-    >
+    <div className={`center-div ${open ? "sidebar-open" : ""}`} style={{ paddingBottom: "80px" }}>
       <div className="center-content">
         {isInitialized && (
           <div className="select-container">
@@ -552,6 +549,15 @@ function PieChart() {
                     }}
                   ></Chart>
                 </div>
+                {BoardData && (
+                  <div>
+                    <p>Selected Board: {BoardData.id}</p>
+                    <p>Start Date: {BoardData.sprintStart}</p>
+                    <p>End Date: {BoardData.sprintEnd}</p>
+                    <p>Total Days: {totalDays}</p>
+                    <p>Date Range: {dateRange.join(", ")}</p>
+                  </div>
+                )}
               </div>
             )}
           </div>

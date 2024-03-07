@@ -6,7 +6,7 @@ import "./ScrumCompletedCard.css";
 import SprintCardDetails from "../../sprint/Card/CardDetails/SprintCardDetails";
 const ScrumCompletedCard = (props) => {
   useEffect(() => {
-    console.log(props.completed);
+    console.log(props.card);
   });
   const [dropdown, setDropdown] = useState(false);
   const [modalShow, setModalShow] = useState(false);
@@ -18,11 +18,8 @@ const ScrumCompletedCard = (props) => {
           updateCard={props.updateCard}
           onClose={setModalShow}
           card={props.card}
-          index={props.index}
           bid={props.bid}
-          completed={props.completed}
           removeCard={props.removeCard}
-          onDrag={props.onDrag}
         />
       )}
 

@@ -5,7 +5,7 @@ import ProjectKanban from "../src/components/project/kanban/ProjectKanban";
 import "./App.css";
 import Home from "./components/home/Home";
 import Navbar1 from "./components/navbar/Navbar1";
-import Gantt1 from "./components/project/kanban/GranttChart/Gantt1.jsx";
+import GanttInitializer from "./components/project/kanban/GranttChart/GanttInitializer.jsx";
 import Members from "./components/project/kanban/Member/Members";
 import BoardMain from "./components/project/kanban/board/BoardMain";
 import ProjectScrum from "./components/project/scrum/ProjectScrum";
@@ -49,7 +49,7 @@ function App() {
           <Route path="/login/temp" element={<Temp />} />
 
           <Route path="/project/kanban/:projectId/" element={<ProjectKanban />}>
-            <Route path="gantt" element={<Gantt1 />} />
+            <Route path="gantt" element={<GanttInitializer />} />
             <Route path="members" element={<Members />} />
             <Route index element={<BoardMain />} />
             <Route path="piechart" element={<PieChartKanban />} />

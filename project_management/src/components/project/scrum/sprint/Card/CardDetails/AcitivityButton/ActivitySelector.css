@@ -40,16 +40,6 @@
   color: black;
   font-style: bold;
 }
-.priority-selector-testing {
-  position: relative;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: rgb(205, 249, 236);
-  color: black;
-  font-style: bold;
-}
 .options-container {
   position: absolute;
   top: 100%;
@@ -92,11 +82,6 @@
   border-bottom: 0.5px solid rgb(232, 221, 221);
 }
 .option-hold {
-  background-color: rgb(255, 255, 255);
-  color: black;
-  border-bottom: 0.5px solid rgb(232, 221, 221);
-}
-.option-testing {
   background-color: rgb(255, 255, 255);
   color: black;
   border-bottom: 0.5px solid rgb(232, 221, 221);
