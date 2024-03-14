@@ -22,6 +22,10 @@ const boardSchema = new mongoose.Schema({
             type: Boolean,
             default: false,
           },
+          point: {
+            type: Number,
+            default: 0,
+          },
         },
       ],
       startDate: Date,
@@ -47,7 +51,7 @@ const boardSchema = new mongoose.Schema({
           },
           id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'boardSchema', // Reference to the same schema
+            ref: "boardSchema", // Reference to the same schema
           },
         },
       ],
@@ -62,18 +66,19 @@ const boardSchema = new mongoose.Schema({
       dependencies: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'boardSchema',
+          ref: "boardSchema",
           default: [],
         },
       ],
       workflow: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'boardSchema',
+          ref: "boardSchema",
           default: [],
         },
       ],
-    }],
+    },
+  ],
 });
 
 // Use mongoose.model only once, with the schema as the second parameter
