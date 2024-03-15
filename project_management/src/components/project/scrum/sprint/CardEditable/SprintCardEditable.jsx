@@ -4,7 +4,7 @@ import "../Editable/SprintEditable.css";
 const SprintCardEditable = (props) => {
   const [show, setShow] = useState(props?.handler || false);
   const [text, setText] = useState(props.defaultValue || "");
-  const [point, setPoint] = useState(0);
+  const [point, setPoint] = useState(1);
   const toggleshow = () => {
     setShow(false);
   };
