@@ -148,6 +148,14 @@ export default function Gantt1({ data }: { data: any[] }) {
         {/* <button onClick={addDependencyToTask0}>Add Dependency to Task[0]</button> */}
         <br />
         <h3>Gantt With Unlimited Height</h3>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <div style={{ width: '10px', height: '10px', backgroundColor: '#4CAF50' }}></div>
+          normal
+          <div style={{ marginLeft: '10px', width: '10px', height: '10px', backgroundColor: '#f7655b' }}></div>
+          overdue
+          <div style={{ marginLeft: '10px', width: '10px', height: '10px', backgroundColor: '#2196F3' }}></div>
+          was overdue and finished
+        </div>
         <div onWheel={(e) => e.preventDefault()} style={{ overflowX: "hidden" }}>
           <Gantt
             tasks={tasks}
