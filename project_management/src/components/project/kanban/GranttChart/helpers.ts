@@ -44,9 +44,18 @@ export const initTasks = (projectData: any[]): any[] => {
         // Loop through cards within each project
         let minStartDate = Infinity; // Initialize with a large value
         let maxFinishedDate = -Infinity; // Initialize with a small value
-
+        var totalPoints = 0;
+        var completedPoints = 0;
         for (const card of project.card) {
+            for (const task of card.task) {
+                // Add the points of the current task to the totalPoints
+                totalPoints += parseInt(task.point);
 
+                // If the task is complete, add its points to completedPoints
+                if (task.complete) {
+                    completedPoints += parseInt(task.point);
+                }
+            }
             // Update minStartDate if the current card's startDate is earlier
             if (card.startDate) {
                 minStartDate = Math.min(minStartDate, new Date(card.startDate).getTime());
@@ -59,7 +68,9 @@ export const initTasks = (projectData: any[]): any[] => {
                 console.log(maxFinishedDate)
             }
         }
-
+        if (totalPoints === 0) {
+            totalPoints = 1;
+        }
         // Now minStartDate and maxFinishedDate hold the desired values
         console.log('Min Start Date:', new Date(minStartDate));
         console.log('Max Finished Date:', new Date(maxFinishedDate));
@@ -70,15 +81,30 @@ export const initTasks = (projectData: any[]): any[] => {
             //end: new Date(maxFinishedDate || currentDate.getTime() + 24 * 60 * 60 * 1000),
             name: project.name,
             id: project.id,
-            progress: 10, // Set your desired default value
+            progress: Math.round((completedPoints / totalPoints) * 100), // Set your desired default value
             type: "project", // Use string literal type
             styles: taskStyles,
             hideChildren: false,
         };
         console.log(projectObject)
         tasks.push(projectObject);
-
         for (const card of project.card) {
+            var totalCardPoints = 0;
+            var completedCardPoints = 0;
+            for (const task of card.task) {
+                // Add the points of the current task to the totalPoints
+                totalCardPoints += parseInt(task.point);
+
+                // If the task is complete, add its points to completedPoints
+                if (task.complete) {
+                    completedCardPoints += parseInt(task.point);
+                }
+            }
+            if (totalCardPoints === 0) {
+                totalCardPoints = 10000;
+            }
+            console.log((completedCardPoints / totalCardPoints) * 100)
+            console.log(Math.round((completedCardPoints / totalCardPoints) * 100))
             const newTask: Task = {
                 start: new Date(card.startDate || card.creationDate || currentDate),
                 end: new Date(card.dueDate || new Date(card.creationDate || currentDate).getTime() + 7 * 24 * 60 * 60 * 1000),
@@ -96,7 +122,7 @@ export const initTasks = (projectData: any[]): any[] => {
                     }
                 })(),
                 dependencies: card.dependencies,
-                progress: 20,
+                progress: (Math.round((completedCardPoints / totalCardPoints) * 100)),
             };
             console.log(newTask);
             tasks.push(newTask);
