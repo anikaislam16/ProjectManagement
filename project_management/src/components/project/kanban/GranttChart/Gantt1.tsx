@@ -5,12 +5,14 @@ import SidebarContext from "../../../../sidebar_app/components/sidebar_context/S
 import { initTasks, getStartEndDateForProject } from "./helpers.ts";
 import { ViewSwitcher } from "./ViewSwithcer.tsx";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
+import { slideStartDueDateFixed } from "./slideStartDueDateFixed.js"
 export default function Gantt1({ data }: { data: any[] }) {
   const { open } = useContext(SidebarContext);
+  console.log(data);
   const { projectId } = useParams();
   const [view, setView] = useState<ViewMode>(ViewMode.Day);
 
-  const [tasks, setTasks] = useState<Task[]>(
+  var [tasks, setTasks] = useState<Task[]>(
     initTasks(data)
   );
   const [isChecked, setIsChecked] = useState(true);
@@ -21,17 +23,13 @@ export default function Gantt1({ data }: { data: any[] }) {
     columnWidth = 100;
   }
   useEffect(() => {
-    //  console.log(props);
-    //const tasks: Task[] = [];
     const taskStyles = {
       backgroundColor: "#4CAF50",
       backgroundSelectedColor: "#FFC107",
       progressColor: "#2196F3",
     };
-
-    //fetchData();
   }, []);
-  const handleTaskChange = (task: Task) => {
+  const handleTaskChange = async (task: Task) => {
     //ekhane drag n drop er karone new task ta ase.
     console.log("On date change Id:" + task.id);
     if (task.start.getHours() > 13) {
@@ -50,7 +48,13 @@ export default function Gantt1({ data }: { data: any[] }) {
       task.end.setDate(task.end.getDate() + 1);
     }
     console.log(task);
-    let newTasks = tasks.map((t) => (t.id === task.id ? task : t));
+    let newTasks;
+    //console.log(tasks);
+    newTasks = slideStartDueDateFixed(data, task);
+    console.log(data);
+    setTasks(tasks = initTasks(data));
+    //ekhane newTasks array genarate kora hosse. jetai task change hbe, seta update hocche. bakita as usual newTasks array te dhukse..
+    newTasks = tasks.map((t) => (t.id === task.id ? task : t));
     console.log(newTasks);
     if (task.project) {
       const [start, end] = getStartEndDateForProject(newTasks, task.project);
@@ -68,20 +72,45 @@ export default function Gantt1({ data }: { data: any[] }) {
         );
       }
     }
-    setTasks(newTasks);
-  };
+    setTasks(tasks = newTasks);
+    console.log(tasks);
+    for (let i = 0; i < tasks.length; i++) {
+      if (tasks[i].type === "project") {
+        continue; // Skip this iteration if tasks[i].type is "project"
+      }
 
-  // const handleTaskDelete = (task: Task) => {
-  //   const conf = window.confirm("Are you sure about " + task.name + " ?");
-  //   if (conf) {
-  //     setTasks(tasks.filter((t) => t.id !== task.id));
-  //   }
-  //   return conf;
-  // };
-  // const handleProgressChange = async (task: Task) => {
-  //   setTasks(tasks.map((t) => (t.id === task.id ? task : t)));
-  //   console.log("On progress change Id:" + task.id);
-  // };
+      const response = await fetch(
+        `http://localhost:3010/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fieldName: "startDate",
+            newValue: tasks[i].start,
+          }),
+        }
+      );
+      const response1 = await fetch(
+        `http://localhost:3010/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fieldName: "dueDate",
+            newValue: tasks[i].end,
+          }),
+        }
+      );
+      if (!response.ok || !response1.ok) {
+        throw new Error(`Failed to update task: ${response.statusText}`);
+      }
+    }
+
+  }
   const handleSelect = (task: Task, isSelected: boolean) => {
     console.log(task.name + " has " + (isSelected ? "selected" : "unselected"));
   };
@@ -102,9 +131,7 @@ export default function Gantt1({ data }: { data: any[] }) {
   //     //  styles: taskStyles,
   //     hideChildren: false,
   //   };
-
   //   setTasks((prevTasks) => [...prevTasks, newProject]);
-
   // };
   return (
     <div
