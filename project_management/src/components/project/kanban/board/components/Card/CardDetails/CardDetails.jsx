@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import StartDateButton from "./Date/StartDateButton";
 import PrioritySelector from "./priorityButtons/PrioritySelector";
 import EditableHeader from "./tasklist/EditableHeader";
+import SprintCardEditable from "../../../../../scrum/sprint/CardEditable/SprintCardEditable";
 import CardMember from "./CardMember";
 import KanbanEditableHeader from "./tasklist/KanbanEditableHeader";
 import Dependencylist from "./Dependency/Dependencylist";
@@ -250,11 +251,12 @@ export default function CardDetails(props) {
       // Assuming values and setValues are state variables
       // and updateCardItemApi is the API endpoint for updating a card item
       // Prepare the task object without the id
-      const newTaskWithoutId = {
-        taskName: value,
-        completed: false,
-      };
+
       console.log(props.card);
+      console.log(value);
+      const name = value[0];
+      const point = value[1];
+      const pointNum = parseInt(point);
       // Make the API request to update the card item
       const response = await fetch(
         `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
@@ -266,7 +268,8 @@ export default function CardDetails(props) {
           body: JSON.stringify({
             fieldName: "task",
             newValue: {
-              taskName: value,
+              taskName: name,
+              point: pointNum,
               complete: false,
             },
           }),
@@ -286,7 +289,8 @@ export default function CardDetails(props) {
       // Create the complete task object with the id
       const newTask = {
         _id: taskId,
-        taskName: value,
+        taskName: name,
+        point: pointNum,
         completed: false,
       };
 
@@ -351,7 +355,7 @@ export default function CardDetails(props) {
       throw new Error(`Failed t update task :${response.statusText}`);
     }
     const resultData = await response.json();
-    console.log(date);
+
     setValues({ ...values });
   };
   const removeTask = async (id) => {
@@ -393,9 +397,9 @@ export default function CardDetails(props) {
     });
   };
 
-  const handleTaskClick = async (id, updatedValue) => {
-    console.log(id);
-
+  const handleTaskClick = async (id, updatedValue, updatedPoint) => {
+    console.log(updatedPoint);
+    const p = parseInt(updatedPoint);
     const response = await fetch(
       `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
       {
@@ -405,6 +409,7 @@ export default function CardDetails(props) {
         },
         body: JSON.stringify({
           taskName: updatedValue,
+          point: p,
         }),
       }
     );
@@ -416,7 +421,7 @@ export default function CardDetails(props) {
     setValues((prevValues) => {
       if (prevValues && prevValues.task && Array.isArray(prevValues.task)) {
         const updatedTasks = prevValues.task.map((task) =>
-          task._id === id ? { ...task, taskName: updatedValue } : task
+          task._id === id ? { ...task, taskName: updatedValue, point: p } : task
         );
         return {
           ...prevValues,
@@ -428,6 +433,7 @@ export default function CardDetails(props) {
         return prevValues;
       }
     });
+    console.log(values.task);
   };
 
   const updateTask = async (id) => {
@@ -480,8 +486,19 @@ export default function CardDetails(props) {
     const completedTask = values.task.filter(
       (item) => item.completed === true
     ).length;
-
-    return Math.floor((completedTask * 100) / totalTask) || 0;
+    const totalPoints = values.task.reduce((acc, tas) => {
+      console.log("Current task:", tas); // Log current task
+      console.log("Accumulator:", acc); // Log current accumulator value
+      console.log("Accumulating:", acc + tas.point); // Log the result of current iteration
+      return acc + tas.point; // Accumulate the points
+    }, 0);
+    const completedPoints = values.task
+      .filter((tas) => tas.completed)
+      .reduce((acc, tas) => acc + tas.point, 0);
+    console.log(totalPoints, completedPoints);
+    const p = ((completedPoints / totalPoints) * 100).toFixed(2);
+    if (p > 0) return p;
+    return 0;
   };
 
   const removeTag = async (id) => {
@@ -721,12 +738,13 @@ export default function CardDetails(props) {
                             updateTask(item._id);
                           }}
                         />
-                        <KanbanEditableHeader
+                        <EditableHeader
                           value={item}
                           id={item._id}
                           initialValue={item.taskName}
+                          initialPoint={item.point}
                           onSave={handleTaskClick}
-                          onClose={() => { }}
+                          onClose={() => {}}
                         />
                         <Trash
                           onClick={() => {
@@ -745,7 +763,7 @@ export default function CardDetails(props) {
                     <></>
                   )}
 
-                  <Editable
+                  <SprintCardEditable
                     parentClass={"task__editable"}
                     name={"Add Task"}
                     btnName={"Add task"}
@@ -768,7 +786,7 @@ export default function CardDetails(props) {
                               e
                             )
                           }
-                        // handleDownload(pdf._id, props.bid, props.card._id, e)
+                          // handleDownload(pdf._id, props.bid, props.card._id, e)
                         >
                           X
                         </button>
