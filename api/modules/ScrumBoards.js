@@ -29,7 +29,7 @@ const scrumBoardSchema = new mongoose.Schema({
           },
           point: {
             type: Number,
-            default: 0,
+            default: 1,
           },
         },
       ],
