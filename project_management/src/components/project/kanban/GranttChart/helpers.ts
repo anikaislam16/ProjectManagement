@@ -5,7 +5,16 @@ const taskStyles = {
     backgroundSelectedColor: '#FFC107',
     progressColor: '#2196F3',
 };
-
+const taskStyles1 = {
+    backgroundColor: '#f7655b',
+    backgroundSelectedColor: '#FFC107',
+    progressColor: '#2196F3',
+};
+const taskStyles2 = {
+    backgroundColor: '#f04695',
+    backgroundSelectedColor: '#FFC107',
+    progressColor: '#2196F3',
+};
 export const initTasks = (projectData: any[]): any[] => {
     const currentDate = new Date();
 
@@ -28,8 +37,10 @@ export const initTasks = (projectData: any[]): any[] => {
     let tasks: Task[] = [
 
     ];
-
+    const lastIndex = projectData.length - 1;
     for (const project of projectData) {
+        const currentIndex = projectData.indexOf(project);
+
         // Loop through cards within each project
         let minStartDate = Infinity; // Initialize with a large value
         let maxFinishedDate = -Infinity; // Initialize with a small value
@@ -75,7 +86,15 @@ export const initTasks = (projectData: any[]): any[] => {
                 id: card._id,
                 type: 'task',
                 project: project.id,
-                styles: taskStyles,
+                styles: (() => {
+                    if ((lastIndex === currentIndex) && (new Date(card.dueDate) < new Date(card.finishedTime))) {
+                        return taskStyles2;
+                    } else if ((lastIndex !== currentIndex) && (new Date(card.dueDate) < currentDate)) {
+                        return taskStyles1;
+                    } else {
+                        return taskStyles;
+                    }
+                })(),
                 dependencies: card.dependencies,
                 progress: 20,
             };
