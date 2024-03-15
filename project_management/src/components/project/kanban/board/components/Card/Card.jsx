@@ -88,10 +88,11 @@ const Card = (props) => {
                   <CheckSquare />
                   <span>
                     {props.card.task.length !== 0
-                      ? `${(props.card.task?.filter(
-                        (item) => item.completed === true
-                      )).length
-                      } / ${props.card.task.length}`
+                      ? `${
+                          (props.card.task?.filter(
+                            (item) => item.complete === true
+                          )).length
+                        } / ${props.card.task.length}`
                       : `${"0/0"}`}
                   </span>
                 </div>

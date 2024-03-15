@@ -72,7 +72,7 @@ const SprintCard = (props) => {
                     {props.card.task.length !== 0
                       ? `${
                           (props.card.task?.filter(
-                            (item) => item.completed === true
+                            (item) => item.complete === true
                           )).length
                         } / ${props.card.task.length}`
                       : `${"0/0"}`}

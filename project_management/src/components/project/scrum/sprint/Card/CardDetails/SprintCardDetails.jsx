@@ -113,7 +113,7 @@ export default function SprintCardDetails(props) {
         _id: taskId,
         taskName: name,
         point: pointNum,
-        completed: false,
+        complete: false,
       };
 
       // Update the state with the new task and result data
@@ -211,8 +211,8 @@ export default function SprintCardDetails(props) {
   const updateTask = async (id) => {
     console.log(id);
     const taskIndex = values.task.findIndex((item) => item._id === id);
-    values.task[taskIndex].completed = !values.task[taskIndex].completed;
-    const Iscomplete = values.task[taskIndex].completed;
+    values.task[taskIndex].complete = !values.task[taskIndex].complete;
+    const Iscomplete = values.task[taskIndex].complete;
     console.log(Iscomplete);
     const response = await fetch(
       `http://localhost:3010/projects/scrum/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
@@ -258,7 +258,7 @@ export default function SprintCardDetails(props) {
   const calculatePercent = () => {
     const totalTask = values.task.length;
     const completedTask = values.task.filter(
-      (item) => item.completed === true
+      (item) => item.complete === true
     ).length;
     const totalPoints = values.task.reduce((acc, tas) => {
       console.log("Current task:", tas); // Log current task
@@ -267,7 +267,7 @@ export default function SprintCardDetails(props) {
       return acc + tas.point; // Accumulate the points
     }, 0);
     const completedPoints = values.task
-      .filter((tas) => tas.completed)
+      .filter((tas) => tas.complete)
       .reduce((acc, tas) => acc + tas.point, 0);
     console.log(totalPoints, completedPoints);
     const p = ((completedPoints / totalPoints) * 100).toFixed(2);
@@ -666,7 +666,7 @@ export default function SprintCardDetails(props) {
                                 e
                               )
                             }
-                          // handleDownload(pdf._id, props.bid, props.card._id, e)
+                            // handleDownload(pdf._id, props.bid, props.card._id, e)
                           >
                             X
                           </button>
@@ -691,7 +691,7 @@ export default function SprintCardDetails(props) {
                         <input
                           className="task__checkbox"
                           type="checkbox"
-                          defaultChecked={item.completed}
+                          defaultChecked={item.complete}
                           onChange={() => {
                             updateTask(item._id);
                           }}
@@ -702,7 +702,7 @@ export default function SprintCardDetails(props) {
                           initialValue={item.taskName}
                           initialPoint={item.point}
                           onSave={handleTaskClick}
-                          onClose={() => { }}
+                          onClose={() => {}}
                         />
                         <Trash
                           onClick={() => {
