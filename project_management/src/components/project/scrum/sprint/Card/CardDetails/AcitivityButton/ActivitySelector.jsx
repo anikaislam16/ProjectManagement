@@ -48,7 +48,12 @@ const ActivitySelector = ({ initialPriority, setPriority }) => {
         >
           Hold
         </div>
-
+        <div
+          className="option option-testing"
+          onClick={() => handleOptionClick("testing")}
+        >
+          Testing
+        </div>
         <div
           className="option option-done"
           onClick={() => handleOptionClick("done")}
