@@ -62,7 +62,9 @@ const ScrumBoardInitializer = () => {
       const doneCards = cardsWithIndex.filter(
         (card) => card.progres === "done"
       );
-
+      const TestingCards = cardsWithIndex.filter(
+        (card) => card.progres === "testing"
+      );
       setData([
         {
           id: "1",
@@ -81,6 +83,11 @@ const ScrumBoardInitializer = () => {
         },
         {
           id: "4",
+          name: "Testing/Review",
+          card: TestingCards,
+        },
+        {
+          id: "5",
           name: "Done",
           card: doneCards,
         },
@@ -261,6 +268,8 @@ const ScrumBoardInitializer = () => {
       } else if (destination.droppableId === "3") {
         await updateCardProgress("progres", "hold", sourceCard._id);
       } else if (destination.droppableId === "4") {
+        await updateCardProgress("progres", "testing", sourceCard._id);
+      } else if (destination.droppableId === "5") {
         await updateCardProgress("progres", "done", sourceCard._id);
       }
     }
