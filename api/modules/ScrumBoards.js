@@ -62,6 +62,24 @@ const scrumBoardSchema = new mongoose.Schema({
         },
       ],
       pdf: [{ type: mongoose.Schema.Types.ObjectId, ref: "PDF" }],
+      finishedTime: {
+        type: Date,
+        default: null,
+      },
+      dependencies: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "boardSchema",
+          default: [],
+        },
+      ],
+      workflow: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "boardSchema",
+          default: [],
+        },
+      ],
     },
   ],
   sprintStart: Date,

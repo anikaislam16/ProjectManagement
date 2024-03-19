@@ -17,10 +17,12 @@ import "./SprintCardDetails.css";
 import { useParams } from "react-router-dom";
 import ActivitySelector from "./AcitivityButton/ActivitySelector";
 import EditableHeader from "../../../../kanban/board/components/Card/CardDetails/tasklist/EditableHeader";
-import StartDateButton from "../../../../kanban/board/components/Card/CardDetails/Date/StartDateButton";
 import PrioritySelector from "../../../../kanban/board/components/Card/CardDetails/priorityButtons/PrioritySelector";
 import CardMember from "./CardMember";
 import SprintCardEditable from "../../CardEditable/SprintCardEditable";
+import dependenciesImage from './dependencies.png';
+import StartDateButton from "./Date/StartDateButton";
+import Dependencylist from "./Dependency/Dependencylist";
 export default function SprintCardDetails(props) {
   const colors = ["#61bd4f", "#f2d600", "#ff9f1a", "#eb5a46", "#c377e0"];
   const { projectId } = useParams();
@@ -30,6 +32,7 @@ export default function SprintCardDetails(props) {
   const [text, setText] = useState(values.cardName);
   const [labelShow, setLabelShow] = useState(false);
   const [isMemberVisible, setIsMemberVisible] = useState(false);
+  const [isdependencyVisible, setIsdependencyVisible] = useState(false);
   const [inputValue, setInputValue] = useState(values.storyPoints);
   const [pdfFile, setPDFFile] = useState(null);
   const [title, setTitle] = useState("");
@@ -45,6 +48,27 @@ export default function SprintCardDetails(props) {
     updateFields("storyPoints", numericValue);
     // Optionally, you can clear the input field after clicking the button
   };
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3010/projects/scrum/${projectId}/${props.bid}/${props.card._id}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      console.log({ ...result.card });
+      setValues({ ...result.card });
+      setText(result.card.cardName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
   const Input = (props) => {
     return (
       <div className="container">
@@ -233,6 +257,14 @@ export default function SprintCardDetails(props) {
     console.log("fella", resultData);
     setValues({ ...values });
   };
+
+  const addStartDate = async (startDate, dueDate) => {
+    values.creationDate = startDate;
+    values.dueDate = dueDate;
+
+    setValues({ ...values });
+    console.log(values);
+  };
   const updateTitle = async (value) => {
     console.log(props.bid, props.card._id);
     const response = await fetch(
@@ -387,6 +419,15 @@ export default function SprintCardDetails(props) {
   });
   const updateFields = async (fieldName, value) => {
     values[fieldName] = value;
+    if (fieldName === 'dueDate' || fieldName === 'creationDate') {
+      value = new Date(value);
+      if (fieldName === "dueDate") {
+        value.setHours(23, 59, 0, 0);
+        console.log(value);
+      }
+      values[fieldName] = value;
+    }
+    console.log(fieldName, value);
     const response = await fetch(
       `http://localhost:3010/projects/scrum/${projectId}/${props.bid}/${props.card._id}`,
       {
@@ -568,6 +609,10 @@ export default function SprintCardDetails(props) {
     }
   };
   const isUploadDisabled = !pdfFile;
+  const DependencyButtonClick = () => {
+    if (isdependencyVisible === false) setIsdependencyVisible(true);
+    else setIsdependencyVisible(false);
+  };
   return (
     <SprintModal onClose={props.onClose}>
       <div className="local__bootstrap">
@@ -666,7 +711,7 @@ export default function SprintCardDetails(props) {
                                 e
                               )
                             }
-                            // handleDownload(pdf._id, props.bid, props.card._id, e)
+                          // handleDownload(pdf._id, props.bid, props.card._id, e)
                           >
                             X
                           </button>
@@ -702,7 +747,7 @@ export default function SprintCardDetails(props) {
                           initialValue={item.taskName}
                           initialPoint={item.point}
                           onSave={handleTaskClick}
-                          onClose={() => {}}
+                          onClose={() => { }}
                         />
                         <Trash
                           onClick={() => {
@@ -763,12 +808,14 @@ export default function SprintCardDetails(props) {
                   handleDate={updateFields}
                   initialDate={values.creationDate}
                   value="creationDate"
+                  cardId={props.card._id}
                 />
                 <StartDateButton
                   due="Due"
                   handleDate={updateFields}
                   initialDate={values.dueDate}
                   value="dueDate"
+                  cardId={props.card._id}
                 />
                 <PrioritySelector
                   initialPriority={values.priority}
@@ -783,6 +830,25 @@ export default function SprintCardDetails(props) {
                 </button>
                 {isMemberVisible && (
                   <CardMember bid={props.bid} cardId={props.card._id} />
+                )}
+                <button onClick={DependencyButtonClick}>
+                  <span>
+                    {/* Assuming User is an icon component */}
+                    <img
+                      src={dependenciesImage}
+                      alt="Dependencies"
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </span>
+                  Dependencies
+                </button>
+                {isdependencyVisible && (
+                  <Dependencylist
+                    bid={props.bid}
+                    cardId={props.card._id}
+                    projectId={projectId}
+                    addStartDate={addStartDate}
+                  />
                 )}
                 <form className="space-y-4">
                   <input

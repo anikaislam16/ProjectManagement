@@ -227,9 +227,19 @@ const deleteCardField = async (req, res) => {
     );
 
     // Find the index of the task, label, or member to delete within the array
-    const indexToDelete = cardToUpdate[subDocumentKey].findIndex(
-      (item) => item._id.toString() === subDocumentId
-    );
+    let indexToDelete;
+    //for the array type element
+    if (subDocumentKey === 'dependencies' || 'workflow') {
+      indexToDelete = cardToUpdate[subDocumentKey].indexOf(subDocumentId);
+      console.log('dkfa', indexToDelete);
+    }
+    //for the object of array type element
+    else {
+      // Find the index of the task, label, or member to delete within the array
+      indexToDelete = cardToUpdate[subDocumentKey].findIndex(
+        (item) => item._id.toString() === subDocumentId
+      );
+    }
 
     // Check if the item was found
     if (indexToDelete !== -1) {
