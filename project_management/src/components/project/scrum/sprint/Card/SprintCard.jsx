@@ -25,6 +25,7 @@ const SprintCard = (props) => {
               onClose={setModalShow}
               card={props.card}
               bid={props.bid}
+              type={props.type}
               removeCard={props.removeCard}
             />
           )}

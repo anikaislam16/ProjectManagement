@@ -34,7 +34,7 @@ export default function Board(props) {
   const handleModalClose = () => {
     setModalShow(false);
   };
-  const addCards = () => { };
+  const addCards = () => {};
   const handleInputChange = (field, value) => {
     console.log(value);
     setModalData({
@@ -55,7 +55,6 @@ export default function Board(props) {
   const startBoard = () => {
     const currentDate = new Date();
     props.updateBoard("started", true, props.id);
-
 
     props.updateBoard("sprintStart", new Date(), props.id);
     setModalData({
@@ -139,6 +138,7 @@ export default function Board(props) {
                 id={items._id}
                 index={index}
                 key={items._id}
+                type={props.type}
                 title={items.cardName}
                 tags={items.tags}
                 task={items.task}

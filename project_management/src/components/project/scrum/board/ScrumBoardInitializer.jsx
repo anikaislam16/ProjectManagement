@@ -5,8 +5,10 @@ import { v4 as uuidv4 } from "uuid";
 import SidebarContextScrum from "../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum";
 import "./ScrumBoardInitializer.css";
 import ScrumBoard from "./Board/ScrumBoard";
+
 const ScrumBoardInitializer = () => {
   const { open } = useContext(SidebarContextScrum);
+
   const { projectId } = useParams();
   const [datas, setDatas] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -357,6 +359,7 @@ const ScrumBoardInitializer = () => {
                       <ScrumBoard
                         key={item.id}
                         id={datas._id}
+                        type={item.id}
                         bb={item.id}
                         name={item.name}
                         board={item}

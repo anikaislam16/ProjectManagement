@@ -33,6 +33,7 @@ export default function ScrumBoard(props) {
                 id={items._id}
                 index={index}
                 key={items._id}
+                type={props.type}
                 title={items.cardName}
                 tags={items.tags}
                 task={items.task}

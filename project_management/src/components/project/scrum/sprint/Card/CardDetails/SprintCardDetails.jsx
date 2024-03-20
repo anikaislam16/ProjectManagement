@@ -20,7 +20,7 @@ import EditableHeader from "../../../../kanban/board/components/Card/CardDetails
 import PrioritySelector from "../../../../kanban/board/components/Card/CardDetails/priorityButtons/PrioritySelector";
 import CardMember from "./CardMember";
 import SprintCardEditable from "../../CardEditable/SprintCardEditable";
-import dependenciesImage from './dependencies.png';
+import dependenciesImage from "./dependencies.png";
 import StartDateButton from "./Date/StartDateButton";
 import Dependencylist from "./Dependency/Dependencylist";
 export default function SprintCardDetails(props) {
@@ -419,7 +419,7 @@ export default function SprintCardDetails(props) {
   });
   const updateFields = async (fieldName, value) => {
     values[fieldName] = value;
-    if (fieldName === 'dueDate' || fieldName === 'creationDate') {
+    if (fieldName === "dueDate" || fieldName === "creationDate") {
       value = new Date(value);
       if (fieldName === "dueDate") {
         value.setHours(23, 59, 0, 0);
@@ -711,7 +711,7 @@ export default function SprintCardDetails(props) {
                                 e
                               )
                             }
-                          // handleDownload(pdf._id, props.bid, props.card._id, e)
+                            // handleDownload(pdf._id, props.bid, props.card._id, e)
                           >
                             X
                           </button>
@@ -747,7 +747,7 @@ export default function SprintCardDetails(props) {
                           initialValue={item.taskName}
                           initialPoint={item.point}
                           onSave={handleTaskClick}
-                          onClose={() => { }}
+                          onClose={() => {}}
                         />
                         <Trash
                           onClick={() => {
@@ -831,17 +831,19 @@ export default function SprintCardDetails(props) {
                 {isMemberVisible && (
                   <CardMember bid={props.bid} cardId={props.card._id} />
                 )}
-                <button onClick={DependencyButtonClick}>
-                  <span>
-                    {/* Assuming User is an icon component */}
-                    <img
-                      src={dependenciesImage}
-                      alt="Dependencies"
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  </span>
-                  Dependencies
-                </button>
+                {(props.type === "1" || props.type === "sprint") && (
+                  <button onClick={DependencyButtonClick}>
+                    <span>
+                      {/* Assuming User is an icon component */}
+                      <img
+                        src={dependenciesImage}
+                        alt="Dependencies"
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </span>
+                    Dependencies
+                  </button>
+                )}
                 {isdependencyVisible && (
                   <Dependencylist
                     bid={props.bid}

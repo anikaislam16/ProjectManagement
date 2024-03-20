@@ -480,6 +480,7 @@ function SprintBoardMain() {
                         id={item.id}
                         name={item.name}
                         board={item}
+                        type={item.boardType}
                         card={item.card}
                         updateBoard={updateBoard}
                         addCard={addCard}

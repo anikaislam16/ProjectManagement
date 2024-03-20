@@ -19,6 +19,7 @@ const ScrumCompletedCard = (props) => {
           onClose={setModalShow}
           card={props.card}
           bid={props.bid}
+          key={props.key}
           removeCard={props.removeCard}
         />
       )}
