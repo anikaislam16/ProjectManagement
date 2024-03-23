@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
 import { DragDropContext } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
 import SidebarContextScrum from "../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum";
@@ -8,11 +9,11 @@ import ScrumBoard from "./Board/ScrumBoard";
 
 const ScrumBoardInitializer = () => {
   const { open } = useContext(SidebarContextScrum);
-
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const { projectId } = useParams();
   const [datas, setDatas] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
-
+  var [dep, setdep] = useState([]);
   const [data, setData] = useState([]);
   const initializeData = async () => {
     try {
@@ -162,6 +163,25 @@ const ScrumBoardInitializer = () => {
     if (!response.ok) {
       throw new Error(`Failed t update task :${response.statusText}`);
     }
+    else {
+      value = new Date();
+      const response1 = await fetch(
+        `http://localhost:3010/projects/scrum/${projectId}/${datas._id}/${cardId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fieldName: "finishedTime",
+            newValue: value,
+          }),
+        }
+      );
+      if (!response1.ok) {
+        throw new Error(`Failed t update card :${response1.statusText}`);
+      }
+    }
     const resultData = await response.json();
   };
   const ChangePosition = async (boardId, sourceIndex, destinationIndex) => {
@@ -199,6 +219,7 @@ const ScrumBoardInitializer = () => {
     const destinationIndex = destination.index;
     console.log("cde " + sourceIndex);
     console.log("def " + destinationIndex);
+
     const findSourceBoard = data.find(
       (board) => board.id === source.droppableId
     );
@@ -246,62 +267,61 @@ const ScrumBoardInitializer = () => {
       );
     }
     console.log(findDestBoard);
-    if (source.droppableId === destination.droppableId) {
-      await ChangePosition(datas._id, sourceCard.index, DestCard.index);
-    } else {
-      if (DestCard) {
-        if (sourceCard.index < DestCard.index) {
-          await ChangePosition(datas._id, sourceCard.index, DestCard.index - 1);
-        } else
-          await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+    if (String(source.droppableId) !== String(destination.droppableId)) {
+      const url = `http://localhost:3010/projects/scrum/${projectId}/${datas._id}/${sourceCard._id}/dependency/card/check`;
+      await fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Process the fetched data
+          console.log(data.dependentCardNames);
+          if (data.dependentCardNames.length > 0) {
+            setdep(dep = data.dependentCardNames)
+            setShowErrorModal(true);
+            console.log(dep.length);
+          }
+        })
+        .catch(error => {
+          // Handle errors
+          console.error('Fetch error:', error);
+        });
+    }
+    if (dep.length === 0) {
+      if (source.droppableId === destination.droppableId) {
+        await ChangePosition(datas._id, sourceCard.index, DestCard.index);
       } else {
-        if (destinationIndex > 0) {
-          DestCard = findDestBoard.card[destinationIndex - 1];
+        if (DestCard) {
           if (sourceCard.index < DestCard.index) {
+            await ChangePosition(datas._id, sourceCard.index, DestCard.index - 1);
+          } else
             await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+        } else {
+          if (destinationIndex > 0) {
+            DestCard = findDestBoard.card[destinationIndex - 1];
+            if (sourceCard.index < DestCard.index) {
+              await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+            }
           }
         }
-      }
 
-      if (destination.droppableId === "1") {
-        await updateCardProgress("progres", "todo", sourceCard._id);
-      } else if (destination.droppableId === "2") {
-        await updateCardProgress("progres", "progress", sourceCard._id);
-      } else if (destination.droppableId === "3") {
-        await updateCardProgress("progres", "hold", sourceCard._id);
-      } else if (destination.droppableId === "4") {
-        await updateCardProgress("progres", "testing", sourceCard._id);
-      } else if (destination.droppableId === "5") {
-        await updateCardProgress("progres", "done", sourceCard._id);
+        if (destination.droppableId === "1") {
+          await updateCardProgress("progres", "todo", sourceCard._id);
+        } else if (destination.droppableId === "2") {
+          await updateCardProgress("progres", "progress", sourceCard._id);
+        } else if (destination.droppableId === "3") {
+          await updateCardProgress("progres", "hold", sourceCard._id);
+        } else if (destination.droppableId === "4") {
+          await updateCardProgress("progres", "testing", sourceCard._id);
+        } else if (destination.droppableId === "5") {
+          await updateCardProgress("progres", "done", sourceCard._id);
+        }
       }
     }
     initializeData();
-  };
-  const switchCardsInDb = async (boardId, sourceIndex, destinationIndex) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sourceIndex: sourceIndex,
-            destinationIndex: destinationIndex,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to update Board: ${response.statusText}`);
-      }
-
-      // Process successful response here if needed
-    } catch (error) {
-      console.error("Error updating card item:", error.message);
-      // Handle the error or show a user-friendly message
-    }
   };
   const updateCard = (bid, cid, card) => {
     initializeData();
@@ -343,6 +363,11 @@ const ScrumBoardInitializer = () => {
 
     // Find the matching board and card
   };
+  const closeErrorModal = () => {
+    setdep(dep = []);
+    console.log(dep.length);
+    setShowErrorModal(false);
+  };
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="">
@@ -377,6 +402,29 @@ const ScrumBoardInitializer = () => {
             </div>
           </div>
         </DragDropContext>
+      </div>
+      <div>
+        {showErrorModal && (
+          <Modal show={showErrorModal} onHide={closeErrorModal}>
+            <Modal.Header closeButton></Modal.Header>
+            <Modal.Body>
+              {dep.length > 0 && (
+                <div>
+                  <p style={{ textAlign: 'center', color: 'red' }}>
+                    Before moving this card, complete the dependent card first. Dependent cards are:
+                  </p>
+                  <p style={{ textAlign: 'center' }}>
+                    [    {dep.join(', ')}]
+                  </p>
+                </div>
+              )}
+              <Button variant="primary" onClick={closeErrorModal} style={{ float: 'right' }}>
+                Close
+              </Button>
+            </Modal.Body>
+
+          </Modal>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { Gantt, Task, ViewMode } from "gantt-task-react";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import SidebarContext from "../../../../sidebar_app/components/sidebar_context/SidebarContext";
+import SidebarContext from "../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum.jsx";
 import { initTasks, getStartEndDateForProject } from "./helpers.ts";
 import { ViewSwitcher } from "./ViewSwithcer.tsx";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
@@ -53,6 +53,7 @@ export default function Gantt1({ data }: { data: any[] }) {
     newTasks = slideStartDueDateFixed(data, task);
     console.log(data);
     setTasks(tasks = initTasks(data));
+    console.log(tasks);
     //ekhane newTasks array genarate kora hosse. jetai task change hbe, seta update hocche. bakita as usual newTasks array te dhukse..
     newTasks = tasks.map((t) => (t.id === task.id ? task : t));
     console.log(newTasks);
@@ -80,20 +81,20 @@ export default function Gantt1({ data }: { data: any[] }) {
       }
 
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
+        `http://localhost:3010/projects/scrum/${projectId}/${tasks[i].project}/${tasks[i].id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            fieldName: "startDate",
+            fieldName: "creationDate",
             newValue: tasks[i].start,
           }),
         }
       );
       const response1 = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
+        `http://localhost:3010/projects/scrum/${projectId}/${tasks[i].project}/${tasks[i].id}`,
         {
           method: "PUT",
           headers: {

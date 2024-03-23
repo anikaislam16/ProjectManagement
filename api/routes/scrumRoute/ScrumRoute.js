@@ -8,6 +8,7 @@ const {
   deleteProject,
   deleteMemberfromProject,
   addMemberInProject,
+  dependentcard
 } = require("./ScrumController/ScrumProjectController");
 const {
   logRequestInfo,
@@ -73,4 +74,5 @@ router
     "/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder"
   )
   .put(reorderCards);
+router.route("/:id/:boardId/:cardId/dependency/card/check").get(dependentcard);
 module.exports = router;

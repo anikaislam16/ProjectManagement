@@ -55,6 +55,53 @@ const createProject = async (req, res) => {
     handleErrors(res, error);
   }
 };
+const dependentcard = async (req, res) => {
+  const { id, boardId, cardId } = req.params;
+  console.log(id, boardId, cardId);
+  try {
+    const project = await ScrumProject.findById(id).populate("boards");
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // Find the board with the provided boardId
+    const board = project.boards.find(board => board._id.toString() === boardId);
+
+    if (!board) {
+      return res.status(404).json({ message: "Board not found" });
+    }
+
+    // Find the card with the provided cardId within the board
+    const card = board.cards.find(card => card._id.toString() === cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: "Card not found" });
+    }
+    // console.log(card);
+    // Find the cards based on the dependencies stored in the card object
+    const dependentCardNames = [];
+    // console.log(card.dependencies)
+    for (const dependencyId of card.dependencies) {
+      console.log(dependencyId);
+      const dependentCard = board.cards.filter(card => {
+        const match = card._id.toString() === dependencyId.toString();
+        return match;
+      });
+
+      console.log('a', dependentCard);
+      if (dependentCard && dependentCard.progres !== "done") {
+        dependentCardNames.push(dependentCard[0].cardName);
+      }
+    }
+
+    // Now you have the dependentCardNames array containing the card names based on the dependencies and progress
+    console.log(dependentCardNames)
+    res.status(200).json({ dependentCardNames });
+  } catch (error) {
+    handleErrors(res, error);
+  }
+}
 
 // Update a Scrum project (using PATCH for partial updates)
 const updateProject = async (req, res) => {
@@ -153,4 +200,5 @@ module.exports = {
   deleteProject,
   deleteMemberfromProject,
   addMemberInProject,
+  dependentcard
 };

@@ -224,7 +224,7 @@ const DependencyList = (props) => {
             setmessage("This card is already added to dependency");
             console.log(isValuePresent);
         }
-        if (cyclecheck(newValue)) {
+        else if (cyclecheck(newValue)) {
             setShowErrorModal(true);
             setmessage("This Dependency is not possible. It creates a cycle");
         } else {

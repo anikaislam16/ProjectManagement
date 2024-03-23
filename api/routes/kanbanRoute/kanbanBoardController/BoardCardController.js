@@ -5,6 +5,7 @@ const { KanbanProject } = require("../../../modules/KanbanModule")
 const { sendJoingcardEmail, sendRemovingcardEmail } = require('./SendMail');
 const addCard = async (req, res) => { //lagbe
   try {
+    const currentDate = new Date();
     const boardId = req.params.boardId;
     console.log(req.params.boardId);
     const kanbanBoard = await KanbanBoard.findById(req.params.boardId);
@@ -18,8 +19,8 @@ const addCard = async (req, res) => { //lagbe
       cardName: req.body.cardName,
       tags: [], // Assuming labels is an array
       task: [], // Assuming tasks is an array
-      startDate: null,
-      dueDate: null,
+      startDate: new Date(currentDate),
+      dueDate: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000),
       priority: "low",
       members: [
         {

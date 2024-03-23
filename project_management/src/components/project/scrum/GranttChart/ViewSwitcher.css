@@ -1,0 +1,15 @@
+.Button1 {
+    margin: 5px;
+    border: 2px solid #56da56;
+    /* A brighter shade of green */
+    color: #56da56;
+    /* Text color matches the border color */
+    /* Add any additional custom styles here */
+}
+
+.Button1:hover {
+    background-color: #56da56;
+    /* Brighter shade for hover */
+    color: #fff;
+    /* Change text color on hover, if needed */
+}

@@ -711,7 +711,7 @@ export default function SprintCardDetails(props) {
                                 e
                               )
                             }
-                            // handleDownload(pdf._id, props.bid, props.card._id, e)
+                          // handleDownload(pdf._id, props.bid, props.card._id, e)
                           >
                             X
                           </button>
@@ -747,7 +747,7 @@ export default function SprintCardDetails(props) {
                           initialValue={item.taskName}
                           initialPoint={item.point}
                           onSave={handleTaskClick}
-                          onClose={() => {}}
+                          onClose={() => { }}
                         />
                         <Trash
                           onClick={() => {
@@ -804,14 +804,14 @@ export default function SprintCardDetails(props) {
                 />
                 <button onClick={handleButtonClick}>Update Storypoints</button>
                 <StartDateButton
-                  due="Start"
+                  dueOrStart="Start"
                   handleDate={updateFields}
                   initialDate={values.creationDate}
                   value="creationDate"
                   cardId={props.card._id}
                 />
                 <StartDateButton
-                  due="Due"
+                  dueOrStart="Due"
                   handleDate={updateFields}
                   initialDate={values.dueDate}
                   value="dueDate"
