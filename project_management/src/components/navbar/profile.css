@@ -1,0 +1,62 @@
+.profile-container {
+    position: fixed;
+    top: 10;
+    right: 0;
+    width: 300px;
+    /* Adjust as needed */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    /* Ensure the profile box is on top */
+}
+
+.profile-box {
+    width: 100%;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.profile-header {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.email {
+    font-size: 14px;
+    color: #777;
+}
+
+.profile-options {
+    padding: 8px;
+    padding-right: 25px;
+    padding-left: 25px;
+    width: 100%;
+}
+
+.option {
+    padding: 8px 0;
+    cursor: pointer;
+    color: #333;
+}
+
+.img {
+    height: 20px;
+    width: 25px;
+    padding-right: 5px;
+}
+
+.option:hover {
+    background-color: #f0f0f0;
+}
+
+.btn-link {
+    text-decoration: none;
+    color: black;
+}

@@ -31,6 +31,7 @@ import BurnDown from "./components/project/scrum/reports/BurnDown.jsx";
 import PieChart from "./components/project/scrum/reports/PieChart.jsx";
 import SprintReport from "./components/project/scrum/reports/SprintReport.jsx";
 import GraphScrum from "./components/project/scrum/reports/GraphScrum";
+import Profile_main from "./components/profile/profile_main.jsx";
 function App() {
   return (
     <div className="App">
@@ -72,6 +73,7 @@ function App() {
             <Route path="pie" element={<PieChart />} />
             {/* <Route path="graph" element={<Graph />} /> */}
           </Route>
+          <Route path="/member/:memberId" element={<Profile_main />} />
         </Routes>
       </BrowserRouter>
     </div>
