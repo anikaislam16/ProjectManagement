@@ -277,32 +277,7 @@ const ScrumBoardInitializer = () => {
     }
     initializeData();
   };
-  const switchCardsInDb = async (boardId, sourceIndex, destinationIndex) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sourceIndex: sourceIndex,
-            destinationIndex: destinationIndex,
-          }),
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error(`Failed to update Board: ${response.statusText}`);
-      }
-
-      // Process successful response here if needed
-    } catch (error) {
-      console.error("Error updating card item:", error.message);
-      // Handle the error or show a user-friendly message
-    }
-  };
   const updateCard = (bid, cid, card) => {
     initializeData();
   };

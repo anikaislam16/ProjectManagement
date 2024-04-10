@@ -1,0 +1,9 @@
+.light-ash-span {
+  color: #181818; /* Light Ash color */
+  font-size: 10px;
+  text-align: left;
+  margin-left: 10px;
+  justify-content: left;
+  align-items: left;
+  margin-right: 5px; /* Small font size */
+}

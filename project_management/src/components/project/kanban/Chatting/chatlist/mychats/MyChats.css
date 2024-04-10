@@ -1,0 +1,30 @@
+/* styles.css */
+.chat-item {
+  border-radius: 5px;
+  height: 60px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  background-color: rgb(223, 243, 235);
+  padding: 10px;
+  margin: 7px;
+  margin-top: 0px;
+}
+.chat-container {
+  background-color: rgb(244, 245, 245);
+  height: 100%;
+}
+
+.chat-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+.head {
+  font-weight: bold;
+  font-size: 28px;
+  text-align: center;
+  margin: 5px;
+  margin-bottom: 15px; /* Adjust font size as needed */
+}
+
+.chat-item.selected {
+  background-color: lightgray; /* Change color for selected item */
+}

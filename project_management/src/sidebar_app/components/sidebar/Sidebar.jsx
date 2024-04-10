@@ -5,7 +5,7 @@ import News from "../../Images/news.svg";
 import Performance from "../../Images/performance.svg";
 import Transactions from "../../Images/transactions.svg";
 import { ChevronDown } from "react-feather";
-
+import chatting from "../../Images/chatting.svg";
 import "../../css/main.scss";
 import SidebarContext from "../sidebar_context/SidebarContext";
 const Sidebar = ({ projectId }) => {
@@ -184,6 +184,18 @@ const Sidebar = ({ projectId }) => {
             <NavLink to={`/project/kanban/${projectId}/members`}>
               <img src={News} alt="News" />
               <span className="text-hidden">Members</span>
+            </NavLink>
+          </li>
+          <li
+            className={
+              location.pathname === `/project/kanban/${projectId}/chat`
+                ? "active"
+                : ""
+            }
+          >
+            <NavLink to={`/project/kanban/${projectId}/chat`}>
+              <img src={chatting} alt="News" />
+              <span className="text-hidden">Live Issue Board</span>
             </NavLink>
           </li>
         </ul>

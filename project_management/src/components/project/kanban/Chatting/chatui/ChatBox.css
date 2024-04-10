@@ -1,0 +1,28 @@
+.title {
+  width: 980px;
+  height: auto;
+
+  min-height: 50px;
+  border: 1px solid rgb(242, 226, 226);
+  border-radius: 10px; /* Adjust the value as needed for desired roundness */
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2); /* Adjust the values for shadow intensity and spread */
+  text-align: left;
+  padding: 10px;
+  margin: 10px;
+}
+.messageBody {
+  width: 980px; /* Adjust width as needed */
+  height: 480px; /* Adjust height as needed */
+  border: 1px solid rgb(242, 226, 226);
+  border-radius: 10px;
+  border-bottom: 0px;
+  margin: 10px; /* Adjust margin as needed */
+
+  /* Adjust the values for shadow 
+  border: 1px solid #ccc; /* Adjust border properties as needed */
+  border-radius: 10px; /* Adjust border radius as needed */
+  overflow: auto; /* Add scrollbars when content overflows */
+}
+.custom-modal {
+  max-width: 600px;
+}
