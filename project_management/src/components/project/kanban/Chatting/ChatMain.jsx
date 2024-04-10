@@ -67,7 +67,7 @@ export default function ChatMain() {
         />
         <button onClick={sendMessage}>SendMessage</button>
         <h1>Message:{recmsg}</h1> */}
-        <div className="container">
+        <div className="containers">
           <div
             className="child big-bold-text"
             onClick={() => openChatBox("You")}

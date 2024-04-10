@@ -7,9 +7,9 @@ const memberRoute = require("./routes/memberRoute/MemberInfo");
 const kanbanRoute = require("./routes/kanbanRoute/KanbanRoute");
 const connectToMongoDB = require("./server.js");
 
-const bodyParser = require('body-parser');
+
 const app = express();
-const kanbanRoute = require('./routes/kanbanRoute/KanbanRoute');
+
 
 const ScrumRoute = require("./routes/scrumRoute/ScrumRoute.js");
 const pdfRoute = require("./routes/pdfRoutes/pdfRoutes.js");

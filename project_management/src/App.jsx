@@ -10,7 +10,7 @@ import GanttInitializer from "./components/project/kanban/GranttChart/GanttIniti
 import Members from "./components/project/kanban/Member/Members";
 import BoardMain from "./components/project/kanban/board/BoardMain";
 import ProjectScrum from "./components/project/scrum/ProjectScrum";
-import GanttScrum from "./components/project/scrum/gantt/GanttScrum";
+import ScurmGanttInitializer from "./components/project/scrum/GranttChart/ScurmGanttInitializer.jsx";
 import ScrumBoardMain from "./components/project/scrum/board/ScrumBoardMain";
 import MemberScrum from "./components/project/scrum/member/Members";
 import SprintBoardMain from "./components/project/scrum/sprint/SprintBoardMain";
@@ -69,7 +69,7 @@ function App() {
               <Route path="resolutionchart" element={<ResolutionTime />} />
             </Route>
             <Route path="/project/scrum/:projectId/" element={<ProjectScrum />}>
-              <Route path="gantt" element={<GanttScrum />}></Route>
+              <Route path="gantt" element={<ScurmGanttInitializer />}></Route>
               <Route
                 path="completed"
                 element={<ScrumCompleteBoardMain />}
@@ -88,6 +88,7 @@ function App() {
               path="/member/:memberId/myProjects"
               element={<MyProject />}
             />
+            <Route path="/member/:memberId" element={<Profile_main />} />
           </Routes>
         </BrowserRouter>
       </ChatContextProvider>

@@ -1,4 +1,4 @@
-.container {
+.containers {
   display: flex;
   flex-direction: column;
   margin-top: 100px;
@@ -9,7 +9,7 @@
   transition: box-shadow 0.3s; /* Transition added for box-shadow */
 }
 
-.container:hover {
+.containers:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 .big-bold-text {
