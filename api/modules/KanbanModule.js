@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const Member = require('./MemberModule');
 const kanbanProjectSchema = new mongoose.Schema({
   projectName: String,
+  projectType: {
+    type: String,
+    default:"Kanban"
+  },
   boards: [{ type: mongoose.Schema.Types.ObjectId, ref: "KanbanBoard" }],
   members: [{
     member_id: { type: mongoose.Schema.Types.ObjectId, ref: "Member" },
