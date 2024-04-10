@@ -4,12 +4,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Clock } from "react-feather";
 import { Button, Modal, Form } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-const StartDateButton = ({ due, handleDate, initialDate, value, cardId }) => {
+const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId }) => {
   var [selectedDate, setSelectedDate] = useState(
     initialDate ? new Date(initialDate) : null
   );
   const [showModal, setShowModal] = useState(false);
-  const [strtdate, setstart] = useState(null);
+  var [strtdate, setstart] = useState(null);
+  var [msg, setmsg] = useState(null)
   const { projectId } = useParams();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const buttonRef = useRef(null);
@@ -39,21 +40,30 @@ const StartDateButton = ({ due, handleDate, initialDate, value, cardId }) => {
             console.log(Card.dueDate)
             if (new Date(Card.dueDate) > new Date(stdate) || stdate === null) {
               stdate = Card.dueDate;
-              console.log(stdate);
+              console.log(new Date(stdate));
             }
           });
+          console.log(new Date(date) <= new Date(stdate));
           if (new Date(date) <= new Date(stdate)) {
             // Set date to stdate + 1 with hours (0,0,0,0)
-
             const d = new Date(stdate);
             d.setDate(d.getDate() + 1);
             d.setHours(0, 0, 0, 0);
-            setstart(new Date(d));
+            setstart(strtdate = new Date(d));
             setShowModal(true);
-
+            console.log('d');
+            setmsg(`Start Date can not be set before ${strtdate.toDateString()} , as it dependent to other Cards.`)
+            console.log(strtdate);
             // Now, `stdate` has been updated to the next day with hours set to 00:00:00.000
             date = new Date(d);
             console.log(date);
+          }
+          if (new Date(date) > new Date(foundCard.dueDate) && foundCard.dueDate != null) {
+            date = new Date(foundCard.dueDate);
+            date.setHours(0, 0, 0, 0);
+            setstart(new Date(date));
+            setShowModal(true);
+            setmsg(` Start Date can not be set after Due Date`)
           }
         }
         else {
@@ -61,6 +71,14 @@ const StartDateButton = ({ due, handleDate, initialDate, value, cardId }) => {
           const fixingDuration = (currentCard, visited) => {
             console.log(foundCard);
             if (currentCard._id === cardId) {
+              if (new Date(date) < new Date(foundCard.creationDate)) {
+                const d = new Date(foundCard.creationDate);
+                d.setHours(23, 59, 0, 0);
+                date = new Date(d);
+                console.log(date);
+                setShowModal(true);
+                setmsg(`Due Date can not be set Before Start Date`)
+              }
               currentCard.dueDate = new Date(date)
             }
             // Check if the current card is already visited (indicating a cycle)
@@ -177,7 +195,7 @@ const StartDateButton = ({ due, handleDate, initialDate, value, cardId }) => {
     if (initialDate === null) {
 
     }
-    setSelectedDate(new Date(initialDate))
+    setSelectedDate(initialDate ? new Date(initialDate) : null)
   }, [initialDate]);
   const handleCloseModal = () => {
     setShowModal(false);
@@ -188,7 +206,7 @@ const StartDateButton = ({ due, handleDate, initialDate, value, cardId }) => {
         <Modal show={showModal} onHide={handleCloseModal}>
           <Modal.Header closeButton></Modal.Header>
           <Modal.Body style={{ backgroundColor: "#dc2626", color: "white" }}>
-            Start Date can not be set before {strtdate.toDateString()} , as it dependent to other Cards.
+            {msg}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={handleCloseModal}>
@@ -212,7 +230,7 @@ const StartDateButton = ({ due, handleDate, initialDate, value, cardId }) => {
           <Clock />
         </span>
 
-        {" " + due} Date: {selectedDate ? selectedDate.toDateString() : ""}
+        {" " + dueOrStart} Date: {selectedDate ? selectedDate.toDateString() : ""}
       </button>
       {isDatePickerOpen && (
         <DatePicker

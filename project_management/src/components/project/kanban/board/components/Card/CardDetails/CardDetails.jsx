@@ -744,7 +744,7 @@ export default function CardDetails(props) {
                           initialValue={item.taskName}
                           initialPoint={item.point}
                           onSave={handleTaskClick}
-                          onClose={() => {}}
+                          onClose={() => { }}
                         />
                         <Trash
                           onClick={() => {
@@ -786,7 +786,7 @@ export default function CardDetails(props) {
                               e
                             )
                           }
-                          // handleDownload(pdf._id, props.bid, props.card._id, e)
+                        // handleDownload(pdf._id, props.bid, props.card._id, e)
                         >
                           X
                         </button>
@@ -821,14 +821,14 @@ export default function CardDetails(props) {
                   />
                 )}
                 <StartDateButton
-                  due="Start"
+                  dueOrStart="Start"
                   handleDate={updateFields}
                   initialDate={values.startDate}
                   value="startDate"
                   cardId={props.card._id}
                 />
                 <StartDateButton
-                  due="Due"
+                  dueOrStart="Due"
                   handleDate={updateFields}
                   initialDate={values.dueDate}
                   value="dueDate"

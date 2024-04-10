@@ -8,6 +8,7 @@ const {
   deleteProject,
   deleteMemberfromProject,
   addMemberInProject,
+  getProjectByMember
 } = require("./kanbanBoardController/KanbanProjectController");
 // Correct import
 const {
@@ -31,7 +32,7 @@ const {
 } = require("./kanbanBoardController/BoardCardController");
 router.use(logRequestInfo);
 ///For projects
-router.route("/").get(getAllProjects).post(createProject);  //shb project nam show. //project create
+router.route("/").get(getAllProjects).post(createProject).put(getProjectByMember);  //shb project nam show. //project create  // 1ta particular member er shb project find kora hoi.
 router
   .route("/:id")
   .get(getProjectById) //etai project er id diye oi project er shb info pawa jabe. emn ki oi project er under e shb board er info o pawa jabe.

@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { DragDropContext } from "react-beautiful-dnd";
 import useLocalStorage from "use-local-storage";
 import { v4 as uuidv4 } from "uuid";
@@ -19,6 +19,8 @@ function SprintBoardMain() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSprint, setSprint] = useState(0);
   const [backlogId, setBacklogId] = useState("");
+  const location = useLocation();
+  var [a, seta] = useState(false);
   const initializeData = async () => {
     try {
       const response = await fetch(
@@ -59,11 +61,17 @@ function SprintBoardMain() {
   };
 
   useEffect(() => {
+    seta(a = true);
+    console.log(a)
+  }, [location.pathname])
+  useEffect(() => {
     console.log(data);
-    if (!isInitialized) {
+    if (!isInitialized || a) {
       initializeData();
+      console.log('hell');
+      seta(a = false);
     }
-  }, [isInitialized]);
+  }, [isInitialized, a]);
   const call = async () => {
     const response = await fetch(
       `http://localhost:3010/projects/scrum/${projectId}`
@@ -275,11 +283,11 @@ function SprintBoardMain() {
       const updatedData = prevData.map((board) =>
         board.id === boardId
           ? {
-              ...board,
-              sprintStart: modalData.sprintStart,
-              sprintEnd: modalData.sprintEnd,
-              goal: modalData.goal,
-            }
+            ...board,
+            sprintStart: modalData.sprintStart,
+            sprintEnd: modalData.sprintEnd,
+            goal: modalData.goal,
+          }
           : board
       );
       return updatedData;

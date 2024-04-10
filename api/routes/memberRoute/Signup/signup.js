@@ -5,7 +5,7 @@ const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 const cors = require("cors");
 const nodemailer = require('nodemailer');
-const { Userinfostore, UserinfoUpdate } = require('./storeuser.js');
+const { Userinfostore, UserinfoUpdate, updateMemberinfo } = require('./storeuser.js');
 const { Member } = require('../../../modules/MemberModule.js');
 const { findMemberbyId, memberget } = require('./findmemberbyId.js')
 var bcrypt = require('bcryptjs');
@@ -247,7 +247,7 @@ const sessionget = async (req, res) => {
         console.log(email);
         const existingMember1 = await Member.findOne({ email });
         if (existingMember1) {
-            const username = { ...req.session.user, id: existingMember1._id };
+            const username = { ...req.session.user, id: existingMember1._id, picture: existingMember1.picture };
             res.status(200).json({ message: 'Session is present', user: username });//here req.session.user directly dile kaj krbe na.
             console.log(username);
         }
@@ -264,7 +264,7 @@ const googlesessionget = async (req, res) => {
         const email = req.user.email;
         const existingMember1 = await Member.findOne({ email });
         if (existingMember1) {
-            const username = { ...req.user, id: existingMember1._id };
+            const username = { ...req.user, id: existingMember1._id, picture: existingMember1.picture };
             res.status(200).json({ message: 'Session is present', user: username });
             console.log(username);
         }
@@ -292,6 +292,7 @@ const sessiondel = async (req, res) => {
 }
 
 sign.route('/user').post(Userinfostore).put(UserinfoUpdate);
+sign.route('/updateMember').put(updateMemberinfo);
 sign.route('/').post(signpost);
 sign.route('/login').get(logingooglematch).post(signget).put(googlesessionget).delete(sessiondel);
 sign.route('/loginmatch').post(loginmatch).get(sessionget).delete(sessiondel);

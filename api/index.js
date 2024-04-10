@@ -1,22 +1,36 @@
 const express = require("express");
-const http = require("http"); // Import http module
+ // Import http module
 const socketIO = require("socket.io");
 const morgan = require("morgan");
 const memberRoute = require("./routes/memberRoute/MemberInfo");
+
 const kanbanRoute = require("./routes/kanbanRoute/KanbanRoute");
 const connectToMongoDB = require("./server.js");
+
+const bodyParser = require('body-parser');
+const app = express();
+const kanbanRoute = require('./routes/kanbanRoute/KanbanRoute');
+
 const ScrumRoute = require("./routes/scrumRoute/ScrumRoute.js");
 const pdfRoute = require("./routes/pdfRoutes/pdfRoutes.js");
 const MessageRoute = require("./routes/messageRoute/MessageRoute.js");
 const cors = require("cors");
 const env = require("dotenv");
 const cookieParser = require("cookie-parser");
+
 const bodyParser = require("body-parser");
+
+// Parse JSON request body
+app.use(bodyParser.json({ limit: '1mb' })); // Adjust the limit as needed
+
+env.config({ path: "./data.env" });
+app.use(cookieParser());
+
 const Signroute = require("./routes/memberRoute/Signup/signup");
 
 env.config({ path: "./data.env" });
 
-const app = express();
+
 
 // Parse JSON request body
 app.use(bodyParser.json({ limit: '1mb' })); // Adjust the limit as needed

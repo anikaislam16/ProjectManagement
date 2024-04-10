@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 
 const Forgetpass = () => {
     const navigate = useNavigate();
-
+    console.log("helo");
     // Formik and Yup integration
     const formik = useFormik({
         initialValues: {

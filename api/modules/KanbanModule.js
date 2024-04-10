@@ -22,7 +22,14 @@ const kanbanProjectSchema = new mongoose.Schema({
   weekdays: {
     type: [String], // Assuming you want an array of strings for weekdays
     default: [],    // You can set a default value if needed
-  }
+  },
+  creator: {
+    type: mongoose.Schema.Types.ObjectId, ref: "Member",
+  },
+  projectType: {
+    type: String,
+    default: "Kanban"
+  },
 });
 
 const KanbanProject = mongoose.model("KanbanProject", kanbanProjectSchema);

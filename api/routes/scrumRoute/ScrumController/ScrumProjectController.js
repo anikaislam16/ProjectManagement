@@ -46,6 +46,7 @@ const createProject = async (req, res) => {
         role: 'Product owner',
       },],
     weekdays: req.body.weekDays,
+    creator: existingMember._id,
   });
 
   try {
@@ -55,6 +56,53 @@ const createProject = async (req, res) => {
     handleErrors(res, error);
   }
 };
+const dependentcard = async (req, res) => {
+  const { id, boardId, cardId } = req.params;
+  console.log(id, boardId, cardId);
+  try {
+    const project = await ScrumProject.findById(id).populate("boards");
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // Find the board with the provided boardId
+    const board = project.boards.find(board => board._id.toString() === boardId);
+
+    if (!board) {
+      return res.status(404).json({ message: "Board not found" });
+    }
+
+    // Find the card with the provided cardId within the board
+    const card = board.cards.find(card => card._id.toString() === cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: "Card not found" });
+    }
+    // console.log(card);
+    // Find the cards based on the dependencies stored in the card object
+    const dependentCardNames = [];
+    // console.log(card.dependencies)
+    for (const dependencyId of card.dependencies) {
+      console.log(dependencyId);
+      const dependentCard = board.cards.filter(card => {
+        const match = card._id.toString() === dependencyId.toString();
+        return match;
+      });
+
+      console.log('a', dependentCard);
+      if (dependentCard && dependentCard.progres !== "done") {
+        dependentCardNames.push(dependentCard[0].cardName);
+      }
+    }
+
+    // Now you have the dependentCardNames array containing the card names based on the dependencies and progress
+    console.log(dependentCardNames)
+    res.status(200).json({ dependentCardNames });
+  } catch (error) {
+    handleErrors(res, error);
+  }
+}
 
 // Update a Scrum project (using PATCH for partial updates)
 const updateProject = async (req, res) => {
@@ -143,7 +191,39 @@ const addMemberInProject = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+const getProjectByMember = async (req, res) => {
+  try {
+    const { memberId } = req.body;
+    // Assuming your KanbanProject schema is named KanbanProjectModel
+    var projectdata = await ScrumProject.find({ 'members.member_id': memberId });
 
+    if (!projectdata || projectdata.length === 0) {
+      console.log("hello");
+      return res.status(404).json({ message: 'No projects found for the member' });
+    }
+    const projects = await Promise.all(projectdata.map(async (project) => {
+      const creator = await Member.findById(project.creator);
+      const member = project.members.find(member => member.member_id.equals(memberId));
+      const role = member ? member.role : null;
+      return {
+        _id: project._id,
+        projectName: project.projectName,
+        members: project.members.length,
+        creationTime: project.creationTime,
+        creatorId: project.creator,
+        creatorName: creator ? creator.name : "Unknown",
+        role: role,
+        weekDays: project.weekdays,
+        projectType: 'Scrum'
+      };
+    }));
+
+    res.status(200).json({ projects });
+  } catch (error) {
+    console.error('Error finding projects by member:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 module.exports = {
   getAllProjects,
@@ -153,4 +233,6 @@ module.exports = {
   deleteProject,
   deleteMemberfromProject,
   addMemberInProject,
+  dependentcard,
+  getProjectByMember,
 };

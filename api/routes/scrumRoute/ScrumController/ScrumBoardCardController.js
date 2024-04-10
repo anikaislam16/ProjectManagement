@@ -373,7 +373,13 @@ const reorderCardsInDiffBoard = async (req, res) => {
   try {
     const board1 = await ScrumBoard.findById(board1Id);
     const board2 = await ScrumBoard.findById(board2Id);
-
+    console.log(board1.boardType === "backlog", board2.completed === false, ((board1.cards[sourceIndex].creationDate === null) || (board1.cards[sourceIndex].dueDate === null)));
+    if (board1.boardType === "backlog" && board2.completed === false && ((board1.cards[sourceIndex].creationDate === null) || (board1.cards[sourceIndex].dueDate === null))) {
+      console.log('d');
+      const currentDate = new Date();
+      board1.cards[sourceIndex].creationDate = new Date(currentDate);
+      board1.cards[sourceIndex].dueDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+    }
     if (!board1 || !board2) {
       return res.status(404).json({ error: "Boards not found" });
     }

@@ -34,6 +34,8 @@ import SprintReport from "./components/project/scrum/reports/SprintReport.jsx";
 import GraphScrum from "./components/project/scrum/reports/GraphScrum";
 import ChatList from "./components/project/kanban/Chatting/chatlist/ChatList.jsx";
 import ChatContextProvider from "./components/project/kanban/Chatting/context/ChatContextProvider.jsx";
+import Profile_main from "./components/profile/Settings.jsx";
+import MyProject from "./components/profile/MyProject.jsx";
 function App() {
   return (
     <div className="App">
@@ -82,6 +84,10 @@ function App() {
               <Route path="chat" element={<ChatMain />}></Route>
               {/* <Route path="graph" element={<Graph />} /> */}
             </Route>
+            <Route
+              path="/member/:memberId/myProjects"
+              element={<MyProject />}
+            />
           </Routes>
         </BrowserRouter>
       </ChatContextProvider>

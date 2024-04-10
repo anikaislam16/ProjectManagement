@@ -5,7 +5,7 @@ const DependencyList = (props) => {
     const { bid, cardId, projectId, addStartDate } = props;
     const [showModal, setShowModal] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState(null);
-    const [selectedIndex, setSelectedIndex] = useState(null);
+    var [selectedIndex, setSelectedIndex] = useState(null);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedTaskInd, setSelectedTaskind] = useState(null);
     var [projectsData, setProjectsData] = useState([]);
@@ -26,7 +26,7 @@ const DependencyList = (props) => {
                     var data = await response.json();
                     //    console.log(data.boards);
                     console.log(data);
-                    data.boards = data.boards.filter(board => board.completed === false);
+                    data.boards = data.boards.filter(board => board.completed === false && board.boardType !== 'backlog');
                     setProjectsData((projectsData = data.boards));
                     console.log(projectsData);
                     var projectIndex = projectsData.findIndex(
@@ -226,7 +226,7 @@ const DependencyList = (props) => {
             setmessage("This card is already added to dependency");
             console.log(isValuePresent);
         }
-        if (cyclecheck(newValue)) {
+        else if (cyclecheck(newValue)) {
             setShowErrorModal(true);
             setmessage("This Dependency is not possible. It creates a cycle");
         } else {
@@ -290,8 +290,7 @@ const DependencyList = (props) => {
     };
     const handleDropdownChange = (e) => {
         const selectedOptionIndex = e.target.selectedIndex - 1;
-        setSelectedBoard(e.target.value);
-        setSelectedIndex(selectedOptionIndex);
+        console.log(e.target.value);
 
         // Now, you can use selectedOptionIndex as the index of the selected option
         console.log(`Selected Index: ${selectedOptionIndex}`);
@@ -378,7 +377,13 @@ const DependencyList = (props) => {
                 </Modal>
             )}
             <div className="d-flex justify-content-end">
-                <Button variant="primary" onClick={() => setShowModal(true)}>
+                <Button variant="primary" onClick={() => {
+
+                    setSelectedIndex(selectedIndex = 0);
+                    setSelectedBoard(projectsData[selectedIndex].name);
+                    //console.log(selectedIndex, projectsData[selectedIndex].name);
+                    setShowModal(true)
+                }}>
                     Add Dependency
                 </Button>
 
@@ -388,7 +393,7 @@ const DependencyList = (props) => {
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
-                            <Form.Group controlId="selectBoard">
+                            {/* <Form.Group controlId="selectBoard">
                                 <Form.Label>Select Board</Form.Label>
                                 <Form.Control
                                     as="select"
@@ -405,7 +410,7 @@ const DependencyList = (props) => {
                                     ))}
                                 </Form.Control>
                             </Form.Group>
-                            <br />
+                            <br /> */}
                             {selectedIndex !== null && (
                                 <Form.Group controlId="selectTask">
                                     <Form.Label>{`Select Task for ${projectsData[selectedIndex].name}`}</Form.Label>
