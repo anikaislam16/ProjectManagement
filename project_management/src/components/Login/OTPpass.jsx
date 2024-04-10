@@ -7,7 +7,7 @@ import { port, host } from "../../common_var";
 export default function OTP() {
     const location = useLocation();
     const navigate = useNavigate();
-
+    console.log(location.pathname);
     // Retrieve user details from the location state
     const { email, otp: initialExpectedOTP } = location.state || {};
 

@@ -8,7 +8,8 @@ const {
   deleteProject,
   deleteMemberfromProject,
   addMemberInProject,
-  dependentcard
+  dependentcard,
+  getProjectByMember,
 } = require("./ScrumController/ScrumProjectController");
 const {
   logRequestInfo,
@@ -32,7 +33,7 @@ const {
   reorderCards
 } = require("./ScrumController/ScrumBoardCardController");
 router.use(logRequestInfo);
-router.route("/").get(getAllProjects).post(createProject);
+router.route("/").get(getAllProjects).post(createProject).put(getProjectByMember);
 // project id diye project er schema change kora hbe.
 
 

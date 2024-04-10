@@ -9,15 +9,14 @@ import Profile from './profile.jsx';
 const Navbar1 = () => {
   const loc = useLocation();
   const navigate = useNavigate();
+  var [profilePicture, setProfilePicture] = useState(null); // Initial profile picture
   const searchParams = useSearchParams();
-  const options = ["E-Commerce Website", "E Commerce Website Scrum"];
-  const [selectedOption, setSelectedOption] = useState(null);
   var [user, setUser] = useState({});
   var [letter, setletter] = useState('');
   var [modal, setmodal] = useState(false);
-
+  var [projects, setProjects] = useState([]);
   useEffect(() => {
-    if (!(loc.pathname === '/login' || loc.pathname === '/signup' || loc.pathname === '/signup/password' || loc.pathname === '/signup/otp')) {
+    if (!(loc.pathname === '/login' || loc.pathname === '/signup' || loc.pathname === '/signup/password' || loc.pathname === '/signup/otp' || loc.pathname === '/forgot-password' || loc.pathname === '/forgot-password/otp' || loc.pathname === '/Updatepass')) {
       console.log("k");
       const fetchUserData = async () => {
         const userData = await checkSession();
@@ -27,23 +26,71 @@ const Navbar1 = () => {
           navigate('/login', { state: datasend });
         }
         else {
-          setUser(userData);
+          setUser(user = userData);
           console.log(userData);
-          function generateInitials(input) {
-            // Split the input string into words
-            const words = input.split(' ');
-            let initials = '';
-            words.forEach(word => {
-              // If the word is not empty, append its first letter to the initials string
-              if (word.length > 0) {
-                initials += word[0].toUpperCase();
-              }
-            });
-            // Return the initials string
-            return initials;
+          if (user.picture === null) {
+            function generateInitials(input) {
+              // Split the input string into words
+              const words = input.split(' ');
+              let initials = '';
+              words.forEach(word => {
+                // If the word is not empty, append its first letter to the initials string
+                if (word.length > 0) {
+                  initials += word[0].toUpperCase();
+                }
+              });
+              // Return the initials string
+              return initials;
+            }
+            const response = await fetch(`http://localhost:3010/signup/${user.id}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch data');
+            }
+            const data = await response.json();
+            console.log(data);
+            setletter(letter = generateInitials(data.name));
+            console.log(letter);
           }
-          setletter(letter = generateInitials(userData.displayName));
-          console.log(letter);
+          else {
+            setProfilePicture(profilePicture = user.picture);
+          }
+          const fetchProjectData = async () => {
+            try {
+              const response = await fetch('http://localhost:3010/projects/kanban/', {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ memberId: user.id })
+              });
+              const data = await response.json();
+              console.log(data);
+              if (!data.hasOwnProperty('message')) {
+                console.log('Kanban Projects find successfully:', projects);
+                setProjects(projects = data.projects);
+              }
+              const responseScrum = await fetch('http://localhost:3010/projects/scrum/', {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ memberId: user.id })
+              });
+
+              const dataScrum = await responseScrum.json();
+              if (!dataScrum.hasOwnProperty('message')) {
+                console.log(dataScrum.projects);
+                const projectarr = [...projects, ...dataScrum.projects]
+                console.log(projectarr);
+                setProjects(projectarr);
+              }
+              console.log('Projects updated successfully:', projects);
+            } catch (error) {
+              console.error('Error updating projects by member:', error.message);
+              throw error;
+            }
+          }
+          fetchProjectData();
         };
       }
       fetchUserData();
@@ -51,7 +98,7 @@ const Navbar1 = () => {
   }, [loc.pathname]);
   useEffect(() => {
     const Elements = document.getElementsByClassName('inv');
-    if (loc.pathname === '/login' || loc.pathname === '/signup' || loc.pathname === '/signup/password' || loc.pathname === '/signup/otp') {
+    if (loc.pathname === '/login' || loc.pathname === '/signup' || loc.pathname === '/signup/password' || loc.pathname === '/signup/otp' || loc.pathname === '/forgot-password' || loc.pathname === '/forgot-password/otp' || loc.pathname === '/Updatepass') {
       for (let i = 0; i < Elements.length; i++) {
         Elements[i].style.display = 'none';
       }
@@ -62,12 +109,14 @@ const Navbar1 = () => {
     }
   }, [loc.pathname]);
   const handleOptionSelect = (option) => {
-    setSelectedOption(option);
-    if (option === "E Commerce Website Scrum") {
-      navigate(`project/scrum/65c9a900d23ab9f4a66c12a7`);
+    if (option.projectType === "Scrum") {
+      navigate(`project/scrum/${option._id}`);
     }
-    else navigate(`project/kanban/65c31680fe586db7e1c341db`);
+    else navigate(`project/kanban/${option._id}`);
   };
+  const handleHomeBtn = () => {
+    navigate(`/`);
+  }
   const handleProfile = () => {
     setmodal(!modal);
   }
@@ -100,17 +149,20 @@ const Navbar1 = () => {
       <nav className="navbar">
         <ul className="navbar-list">
           <li className="navbar-item inv">
+            <Button className="btn btn-light" onClick={handleHomeBtn}> Home </Button>
+          </li>
+          <li className="navbar-item inv">
             <Dropdown>
               <Dropdown.Toggle variant="light" id="dropdown-basic">
                 {"Your Projects"}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {options.map((option) => (
+                {projects.map((project) => (
                   <Dropdown.Item
-                    key={option}
-                    onClick={() => handleOptionSelect(option)}
+                    key={project._id}
+                    onClick={() => handleOptionSelect(project)}
                   >
-                    {option}
+                    {project.projectName}
                   </Dropdown.Item>
                 ))}
               </Dropdown.Menu>
@@ -118,9 +170,8 @@ const Navbar1 = () => {
           </li>
 
           <li className="inv">
-            <Button onClick={handleProfile}
-              variant="primary"
-              style={{
+            {profilePicture ?
+              <img style={{
                 borderRadius: '50%',
                 backgroundColor: color,
                 width: '40px',
@@ -131,10 +182,23 @@ const Navbar1 = () => {
                 fontWeight: 'bold',
                 marginLeft: '15px', // Corrected property name
                 // Corrected property name
-              }}
-            >
-              {letter}
-            </Button>
+              }} src={profilePicture} alt="Profile" onClick={handleProfile} /> : <Button onClick={handleProfile}
+                variant="primary"
+                style={{
+                  borderRadius: '50%',
+                  backgroundColor: color,
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  fontWeight: 'bold',
+                  marginLeft: '15px', // Corrected property name
+                  // Corrected property name
+                }}
+              >
+                {letter}
+              </Button>}
           </li>
         </ul>
       </nav >

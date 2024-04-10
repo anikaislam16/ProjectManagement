@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const memberRoute = require("./routes/memberRoute/MemberInfo");
+const bodyParser = require('body-parser');
 const app = express();
 const kanbanRoute = require('./routes/kanbanRoute/KanbanRoute');
 const ScrumRoute = require("./routes/scrumRoute/ScrumRoute.js");
@@ -8,6 +9,9 @@ const pdfRoute = require('./routes/pdfRoutes/pdfRoutes.js');
 const cors = require("cors");
 var env = require("dotenv");
 const cookieParser = require("cookie-parser");
+// Parse JSON request body
+app.use(bodyParser.json({ limit: '1mb' })); // Adjust the limit as needed
+
 env.config({ path: "./data.env" });
 app.use(cookieParser());
 const Signroute = require("./routes/memberRoute/Signup/signup");

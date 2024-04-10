@@ -1,0 +1,48 @@
+/* Custom CSS for ProjectPage */
+
+/* Center the project cards */
+.card {
+    height: 100%;
+    transition: transform 0.3s ease;
+    /* Add transition effect */
+}
+
+/* Adjust spacing between project cards */
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+/* Style the card titles */
+.card-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    /* Limit the width to 100% */
+}
+
+/* Style the card texts */
+.card-text {
+    margin-bottom: 1rem;
+}
+
+/* Style the status text */
+.card-text:last-child {
+    font-style: italic;
+}
+
+/* Style the button */
+.btn {
+    width: 100%;
+}
+
+/* Add floating effect on hover */
+.card:hover {
+    transform: translateY(-10px);
+    /* Move card up */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    /* Add box shadow */
+}

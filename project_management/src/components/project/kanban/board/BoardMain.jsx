@@ -5,7 +5,7 @@ import SidebarContext from "../../../../sidebar_app/components/sidebar_context/S
 import "./BoardMain.css";
 import Board from "./components/Board/Board";
 import Editable from "./components/Editable/Editable";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { checkSession } from "../../../sessioncheck/session";
 import { Dropdown } from "bootstrap";
 const BoardMain = () => {
@@ -17,6 +17,8 @@ const BoardMain = () => {
   const scrollContainerRef = useRef(null);
   const navigate = useNavigate();
   const [workflow, setWorkFlow] = useState(false);
+  var [a, seta] = useState(false);
+  const location = useLocation();
   const initializeData = async () => {
     try {
       const response = await fetch(
@@ -90,15 +92,21 @@ const BoardMain = () => {
     }
   };
   useEffect(() => {
+    seta(a = true);
+    console.log(a)
+  }, [location.pathname])
+  useEffect(() => {
     console.log("g " + projectId);
     console.log("h " + isInitialized);
-    if (!isInitialized) {
+    if (!isInitialized || a) {
       initializeData();
+      console.log("hek")
+      seta(a = false);
     }
     if (projectId && isInitialized) {
       fetchProjectName();
     }
-  }, [projectId, isInitialized]);
+  }, [projectId, isInitialized, a]);
   useEffect(() => {
     console.log(data);
   }, [data]);

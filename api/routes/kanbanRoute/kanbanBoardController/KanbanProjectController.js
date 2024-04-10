@@ -50,6 +50,7 @@ const createProject = async (req, res) => {
         role: 'Admin',
       },],
     weekdays: req.body.weekDays,
+    creator: existingMember._id,
   });
 
   try {
@@ -153,4 +154,39 @@ const addMemberInProject = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
-module.exports = { getAllProjects, getProjectById, createProject, updateProject, deleteProject, deleteMemberfromProject, addMemberInProject };
+const getProjectByMember = async (req, res) => {
+  try {
+    const { memberId } = req.body;
+    // Assuming your KanbanProject schema is named KanbanProjectModel
+    var projectdata = await KanbanProject.find({ 'members.member_id': memberId });
+
+    if (!projectdata || projectdata.length === 0) {
+      return res.status(404).json({ message: 'No projects found for the member' });
+    }
+    const projects = await Promise.all(projectdata.map(async (project) => { //ekhane Promise.all dewate , projectdata er all index er result projects e store na howa prjonto next line execute hbe na. eta na dile projects empty hoyei response through krto.
+      const creator = await Member.findById(project.creator);
+      const member = project.members.find(member => member.member_id.equals(memberId));
+      console.log(member);
+      const role = member ? member.role : null;
+      return {
+        _id: project._id,
+        projectName: project.projectName,
+        members: project.members.length,
+        creationTime: project.creationTime,
+        creatorId: project.creator,
+        creatorName: creator ? creator.name : "Unknown",
+        role: role,
+        weekDays: project.weekdays,
+        projectType: 'Kanban'
+      };
+    }));
+
+    // If projects found, send them as response
+    res.status(200).json({ projects });
+  } catch (error) {
+    console.error('Error finding projects by member:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+module.exports = { getAllProjects, getProjectById, createProject, updateProject, deleteProject, deleteMemberfromProject, addMemberInProject, getProjectByMember };

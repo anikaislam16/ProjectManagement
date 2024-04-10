@@ -46,6 +46,7 @@ const createProject = async (req, res) => {
         role: 'Product owner',
       },],
     weekdays: req.body.weekDays,
+    creator: existingMember._id,
   });
 
   try {
@@ -190,7 +191,39 @@ const addMemberInProject = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+const getProjectByMember = async (req, res) => {
+  try {
+    const { memberId } = req.body;
+    // Assuming your KanbanProject schema is named KanbanProjectModel
+    var projectdata = await ScrumProject.find({ 'members.member_id': memberId });
 
+    if (!projectdata || projectdata.length === 0) {
+      console.log("hello");
+      return res.status(404).json({ message: 'No projects found for the member' });
+    }
+    const projects = await Promise.all(projectdata.map(async (project) => {
+      const creator = await Member.findById(project.creator);
+      const member = project.members.find(member => member.member_id.equals(memberId));
+      const role = member ? member.role : null;
+      return {
+        _id: project._id,
+        projectName: project.projectName,
+        members: project.members.length,
+        creationTime: project.creationTime,
+        creatorId: project.creator,
+        creatorName: creator ? creator.name : "Unknown",
+        role: role,
+        weekDays: project.weekdays,
+        projectType: 'Scrum'
+      };
+    }));
+
+    res.status(200).json({ projects });
+  } catch (error) {
+    console.error('Error finding projects by member:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 module.exports = {
   getAllProjects,
@@ -200,5 +233,6 @@ module.exports = {
   deleteProject,
   deleteMemberfromProject,
   addMemberInProject,
-  dependentcard
+  dependentcard,
+  getProjectByMember,
 };

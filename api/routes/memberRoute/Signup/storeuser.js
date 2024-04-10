@@ -37,6 +37,44 @@ const UserinfoUpdate = async (req, res) => {
     }
 
 };
+const updateMemberinfo = async (req, res) => {
+    try {
+        console.log("dk");
+        const { id, field, value } = req.body;
+        let info;
+        if (field === 'picture') {
+            info = await Member.updateOne(
+                { _id: id }, // Filter to find the member by ID
+                { $set: { picture: value } } // Set the new password
+            );
+        }
+        else if (field === 'name') {
+            info = await Member.updateOne(
+                { _id: id }, // Filter to find the member by ID
+                { $set: { name: value } } // Set the new password
+            );
+        }
+        else if (field === 'password') {
+            var salt = await bcrypt.genSalt(10);
+            var hash_var = await bcrypt.hash(value, salt);
+            info = await Member.updateOne(
+                { _id: id }, // Filter to find the member by ID
+                { $set: { password: hash_var } } // Set the new password
+            );
+        }
+        else {
+            info = await Member.updateOne(
+                { _id: id }, // Filter to find the member by ID
+                { $set: { organization: value } } // Set the new password
+            );
+        }
+        //   console.log(info);
+        // Respond with the result
+        res.status(200).json({ message: 'successful' });
+    } catch (error) {
+        console.error('Error in endpoint:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
-
-module.exports = { Userinfostore, UserinfoUpdate }
+module.exports = { Userinfostore, UserinfoUpdate, updateMemberinfo }
