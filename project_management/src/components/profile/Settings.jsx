@@ -4,7 +4,7 @@ import "./SettingsPage.css"; // Import your custom CSS file
 import "@fortawesome/fontawesome-free/css/all.css";
 import { Modal, Button } from "react-bootstrap";
 import ChangePass from "./changePass";
-//import { checkSession } from '../sessioncheck/session';
+import { checkSession } from '../sessioncheck/session';
 const Profile_main = () => {
   var [profilePicture, setProfilePicture] = useState(null); // Initial profile picture
   var [letter, setletter] = useState("");
@@ -20,46 +20,60 @@ const Profile_main = () => {
   const location = useLocation();
   const [modal, showmodal] = useState(false);
   const [fields, setfieldsname] = useState(""); //this is for showing on modal, that which field is updating.
+  const [authorized, setauthorized] = useState(true);
   useEffect(() => {
-    const id = location.state.userId;
-    console.log(id);
-    const fetchUserData = async () => {
-      const response = await fetch(`http://localhost:3010/signup/${id}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
+    if (location.state === null) {
+      setauthorized(false);
+    }
+    else {
+      const id = location.state.userId;
+      const getusrId = async () => {
+        const user = await checkSession();
+        if (user.id === id)
+          setauthorized(true);
+        else
+          setauthorized(false);
       }
-      const data = await response.json();
-      console.log(data);
-      // setuser(user = await checkSession());
-      // console.log(user);
-      setuser((user = data));
-      setUserName(user.name);
-      setemail(user.email);
-      if (user.organization !== null) {
-        setOrganization(user.organization);
-      }
-      if (user.picture === null) {
-        function generateInitials(input) {
-          // Split the input string into words
-          const words = input.split(" ");
-          let initials = "";
-          words.forEach((word) => {
-            // If the word is not empty, append its first letter to the initials string
-            if (word.length > 0) {
-              initials += word[0].toUpperCase();
-            }
-          });
-          // Return the initials string
-          return initials;
+      getusrId();
+      console.log(id);
+      const fetchUserData = async () => {
+        const response = await fetch(`http://localhost:3010/signup/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
         }
-        setletter((letter = generateInitials(user.name)));
-        console.log(letter);
-      } else {
-        setProfilePicture((profilePicture = user.picture));
-      }
-    };
-    fetchUserData();
-  }, []);
+        const data = await response.json();
+        console.log(data);
+        // setuser(user = await checkSession());
+        // console.log(user);
+        setuser((user = data));
+        setUserName(user.name);
+        setemail(user.email);
+        if (user.organization !== null) {
+          setOrganization(user.organization);
+        }
+        if (user.picture === null) {
+          function generateInitials(input) {
+            // Split the input string into words
+            const words = input.split(" ");
+            let initials = "";
+            words.forEach((word) => {
+              // If the word is not empty, append its first letter to the initials string
+              if (word.length > 0) {
+                initials += word[0].toUpperCase();
+              }
+            });
+            // Return the initials string
+            return initials;
+          }
+          setletter((letter = generateInitials(user.name)));
+          console.log(letter);
+        } else {
+          setProfilePicture((profilePicture = user.picture));
+        }
+      };
+      fetchUserData();
+    }
+  }, [location.pathname]);
   // Access the user object from the state
 
   // Now you can use the user object in your component
@@ -264,199 +278,202 @@ const Profile_main = () => {
     showmodal(false); // Hide the modal
   };
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4">Settings</h2>
-      <div className="row">
-        <div className="col-md-6 mx-auto">
-          <div className="card p-4">
-            <div className="mb-4">
-              <h5 className="mb-3">Profile Picture</h5>
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="profile-picture-wrapper">
-                  {profilePicture ? (
-                    <img
-                      className="profile-picture"
-                      src={profilePicture}
-                      alt="Profile"
-                    />
+    <div>
+      {authorized ?
+        <div className="container mt-5">
+          <h2 className="text-center mb-4">Settings</h2>
+          <div className="row">
+            <div className="col-md-6 mx-auto">
+              <div className="card p-4">
+                <div className="mb-4">
+                  <h5 className="mb-3">Profile Picture</h5>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="profile-picture-wrapper">
+                      {profilePicture ? (
+                        <img
+                          className="profile-picture"
+                          src={profilePicture}
+                          alt="Profile"
+                        />
+                      ) : (
+                        <Button
+                          className="profile-picture"
+                          variant="primary"
+                          style={{
+                            backgroundColor: color,
+                          }}
+                        >
+                          <h1> {letter} </h1>
+                        </Button>
+                      )}
+                      <div className="overlay">
+                        <label htmlFor="upload-input" className="camera-icon">
+                          <i className="fas fa-camera"></i>
+                        </label>
+                        <input
+                          id="upload-input"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div id="warningSize" style={{ color: "red", display: "none" }}>
+                    *picture size should be below 1MB
+                  </div>
+                </div>
+                <hr />
+                <div className="mb-4">
+                  <h5 className="mb-3">Email</h5>
+                  <span className="display-text">{email}</span>
+                </div>
+                <hr />
+                <div className="mb-4">
+                  <h5 className="mb-3">User Name</h5>
+                  {editingUsername ? (
+                    <div className="edit-mode">
+                      {" "}
+                      {/*this div will be visible while editing userName */}
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={userName}
+                        onChange={(e) => setUserName(e.target.value)}
+                      />
+                      <div className="btn-group mt-2">
+                        <button
+                          className="btn btn-primary"
+                          onClick={handleUpdateNameClick}
+                        >
+                          Update
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={handleCancelNameClick}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
                   ) : (
-                    <Button
-                      className="profile-picture"
-                      variant="primary"
-                      style={{
-                        backgroundColor: color,
-                      }}
-                    >
-                      <h1> {letter} </h1>
-                    </Button>
+                    <div className="d-flex justify-content-between align-items-center">
+                      {/*this div will be visible while normal time */}
+                      <span className="display-text">{userName}</span>
+                      <i
+                        className="fas fa-pencil-alt text-primary"
+                        onClick={handleEditNameClick}
+                      ></i>
+                    </div>
                   )}
-                  <div className="overlay">
-                    <label htmlFor="upload-input" className="camera-icon">
-                      <i className="fas fa-camera"></i>
-                    </label>
-                    <input
-                      id="upload-input"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileInputChange}
-                    />
-                  </div>
+                </div>
+                <hr />
+                <div className="mb-4">
+                  <h5 className="mb-3">Password</h5>
+                  {editpass ? (
+                    confirmpass ? (
+                      <div>
+                        <ChangePass func={passchanged} />
+                      </div>
+                    ) : (
+                      <div className="edit-mode">
+                        {" "}
+                        {/*this div will be visible while editing userName */}
+                        <h3> Type Existing Password</h3>
+                        <input
+                          type="password"
+                          className="form-control"
+                          onChange={(e) => setpassword(e.target.value)}
+                        />
+                        <div
+                          id="wrongpass"
+                          style={{ color: "red", display: "none" }}
+                        >
+                          *Incorrect Password
+                        </div>
+                        <div className="btn-group mt-2">
+                          <button
+                            className="btn btn-primary"
+                            onClick={handleUpdatepass}
+                          >
+                            Check Password
+                          </button>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={handleCancelpass}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  ) : (
+                    <div className="d-flex justify-content-between align-items-center">
+                      {/*this div will be visible while normal time */}
+                      <span className="display-text">********</span>
+                      <i
+                        className="fas fa-pencil-alt text-primary"
+                        onClick={handleEditpass}
+                      ></i>
+                    </div>
+                  )}
+                </div>
+                <hr />
+                <div className="mb-4">
+                  <h5 className="mb-3">Organization Name</h5>
+                  {editingOrganization ? (
+                    <div className="edit-mode">
+                      {" "}
+                      {/*this div will be visible while editing userName */}
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={organization}
+                        onChange={(e) => setOrganization(e.target.value)}
+                      />
+                      <div className="btn-group mt-2">
+                        <button
+                          className="btn btn-primary"
+                          onClick={handleUpdateOrgClick}
+                        >
+                          Update
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={handleCancelOrgClick}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="d-flex justify-content-between align-items-center">
+                      {/*this div will be visible while normal time */}
+                      <span className="display-text">{organization}</span>
+                      <i
+                        className="fas fa-pencil-alt text-primary"
+                        onClick={handleEditOrgClick}
+                      ></i>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div id="warningSize" style={{ color: "red", display: "none" }}>
-                *picture size should be below 1MB
-              </div>
-            </div>
-            <hr />
-            <div className="mb-4">
-              <h5 className="mb-3">Email</h5>
-              <span className="display-text">{email}</span>
-            </div>
-            <hr />
-            <div className="mb-4">
-              <h5 className="mb-3">User Name</h5>
-              {editingUsername ? (
-                <div className="edit-mode">
-                  {" "}
-                  {/*this div will be visible while editing userName */}
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                  />
-                  <div className="btn-group mt-2">
-                    <button
-                      className="btn btn-primary"
-                      onClick={handleUpdateNameClick}
-                    >
-                      Update
-                    </button>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={handleCancelNameClick}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="d-flex justify-content-between align-items-center">
-                  {/*this div will be visible while normal time */}
-                  <span className="display-text">{userName}</span>
-                  <i
-                    className="fas fa-pencil-alt text-primary"
-                    onClick={handleEditNameClick}
-                  ></i>
-                </div>
-              )}
-            </div>
-            <hr />
-            <div className="mb-4">
-              <h5 className="mb-3">Password</h5>
-              {editpass ? (
-                confirmpass ? (
-                  <div>
-                    <ChangePass func={passchanged} />
-                  </div>
-                ) : (
-                  <div className="edit-mode">
-                    {" "}
-                    {/*this div will be visible while editing userName */}
-                    <h3> Type Existing Password</h3>
-                    <input
-                      type="password"
-                      className="form-control"
-                      onChange={(e) => setpassword(e.target.value)}
-                    />
-                    <div
-                      id="wrongpass"
-                      style={{ color: "red", display: "none" }}
-                    >
-                      *Incorrect Password
-                    </div>
-                    <div className="btn-group mt-2">
-                      <button
-                        className="btn btn-primary"
-                        onClick={handleUpdatepass}
-                      >
-                        Check Password
-                      </button>
-                      <button
-                        className="btn btn-secondary"
-                        onClick={handleCancelpass}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )
-              ) : (
-                <div className="d-flex justify-content-between align-items-center">
-                  {/*this div will be visible while normal time */}
-                  <span className="display-text">********</span>
-                  <i
-                    className="fas fa-pencil-alt text-primary"
-                    onClick={handleEditpass}
-                  ></i>
-                </div>
-              )}
-            </div>
-            <hr />
-            <div className="mb-4">
-              <h5 className="mb-3">Organization Name</h5>
-              {editingOrganization ? (
-                <div className="edit-mode">
-                  {" "}
-                  {/*this div will be visible while editing userName */}
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={organization}
-                    onChange={(e) => setOrganization(e.target.value)}
-                  />
-                  <div className="btn-group mt-2">
-                    <button
-                      className="btn btn-primary"
-                      onClick={handleUpdateOrgClick}
-                    >
-                      Update
-                    </button>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={handleCancelOrgClick}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="d-flex justify-content-between align-items-center">
-                  {/*this div will be visible while normal time */}
-                  <span className="display-text">{organization}</span>
-                  <i
-                    className="fas fa-pencil-alt text-primary"
-                    onClick={handleEditOrgClick}
-                  ></i>
-                </div>
-              )}
             </div>
           </div>
-        </div>
-      </div>
-      <Modal show={modal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Success</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>{`${fields} Updated Successfully`}</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          <Modal show={modal} onHide={handleCloseModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Success</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>{`${fields} Updated Successfully`}</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseModal}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div> : <h2>This page is unauthorized for You</h2>}
     </div>
   );
 };
