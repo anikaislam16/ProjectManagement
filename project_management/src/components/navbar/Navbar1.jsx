@@ -29,6 +29,7 @@ const Navbar1 = () => {
           setUser(user = userData);
           console.log(userData);
           if (user.picture === null) {
+            setProfilePicture(null);
             function generateInitials(input) {
               // Split the input string into words
               const words = input.split(' ');

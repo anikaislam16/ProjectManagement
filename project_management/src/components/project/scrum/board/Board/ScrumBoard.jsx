@@ -4,9 +4,26 @@ import "./ScrumBoard.css";
 import { MoreHorizontal } from "react-feather";
 
 import { Droppable } from "react-beautiful-dnd";
-
+import { checkSession } from "../../../../sessioncheck/session";
 import "./ScrumBoard.css";
+import { useNavigate } from "react-router-dom";
 export default function ScrumBoard(props) {
+  const navigate = useNavigate();
+  const [id, set_id] = useState(null);
+  const [filter, setfilter] = useState(false);
+  useEffect(() => {
+    const getusrId = async () => {
+      const user = await checkSession();
+      console.log(user.id);
+      set_id(user.id);
+      if (user.message === "Session Expired") {
+        navigate('/login', { state: user });
+      }
+    }
+    getusrId();
+    setfilter(props.filter);
+  })
+  var cnt = 0;
   return (
     <div className="sboard">
       <div className="board__top">
@@ -16,7 +33,12 @@ export default function ScrumBoard(props) {
             style={{ whiteSpace: "nowrap", overflow: "hidden" }}
           >
             {props?.name || "Name of Board"}
-            <span className="total__cards">{props.card?.length}</span>
+            {props.card?.map((items) => {
+              console.log("Card Component Item:", items); // Log the item in each iteration
+              const hasMemberId = items.members.some(member => member.member_id === id);
+              cnt = hasMemberId ? cnt + 1 : cnt
+            })}
+            <span className="total__cards">{filter ? cnt : (props.card?.length)}</span>
           </p>
         </div>
       </div>
@@ -27,8 +49,12 @@ export default function ScrumBoard(props) {
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {props.card?.map((items, index) => (
-              <SprintCard
+            {props.card?.map((items, index) => {
+              console.log("Card Component Item:", items); // Log the item in each iteration
+              var hasMemberId = items.members.some(member => member.member_id === id);
+              console.log(hasMemberId);
+              hasMemberId = filter ? hasMemberId : 1;
+              return hasMemberId && (<SprintCard
                 bid={props.id}
                 id={items._id}
                 index={index}
@@ -41,7 +67,8 @@ export default function ScrumBoard(props) {
                 removeCard={props.removeCard}
                 card={items}
               />
-            ))}
+              );
+            })}
             {provided.placeholder}
           </div>
         )}

@@ -191,7 +191,10 @@ const CardMember = (props) => {
                         className={`list-group-item d-flex justify-content-between align-items-center ${selectedMembers.includes(member.member_id) ? 'active' : ''
                             }`}
                     >
-                        {member.username}
+                        <div style={{ flex: 1 }}>  {/* Make sure the username and email container takes full width available except for the badge */}
+                            <div>{member.username}</div>
+                            <div className="text-muted" style={{ fontSize: '12px' }}>{member.email}</div>
+                        </div>
                         {selectedMembers.includes(member.member_id) && (
                             <span className="badge ">✔</span>
                         )}

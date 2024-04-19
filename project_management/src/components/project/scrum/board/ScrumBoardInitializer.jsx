@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import SidebarContextScrum from "../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum";
 import "./ScrumBoardInitializer.css";
 import ScrumBoard from "./Board/ScrumBoard";
-
 const ScrumBoardInitializer = () => {
   const { open } = useContext(SidebarContextScrum);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -15,6 +14,7 @@ const ScrumBoardInitializer = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   var [dep, setdep] = useState([]);
   const [data, setData] = useState([]);
+  const [filter, setfilter] = useState(false);
   const initializeData = async () => {
     try {
       const response = await fetch(
@@ -394,9 +394,16 @@ const ScrumBoardInitializer = () => {
     console.log(dep.length);
     setShowErrorModal(false);
   };
+  const filterfunction = () => {
+    setfilter(!filter);
+  }
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="">
+        <button class="btn btn-primary filter-button" onClick={filterfunction}>
+          <img src="/filter_icon.png" alt="Filter Icon" class="filter-icon" style={{ height: '30px', width: '30px' }} />
+          {filter ? 'See All Cards' : 'Filter My Cards'}
+        </button>
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="BoardMain">
             <div className="app_outer">
@@ -417,6 +424,7 @@ const ScrumBoardInitializer = () => {
                         card={item.card}
                         removeCard={removeCard}
                         updateCard={updateCard}
+                        filter={filter}
                       />
                     );
                   }

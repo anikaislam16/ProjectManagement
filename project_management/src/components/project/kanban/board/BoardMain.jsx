@@ -19,6 +19,7 @@ const BoardMain = () => {
   const [workflow, setWorkFlow] = useState(false);
   var [a, seta] = useState(false);
   const location = useLocation();
+  const [filter, setfilter] = useState(false);
   const initializeData = async () => {
     try {
       const response = await fetch(
@@ -521,9 +522,16 @@ const BoardMain = () => {
   //     localStorage.setItem("kanban-board", JSON.stringify(data));
   //   }
   // }, [data, isInitialized]);
+  const filterfunction = () => {
+    setfilter(!filter);
+  }
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="center-content">
+        <button class="btn btn-primary filter-button" onClick={filterfunction}>
+          <img src="/filter_icon.png" alt="Filter Icon" class="filter-icon" style={{ height: '30px', width: '30px' }} />
+          {filter ? 'See All Cards' : 'Filter My Cards'}
+        </button>
         <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
           <Droppable
             droppableId="main-board"
@@ -555,6 +563,7 @@ const BoardMain = () => {
                       workflow={workflow}
                       index={index}
                       length={data.length - 1}
+                      filter={filter}
                     />
                   ))}
                   {workflow === false && (

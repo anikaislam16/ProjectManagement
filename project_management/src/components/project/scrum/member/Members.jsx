@@ -116,16 +116,20 @@ const MemberScrum = () => {
           <ul className="list-group">
             {members.map((member, index) => (
               <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  {index + 1}. {member.username}
+                <div className="col-4">
+                  <div>{index + 1}. {member.username}</div>
+                  <div className="text-muted"><h6 style={{ color: 'gray' }}>{member.email}</h6></div>
                 </div>
-                <div className="text-center flex-fill">
+                <div className="col-7">
                   {member.role}
                 </div>
-                <button className="btn btn-danger" onClick={() => handleRemoveMember(member.member_id, member.role)}>
-                  Remove
-                </button>
+                <div className="col-1">
+                  <button className="btn btn-danger" onClick={() => handleRemoveMember(member.member_id, member.role)}>
+                    Remove
+                  </button>
+                </div>
               </li>
+
             ))}
           </ul>
         </div>

@@ -2,15 +2,28 @@ import React, { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { MoreHorizontal } from "react-feather";
 import Card from "../Card/Card";
-
+import { checkSession } from "../../../../../sessioncheck/session";
 import Editable from "../Editable/Editable";
 import { Dropdown, Modal, Button, Form } from "react-bootstrap";
 import "./Board.css";
+import { useNavigate } from "react-router-dom";
 export default function Board(props) {
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [dropdown, setDropdown] = useState(false);
-
+  const [id, set_id] = useState(null);
+  const [filter, setfilter] = useState(false);
   useEffect(() => {
+    const getusrId = async () => {
+      const user = await checkSession();
+      console.log(user.id);
+      set_id(user.id);
+      if (user.message === "Session Expired") {
+        navigate('/login', { state: user });
+      }
+    }
+    getusrId();
+    setfilter(props.filter);
     console.log("Board Component Items:", props);
     document.addEventListener("keypress", (e) => {
       if (e.code === "Enter") setShow(false);
@@ -21,7 +34,7 @@ export default function Board(props) {
       });
     };
   });
-
+  var cnt = 0;
   return (
     <div className="Ssboard">
       <div className="board__top">
@@ -45,7 +58,12 @@ export default function Board(props) {
               className="board__title"
             >
               {props?.name || "Name of Board"}
-              <span className="total__cards">{props.card?.length}</span>
+              {props.card?.map((items) => {
+                console.log("Card Component Item:", items); // Log the item in each iteration
+                const hasMemberId = items.members.some(member => member.member_id === id);
+                cnt = hasMemberId ? cnt + 1 : cnt
+              })}
+              <span className="total__cards">{filter ? cnt : (props.card?.length)}</span>
             </p>
           </div>
         )}
@@ -78,7 +96,10 @@ export default function Board(props) {
           >
             {props.card?.map((items, index) => {
               console.log("Card Component Item:", items); // Log the item in each iteration
-              return (
+              var hasMemberId = items.members.some(member => member.member_id === id);
+              console.log(hasMemberId);
+              hasMemberId = filter ? hasMemberId : 1;
+              return hasMemberId && (
                 <Card
                   bid={props.id}
                   id={items._id}
