@@ -12,8 +12,15 @@ import { checkSession } from "../../../../../sessioncheck/session";
 import { useNavigate } from "react-router-dom";
 
 const MyChats = () => {
-  const { selectedChat, setSelectedChat, user, setUser, users, setUsers } =
-    ChatState();
+  const {
+    selectedChat,
+    setSelectedChat,
+    user,
+    setUser,
+    users,
+    setUsers,
+    chatOwner,
+  } = ChatState();
   const location = useLocation();
   // Sample chat data
   const [chats, setChats] = useState([]);
@@ -22,7 +29,7 @@ const MyChats = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const navigate = useNavigate();
   const [titleValue, setTitleValue] = useState("");
-  const { projectId } = useParams();
+  const { projectId, type } = useParams();
 
   const handleItemClick = (index, chat) => {
     setSelectedItem(index);
@@ -31,7 +38,11 @@ const MyChats = () => {
   const [showModal, setShowModal] = useState(false);
   const [textValue, setTextValue] = useState("");
 
-  const handleClose = () => setShowModal(false);
+  const handleClose = () => {
+    setShowModal(false);
+    setTextValue("");
+    setTitleValue("");
+  };
   const handleShow = () => setShowModal(true);
   const getAllMembers = async () => {
     try {
@@ -73,8 +84,16 @@ const MyChats = () => {
     getUser();
   }, []);
   const fetchChats = async () => {
+    var ChatBody = null;
+    var api = null;
+    console.log(chatOwner);
+    if (chatOwner === "You" || type === "You") {
+      api = "http://localhost:3010/message/findChatsForMe";
+    } else if ((chatOwner === "others") | (type === "others")) {
+      api = "http://localhost:3010/message/findChats";
+    }
     try {
-      const response = await fetch("http://localhost:3010/message/findChats", {
+      const response = await fetch(api, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,6 +107,7 @@ const MyChats = () => {
       if (!response.ok) {
         throw new Error("Failed to fetch chats");
       }
+      console.log(user, projectId, projectType);
       const data = await response.json();
       console.log(data);
       setChats(data);
@@ -106,19 +126,38 @@ const MyChats = () => {
       });
       return;
     }
+    if (titleValue === "Notice" || titleValue === "notice") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Notice/notice not allowed",
+      });
+      return;
+    }
     const usersArray = users.map((user) => user.userId);
+    var newQuestion = null;
+    if (projectType === "kanban") {
+      newQuestion = {
+        question: titleValue,
+        kanbanProject: projectId,
+        users: usersArray,
+        groupAdmin: user,
+      };
+    } else if (projectType === "scrum") {
+      newQuestion = {
+        question: titleValue,
+        scrumProject: projectId,
+        users: usersArray,
+        groupAdmin: user,
+      };
+    }
     try {
       const response = await fetch(`http://localhost:3010/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          question: titleValue,
-          kanbanProject: projectId,
-          users: usersArray,
-          groupAdmin: user,
-        }),
+        body: JSON.stringify(newQuestion),
       });
 
       if (!response.ok) {

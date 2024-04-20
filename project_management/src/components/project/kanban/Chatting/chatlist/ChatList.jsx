@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import SidebarContext from "../../../../../sidebar_app/components/sidebar_context/SidebarContext";
+import SidebarContextScrum from "../../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum";
 import {
   Container,
   Row,
@@ -13,8 +14,20 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import MyChats from "./mychats/MyChats";
 import { ChatState } from "../context/ChatContextProvider";
 import ChatBox from "../chatui/ChatBox";
+import { useNavigate, useLocation } from "react-router-dom";
 export default function ChatList() {
-  const { open } = useContext(SidebarContext);
+  const location = useLocation();
+  const { pathname } = location;
+
+  // Get context values outside of condition
+  const kanbanContext = useContext(SidebarContext);
+  const scrumContext = useContext(SidebarContextScrum);
+
+  // Conditionally select the context
+  const context = pathname.includes("kanban") ? kanbanContext : scrumContext;
+
+  // Destructure the context value
+  const { open } = context;
   const { selectedChat, setSelectedChat, user, setUser } = ChatState();
   // Assuming you're using useParams to get the project ID
   return (

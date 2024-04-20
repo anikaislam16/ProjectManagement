@@ -7,7 +7,7 @@
   border-radius: 8px;
   background-color: white;
   box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.1);
-  margin-left: 70px;
+  margin-left: 100px;
   position: fixed;
   // text-align: center;
   top: 80px;
@@ -52,7 +52,7 @@
     align-items: center;
     justify-content: flex-start;
 
-    h6.title {
+    h6.titles {
       color: $green;
       padding: 0 0 0 1rem;
     }
@@ -118,17 +118,17 @@
       transition: 0.5s all;
     }
   }
-  .burgerContainer::after {
-    content: "";
-    position: absolute;
-    right: 35px;
-    top: (35px / 2);
-    z-index: 0;
-    width: calc(6rem + 15rem);
-    background-color: $lightGrey;
-    height: 2px;
-    transition: 0.5s all;
-  }
+  // .burgerContainer::after {
+  //   content: "";
+  //   position: absolute;
+  //   right: 35px;
+  //   top: (35px / 2);
+  //   z-index: 0;
+  //   width: calc(6rem + 15rem);
+  //   background-color: $lightGrey;
+  //   height: 2px;
+  //   transition: 0.5s all;
+  // }
 
   .profileContainer {
     display: flex;
@@ -243,6 +243,9 @@
     color: $darkGrey;
     font-size: 12px;
   }
+  .text-hidden {
+    margin-left: 2px;
+  }
 }
 
 .sidebar.active {
@@ -250,8 +253,9 @@
   transition: 0.5s all;
 
   .logoContainer.active {
-    h2.title {
-      opacity: 0;
+    width: 20px;
+    .titles {
+      visibility: hidden;
     }
   }
 

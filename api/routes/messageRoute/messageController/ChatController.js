@@ -36,64 +36,39 @@ async function createQuestion(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
-// const findChats = async (req, res) => {
-//     try {
-//       const { groupAdminId, ProjectId,projectType } = req.body;
-//       var chats = null;
-//       if (projectType === "scrum")
-//       {
-//         chats = await Question.find({
-//           $and: [
-//             { groupAdmin: groupAdminId },
-//             { scrumProject: ProjectId },
-//           ],
-//         }).exec();
-//         }
-//       else
-//       {
-//          chats = await Question.find({
-//            $and: [
-//              { groupAdmin: groupAdminId },
-//              { kanbanProject: ProjectId },
-//            ],
-//          }).exec();
-//         }
+const findChatsForMe = async (req, res) => {
+   console.log("Hell");
+    try {
+      const { groupAdminId, ProjectId,projectType } = req.body;
+      var chats = null;
+      if (projectType === "scrum")
+      {
+        chats = await Question.find({
+          $and: [
+            { groupAdmin: groupAdminId },
+            { scrumProject: ProjectId },
+          ],
+        }).exec();
+        }
+      else
+      {
+         chats = await Question.find({
+           $and: [
+             { groupAdmin: groupAdminId },
+             { kanbanProject: ProjectId },
+           ],
+         }).exec();
+        }
 
-//       res.json(chats);
-//     } catch (err) {
-//       res.status(500).json({ error: err.message });
-//     }
-// };
-// const findChats = async (req, res) => {
-//   try {
-//     const { groupAdminId, ProjectId, projectType } = req.body;
-//     let chats = null;
+      res.json(chats);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+};
 
-//     if (projectType === "scrum") {
-//       chats = await Question.find({
-//         $and: [
-//           { groupAdmin: groupAdminId },
-//           { scrumProject: ProjectId },
-//           { users: { $in: [groupAdminId] } }, // Check if groupAdminId is in the users array
-//         ],
-//       }).exec();
-//     } else {
-//       chats = await Question.find({
-//         $and: [
-//           { groupAdmin: groupAdminId },
-//           { kanbanProject: ProjectId },
-//           { users: { $in: [groupAdminId] } }, // Check if groupAdminId is in the users array
-//         ],
-//       }).exec();
-//     }
-
-//     res.json(chats);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 const findChats = async (req, res) => {
   try {
+    console.log('Hell no')
     const { groupAdminId, ProjectId, projectType } = req.body;
     let chats = null;
 
@@ -105,6 +80,7 @@ const findChats = async (req, res) => {
           { users: { $in: [groupAdminId] } }, // Check if groupAdminId is in the users array
         ],
       }).exec();
+      console.log(chats)
     } else {
       chats = await Question.find({
         $and: [
@@ -114,11 +90,11 @@ const findChats = async (req, res) => {
         ],
       }).exec();
     }
-
+ 
     res.json(chats);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { createQuestion, findChats }; // Exporting the function
+module.exports = { createQuestion, findChats, findChatsForMe }; // Exporting the function

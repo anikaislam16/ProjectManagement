@@ -7,3 +7,8 @@
   align-items: left;
   margin-right: 5px; /* Small font size */
 }
+.like-number {
+  font-size: 15px;
+  color: rgb(88, 89, 89);
+  margin-right: 6px;
+}

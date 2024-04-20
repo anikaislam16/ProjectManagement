@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const {
   createQuestion,
-  findChats
+  findChats,
+  findChatsForMe
 } = require("./messageController/ChatController");
 const {
   createMessage,
   getMessagesByChat,
-  updateMessageContent
+  updateMessageContent,
+  toggleLikeForMember
 } = require("./messageController/MessageController");
 // Route to create a question
 
@@ -57,5 +59,24 @@ router.put("/update-message", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router.post("/toggle-like", async (req, res) => {
+  try {
+    // Extract memberId and messageId from req.query
+    const { memberId, messageId } = req.query;
+
+    // Call toggleLikeForMember function
+    const Liked = await toggleLikeForMember({
+      memberId,
+      messageId,
+    });
+
+    // Send response with updatedLikesCount and isLiked
+    res.json(Liked);
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
+  }
+});
 router.post("/findChats", findChats);
+router.post("/findChatsForMe", findChatsForMe);
 module.exports = router;

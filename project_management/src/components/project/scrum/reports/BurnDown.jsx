@@ -31,8 +31,8 @@ function BurnDown() {
       labels: {
         formatter: function (val) {
           const dateObject = new Date(val);
-          const options = { day: 'numeric', month: 'short' };
-          return dateObject.toLocaleDateString('en-US', options);
+          const options = { day: "numeric", month: "short" };
+          return dateObject.toLocaleDateString("en-US", options);
         },
       },
     },
@@ -40,7 +40,7 @@ function BurnDown() {
       width: 1000, // Set an initial width for the chart
 
       toolbar: {
-        show: false,
+        show: true,
       },
       zoom: {
         enabled: false,
@@ -178,7 +178,6 @@ function BurnDown() {
     return sum;
   };
 
-
   useEffect(() => {
     if (storyPointsPerDay > 0) {
       const updatedRemainingStoryPoints = parseFloat(
@@ -308,7 +307,10 @@ function BurnDown() {
             {selectedBoard && selectedOffDays.length > 0 && BoardData && (
               <div>
                 {/* Render details or perform actions related to the selected board */}
-                <div className="container-fluid mt-3 mb-3" style={{ paddingBottom: "100px" }}>
+                <div
+                  className="container-fluid mt-3 mb-3"
+                  style={{ paddingBottom: "100px" }}
+                >
                   <h2>Burn Down Chart in Scrum</h2>
                   <Chart
                     type="line"

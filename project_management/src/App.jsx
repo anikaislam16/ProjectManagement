@@ -36,6 +36,9 @@ import ChatList from "./components/project/kanban/Chatting/chatlist/ChatList.jsx
 import ChatContextProvider from "./components/project/kanban/Chatting/context/ChatContextProvider.jsx";
 import Profile_main from "./components/profile/Settings.jsx";
 import MyProject from "./components/profile/MyProject.jsx";
+import A from "./components/A.jsx";
+import ScrumReviewBoard from "./components/project/scrum/scrum_review/ScrumReviewBoard.jsx";
+import DailyScrum from "./components/project/scrum/scrum_review/dailyscrum/DailyScrum.jsx";
 function App() {
   return (
     <div className="App">
@@ -64,16 +67,15 @@ function App() {
               <Route path="piechart" element={<PieChartKanban />} />
               <Route path="controlchart" element={<ControlChart />} />
               <Route path="chat" element={<ChatMain />}></Route>
-              <Route path="chatbox" element={<ChatList />} />
+              <Route path="chatbox/:type" element={<ChatList />} />
               <Route path="recentcretedchart" element={<RecentIssue />} />
               <Route path="resolutionchart" element={<ResolutionTime />} />
             </Route>
             <Route path="/project/scrum/:projectId/" element={<ProjectScrum />}>
               <Route path="gantt" element={<ScurmGanttInitializer />}></Route>
-              <Route
-                path="completed"
-                element={<ScrumCompleteBoardMain />}
-              ></Route>
+              <Route path="completed" element={<ScrumCompleteBoardMain />}>
+                <Route path="mor" element={<A />} />
+              </Route>
               <Route path="members" element={<MemberScrum />} />
               <Route index element={<SprintBoardMain />} />
               <Route path="board" element={<ScrumBoardMain />} />
@@ -82,6 +84,9 @@ function App() {
               <Route path="report" element={<SprintReport />} />
               <Route path="pie" element={<PieChart />} />
               <Route path="chat" element={<ChatMain />}></Route>
+              <Route path="chatbox/:type" element={<ChatList />} />
+              <Route path="review" element={<ScrumReviewBoard />} />
+              <Route path="dailyscrum" element={<DailyScrum />} />
               {/* <Route path="graph" element={<Graph />} /> */}
             </Route>
             <Route

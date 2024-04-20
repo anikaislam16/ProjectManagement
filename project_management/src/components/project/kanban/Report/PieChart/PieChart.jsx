@@ -1,7 +1,7 @@
 import Chart from "react-apexcharts";
 import React, { useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import SidebarContext from '../../../../../sidebar_app/components/sidebar_context/SidebarContext';
+import SidebarContext from "../../../../../sidebar_app/components/sidebar_context/SidebarContext";
 import "./GraphScrum.css";
 import "./PieChart.css";
 function PieChartKanban() {
@@ -17,6 +17,7 @@ function PieChartKanban() {
       width: 380,
       type: "pie",
     },
+
     responsive: [
       {
         breakpoint: 480,
@@ -415,7 +416,10 @@ function PieChartKanban() {
   }
 
   return (
-    <div className={`center-div ${open ? "sidebar-open" : ""}`} style={{ paddingBottom: "70px" }}>
+    <div
+      className={`center-div ${open ? "sidebar-open" : ""}`}
+      style={{ paddingBottom: "70px" }}
+    >
       <div className="center-content">
         {isInitialized && (
           <div className="select-container">
@@ -466,12 +470,13 @@ function PieChartKanban() {
                     options={{
                       title: { text: "Kanban PieChart" },
                       noData: { text: "Empty Data" },
-                      colors: generateContrastingColors(pieChartCategory.length + 1),
+                      colors: generateContrastingColors(
+                        pieChartCategory.length + 1
+                      ),
                       labels: pieChartCategory,
                     }}
                   ></Chart>
                 </div>
-
               </div>
             )}
           </div>

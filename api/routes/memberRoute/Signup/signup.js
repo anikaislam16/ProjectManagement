@@ -28,7 +28,7 @@ const sendOtpEmail = (toEmail, otp) => {
         if (error) {
             console.error('Error sending email:', error);
         } else {
-            console.log('Email sent:', info.response);
+            
         }
     })
 };
@@ -101,10 +101,10 @@ passport.use(
         },
         (accessToken, refreshToken, profile, done) => {
 
-            // Your verification logic goes here
-            console.log("Verify callback executed");
-            console.log(profile.displayName);
-            console.log(profile.email);
+            // // Your verification logic goes here
+            // console.log("Verify callback executed");
+            // console.log(profile.displayName);
+            // console.log(profile.email);
 
             // Example: Store user data in the session
             const user = {
@@ -142,7 +142,7 @@ sign.route("/auth/google/callback").get( ///eta 2bar execute hoi.
         if (req.query.origin !== undefined) {  //2nd time execution e origin value change jate na hoi, sejonno.
             origin = req.query.origin;
         }
-        console.log(origin);
+        //onsole.log(origin);
         // Set the success redirect URL based on the origin
         let successRedirect;
         switch (origin) {
@@ -164,16 +164,16 @@ sign.route("/auth/google/callback").get( ///eta 2bar execute hoi.
 );
 
 const signget = async (req, res) => {
-    console.log("fsd");
+    //console.log("fsd");
     const email = req.user.email;
-    console.log(email)
+    //console.log(email)
     const user1 = await Member.findOne({ email });
-    console.log(user1);
+    //console.log(user1);
     if (user1 != null) {
         return res.status(200).json({ message: 'Email already exist' });
     }
     if (req.user) {
-        console.log('nulld');
+       // console.log('nulld');
         const user1 = req.user;
         res.status(200).json({ message: "user Login", user: user1 });
     } else {
@@ -209,7 +209,7 @@ sign.use((req, res, next) => {
 const loginmatch = async (req, res) => {
 
     const { email, password } = req.body;
-    console.log(email);
+    //console.log(email);
     try {
         // Check if the email exists in the Member schema
         const existingMember = await Member.findOne({ email });
@@ -231,7 +231,7 @@ const loginmatch = async (req, res) => {
             displayName: existingMember.name,
             email: existingMember.email,
         };
-        console.log(req.session);
+        //console.log(req.session);
 
 
         // Successful login
@@ -244,12 +244,12 @@ const loginmatch = async (req, res) => {
 const sessionget = async (req, res) => {
     if (req.session && req.session.user) {
         const email = req.session.user.email;
-        console.log(email);
+        //console.log(email);
         const existingMember1 = await Member.findOne({ email });
         if (existingMember1) {
             const username = { ...req.session.user, id: existingMember1._id, picture: existingMember1.picture };
             res.status(200).json({ message: 'Session is present', user: username });//here req.session.user directly dile kaj krbe na.
-            console.log(username);
+           // console.log(username);
         }
         else
             res.status(200).json({ message: 'No session found' });
@@ -258,15 +258,15 @@ const sessionget = async (req, res) => {
     }
 }
 const googlesessionget = async (req, res) => {
-    console.log(req.session);
-    console.log(req.user);
+    //console.log(req.session);
+    //console.log(req.user);
     if (req.session && req.user) {
         const email = req.user.email;
         const existingMember1 = await Member.findOne({ email });
         if (existingMember1) {
             const username = { ...req.user, id: existingMember1._id, picture: existingMember1.picture };
             res.status(200).json({ message: 'Session is present', user: username });
-            console.log(username);
+            //console.log(username);
         }
         else
             res.status(200).json({ message: 'No session found' });
@@ -276,16 +276,16 @@ const googlesessionget = async (req, res) => {
 }
 const sessiondel = async (req, res) => {
     req.session.destroy((err) => {
-        console.log('dwkf`');
+        //console.log('dwkf`');
         if (err) {
-            console.log('dwkf`');
+            //console.log('dwkf`');
             console.error('Error during logout:', err);
             res.status(500).json({ message: 'Internal server error during logout' });
         } else {
-            console.log('dkf');
+            //console.log('dkf');
             // Respond with a success message
             res.clearCookie('connect.sid'); // Clear the session cookie
-            console.log('dkf`');
+            //console.log('dkf`');
             res.status(200).json({ message: 'Logout successful' });
         }
     });

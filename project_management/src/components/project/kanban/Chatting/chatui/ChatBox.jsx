@@ -26,7 +26,36 @@ const ChatBox = () => {
 
     // eslint-disable-next-line
   }, []);
-
+  const handleToggleLike = async (memberId, messageId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3010/message/toggle-like?memberId=${memberId}&messageId=${messageId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to toggle like");
+      }
+      const data = await response.json();
+      console.log(data);
+      setMessages((prevMessages) => {
+        return prevMessages.map((message) => {
+          if (message._id === messageId) {
+            // If the message ID matches, update the Likes array
+            return { ...message, Likes: data.Likes };
+          } else {
+            return message;
+          }
+        });
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleSave = async () => {
     if (textAreaValue === "") {
       // Show SweetAlert if text area is empty
@@ -198,7 +227,11 @@ const ChatBox = () => {
         <h6>{selectedChat.question}</h6>
       </div>
       <div className="messageBody">
-        <ScrollableChat messages={messages} EditMessage={EditMessage} />
+        <ScrollableChat
+          messages={messages}
+          EditMessage={EditMessage}
+          handleToggleLike={handleToggleLike}
+        />
       </div>
       <div>
         <div

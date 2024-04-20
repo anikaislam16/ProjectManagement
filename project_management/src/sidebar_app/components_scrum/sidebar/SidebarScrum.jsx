@@ -1,13 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import Dashboard from "../../Images/dashboard.svg";
+import chatting from "../../Images/chatting.svg";
 import { ChevronDown } from "react-feather";
 import News from "../../Images/news.svg";
 import Performance from "../../Images/performance.svg";
 import Transactions from "../../Images/transactions.svg";
 import table from "../../Images/table.svg";
-import Settings from "../../Images/settings.svg";
+import conversation from "../../Images/conversation.png";
 import ulaa from "../../Images/ulaa.png";
+import board from "../../Images/board.png";
 import backlog from "../../Images/backlog.png";
 import { Modal, Button } from "react-bootstrap";
 // import Settings from "../Images/settings.svg";
@@ -66,7 +68,7 @@ const SidebarScrum = ({ projectId }) => {
           closeMenu === false ? "logoContainer" : "logoContainer active"
         }
       >
-        <h6 className="title">{projectName}</h6>
+        <h6 className="titles">{projectName}</h6>
       </div>
       <div
         className={
@@ -217,6 +219,44 @@ const SidebarScrum = ({ projectId }) => {
             <NavLink to={`/project/scrum/${projectId}/members`}>
               <img src={News} alt="News" />
               <span className="text-hidden">Members</span>
+            </NavLink>
+          </li>
+          <li
+            className={
+              location.pathname === `/project/scrum/${projectId}/chat` ||
+              location.pathname === `/project/scrum/${projectId}/chatbox/You` ||
+              location.pathname ===
+                `/project/scrum/${projectId}/chatbox/others` ||
+              location.pathname === `/project/scrum/${projectId}/chatbox/notice`
+                ? "active"
+                : ""
+            }
+          >
+            <NavLink to={`/project/scrum/${projectId}/chat`}>
+              <img
+                src={conversation}
+                alt="News"
+                style={{ width: "30px", height: "30px" }}
+              />
+
+              <span className="text-hidden">Issues</span>
+            </NavLink>
+          </li>
+          <li
+            className={
+              location.pathname === `/project/scrum/${projectId}/review`
+                ? "active"
+                : ""
+            }
+          >
+            <NavLink to={`/project/scrum/${projectId}/review`}>
+              <img
+                src={board}
+                alt="News"
+                style={{ width: "30px", height: "30px" }}
+              />
+
+              <span className="text-hidden">Review</span>
             </NavLink>
           </li>
         </ul>

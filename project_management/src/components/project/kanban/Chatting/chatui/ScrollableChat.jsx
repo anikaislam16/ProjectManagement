@@ -9,7 +9,7 @@ import reply from "../../../../../sidebar_app/Images/reply.png";
 import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const ScrollableChat = ({ messages, EditMessage }) => {
+const ScrollableChat = ({ messages, EditMessage, handleToggleLike }) => {
   const { selectedChat, setSelectedChat, user, setUser, users, setUsers } =
     ChatState();
   const [showModal, setShowModal] = useState(false);
@@ -22,8 +22,9 @@ const ScrollableChat = ({ messages, EditMessage }) => {
     return user ? user.name : null;
   };
   // Assuming you have functions for handling like and edit actions
-  const handleLike = () => {
+  const handleLike = (message) => {
     // Handle like action
+    handleToggleLike(user, message);
   };
 
   const handleEdit = () => {
@@ -99,21 +100,24 @@ const ScrollableChat = ({ messages, EditMessage }) => {
                     alt="Like"
                     style={{
                       cursor: "pointer",
-                      width: "15px",
-                      height: "15px",
+                      width: "20px",
+                      height: "20px",
                       marginRight: "5px",
                     }}
                     title="Upvote"
-                    onClick={handleLike}
+                    onClick={() => handleLike(m._id)}
                   />
+                  <span className="like-number" title="number of upvotes">
+                    {m.Likes.length}
+                  </span>
                   {user === m.sender._id && (
                     <img
                       src={pencil}
                       alt="Edit"
                       style={{
                         cursor: "pointer",
-                        width: "15px",
-                        height: "15px",
+                        width: "20px",
+                        height: "20px",
                         marginRight: "5px",
                       }}
                       onClick={() => {

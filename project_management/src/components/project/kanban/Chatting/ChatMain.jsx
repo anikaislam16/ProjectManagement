@@ -1,15 +1,38 @@
 import React, { useContext, useEffect, useState } from "react";
 import SidebarContext from "../../../../sidebar_app/components/sidebar_context/SidebarContext";
+import SidebarContextScrum from "../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum";
 import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import "./ChatMain.css";
 import io from "socket.io-client";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ChatState } from "./context/ChatContextProvider";
 const socket = io.connect("http://localhost:3010");
 export default function ChatMain() {
-  const { open } = useContext(SidebarContext);
-  const navigate = useNavigate();
+  const {
+    selectedChat,
+    setSelectedChat,
+    user,
+    setUser,
+    users,
+    setUsers,
+    chatOwner,
+    setChatOwner,
+  } = ChatState();
   const location = useLocation();
+  const { pathname } = location;
+
+  // Get context values outside of condition
+  const kanbanContext = useContext(SidebarContext);
+  const scrumContext = useContext(SidebarContextScrum);
+
+  // Conditionally select the context
+  const context = pathname.includes("kanban") ? kanbanContext : scrumContext;
+
+  // Destructure the context value
+  const { open } = context;
+
+  const navigate = useNavigate();
 
   // const [msg, setMsg] = useState("");
   // const [room, setRoom] = useState("");
@@ -33,15 +56,11 @@ export default function ChatMain() {
   //   });
   // }, [socket]);
   const openChatBox = (type) => {
+    setSelectedChat(null);
+    setChatOwner(type);
     console.log(location.pathname);
-    if (type === "You") {
-      const newPath = location.pathname.replace("/chat", "/chatbox");
-      navigate(newPath); // Replace "/your-path" with the actual path
-    } else {
-      // Handle other types if needed
-      const newPath = location.pathname.replace("/chat", "/chatbox");
-      navigate(newPath);
-    }
+    const newPath = location.pathname.replace("/chat", `/chatbox/${type}`);
+    navigate(newPath);
   };
   return (
     <div
@@ -74,8 +93,18 @@ export default function ChatMain() {
           >
             Your Questions
           </div>
-          <div className="child big-bold-text">Other's Questions</div>
-          <div className="child big-bold-text">Notices</div>
+          <div
+            className="child big-bold-text"
+            onClick={() => openChatBox("others")}
+          >
+            Other's Questions
+          </div>
+          <div
+            className="child big-bold-text"
+            onClick={() => openChatBox("notice")}
+          >
+            Notices
+          </div>
         </div>
       </div>
     </div>

@@ -11,9 +11,9 @@ const Userinfostore = async (req, res) => {
             email: email,
             password: hash_var,
         };
-        console.log(memberData);
+       
         var info = await Member.create(memberData);
-        console.log(info);
+       
         // Respond with the result
         res.status(200).json({ message: 'successful' });
     } catch (error) {

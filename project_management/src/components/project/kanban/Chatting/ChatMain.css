@@ -4,6 +4,8 @@
   margin-top: 100px;
   height: auto;
   padding: 20px;
+  margin-left: 30px;
+  margin-right: 30px;
   border: 2px solid #ccc; /* Border added to the container */
   border-radius: 10px; /* Rounded border for the container */
   transition: box-shadow 0.3s; /* Transition added for box-shadow */
