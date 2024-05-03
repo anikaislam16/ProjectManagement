@@ -24,9 +24,9 @@ function BurnDown() {
     "Saturday",
   ];
   const [option, setOption] = useState({
-    title: { text: "Product sell in 2021" },
+    title: { text: "" },
     xaxis: {
-      title: { text: "Product Sell in Months" },
+      title: { text: "" },
       categories: dateRange,
       labels: {
         formatter: function (val) {

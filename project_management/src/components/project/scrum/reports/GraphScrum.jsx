@@ -89,7 +89,6 @@ const GraphScrum = () => {
               type="bar"
               width={chartWidth} // Set the initial width
               height={500}
-
               series={[
                 {
                   name: "Committed",
@@ -109,7 +108,7 @@ const GraphScrum = () => {
                 },
                 chart: {
                   toolbar: {
-                    show: false,
+                    show: true,
                   },
                   zoom: {
                     enabled: false,
@@ -149,7 +148,6 @@ const GraphScrum = () => {
                   show: true,
                   position: "right",
                 },
-
               }}
             />
           </div>

@@ -39,6 +39,11 @@ import MyProject from "./components/profile/MyProject.jsx";
 import A from "./components/A.jsx";
 import ScrumReviewBoard from "./components/project/scrum/scrum_review/ScrumReviewBoard.jsx";
 import DailyScrum from "./components/project/scrum/scrum_review/dailyscrum/DailyScrum.jsx";
+import TddMain from "./components/project/scrum/tdd/TddMain.jsx";
+import Requirement from "./components/project/scrum/tdd/requirements/Requirement.jsx";
+import TestDesign from "./components/project/scrum/tdd/design/TestDesign.jsx";
+import TestPlan from "./components/project/scrum/tdd/plan/TestPlan.jsx";
+import TestCases from "./components/project/scrum/tdd/testcases/TestCases.jsx";
 function App() {
   return (
     <div className="App">
@@ -72,6 +77,12 @@ function App() {
               <Route path="resolutionchart" element={<ResolutionTime />} />
             </Route>
             <Route path="/project/scrum/:projectId/" element={<ProjectScrum />}>
+              <Route path="tdd" element={<TddMain />}>
+                <Route path="requirements" element={<Requirement />} />
+                <Route path="design" element={<TestDesign />} />
+                <Route path="plan" element={<TestPlan />} />
+                <Route path="test" element={<TestCases />} />
+              </Route>
               <Route path="gantt" element={<ScurmGanttInitializer />}></Route>
               <Route path="completed" element={<ScrumCompleteBoardMain />}>
                 <Route path="mor" element={<A />} />
@@ -86,7 +97,7 @@ function App() {
               <Route path="chat" element={<ChatMain />}></Route>
               <Route path="chatbox/:type" element={<ChatList />} />
               <Route path="review" element={<ScrumReviewBoard />} />
-              <Route path="dailyscrum" element={<DailyScrum />} />
+              <Route path="dailyscrum/:reviewId" element={<DailyScrum />} />
               {/* <Route path="graph" element={<Graph />} /> */}
             </Route>
             <Route

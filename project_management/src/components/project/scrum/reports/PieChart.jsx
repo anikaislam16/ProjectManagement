@@ -8,38 +8,11 @@ function PieChart() {
   const { open } = useContext(SidebarContextScrum);
   const { projectId } = useParams();
 
-  const [dateRange, setDateRange] = useState([]);
-  const [totalDays, setTotalDays] = useState(0);
-
-  const [options, setOption] = useState({
-    series: [44, 55, 13, 43, 22],
-    chart: {
-      width: 380,
-      type: "pie",
-    },
-    labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200,
-          },
-          legend: {
-            position: "bottom",
-          },
-        },
-      },
-    ],
-  });
   const [data, setData] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
   const [BoardData, setBoardData] = useState(null);
-  const [remainingStoryPoints, setRemainingStoryPoints] = useState(0);
-  const [storyPointsPerDay, setStoryPointsPerDay] = useState(0);
-  const [burnDownData, setBurnDownData] = useState([]);
-  const [actualData, setActualData] = useState([]);
+
   const [secondSelectOption, setSecondSelectOption] = useState(null);
   const [piechartData, setPieChartData] = useState([]);
   const [pieChartCategory, setPieChartCategory] = useState([]);

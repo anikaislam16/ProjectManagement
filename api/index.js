@@ -3,7 +3,7 @@ const express = require("express");
 const socketIO = require("socket.io");
 const morgan = require("morgan");
 const memberRoute = require("./routes/memberRoute/MemberInfo");
-
+const TestRoute=require('./routes/testRoute/TestRoute.js')
 const kanbanRoute = require("./routes/kanbanRoute/KanbanRoute");
 const connectToMongoDB = require("./server.js");
 
@@ -72,6 +72,7 @@ app.use("/projects/scrum", ScrumRoute);
 app.use("/signup", Signroute);
 app.use("/pdf", pdfRoute);
 app.use("/message", MessageRoute);
+app.use("/test", TestRoute);
 
 ///Practicing socket io
 // Socket.io logic

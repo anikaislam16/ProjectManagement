@@ -1,0 +1,23 @@
+.scrum-button-container {
+  display: flex;
+}
+
+.scrum-button {
+  flex: 1;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  margin: 5px;
+  background-color: #f0f0f0;
+}
+
+.scrum-button:hover {
+  background-color: #e0e0e0;
+}
+
+.scrum-button:active {
+  background-color: #d0d0d0;
+}

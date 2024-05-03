@@ -11,6 +11,7 @@ import conversation from "../../Images/conversation.png";
 import ulaa from "../../Images/ulaa.png";
 import board from "../../Images/board.png";
 import backlog from "../../Images/backlog.png";
+import testing from "../../Images/testing.png";
 import { Modal, Button } from "react-bootstrap";
 // import Settings from "../Images/settings.svg";
 // import Support from "../Images/support.svg";
@@ -257,6 +258,22 @@ const SidebarScrum = ({ projectId }) => {
               />
 
               <span className="text-hidden">Review</span>
+            </NavLink>
+          </li>
+          <li
+            className={
+              location.pathname === `/project/scrum/${projectId}/tdd`
+                ? "active"
+                : ""
+            }
+          >
+            <NavLink to={`/project/scrum/${projectId}/tdd`}>
+              <img
+                src={testing}
+                alt="News"
+                style={{ width: "30px", height: "30px" }}
+              />
+              <span className="text-hidden">TDD</span>
             </NavLink>
           </li>
         </ul>
