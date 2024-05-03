@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState, useContext } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { DragDropContext } from "react-beautiful-dnd";
+import { Modal, Button } from 'react-bootstrap';
 import useLocalStorage from "use-local-storage";
 import { v4 as uuidv4 } from "uuid";
 import "./SprintBoardMain.css";
@@ -11,6 +12,7 @@ import SidebarContextScrum from "../../../../sidebar_app/components_scrum/sideba
 import { SkipBack } from "react-feather";
 import { checkSession } from "../../../sessioncheck/session";
 import { useNavigate } from "react-router-dom";
+import { checkScrumRole } from "../checkScrumRole";
 function SprintBoardMain() {
   const { open } = useContext(SidebarContextScrum);
   const { projectId } = useParams();
@@ -21,8 +23,25 @@ function SprintBoardMain() {
   const [backlogId, setBacklogId] = useState("");
   const location = useLocation();
   var [a, seta] = useState(false);
+  var [role, setrole] = useState(null);
+  const [errorModal, setErrorModal] = useState(false);
+  const [id, setid] = useState(null);
   const initializeData = async () => {
     try {
+      const getRoles = async () => {
+        const userData = await checkSession();
+        if (userData.hasOwnProperty('message')) {
+          const datasend = { message: "Session Expired" }
+          navigate('/login', { state: datasend });
+        }
+        else {
+          setid(userData.id);
+          const projectrole = await checkScrumRole(projectId, userData.id);
+          setrole(role = projectrole.role);
+          console.log(role);
+        }
+      }
+      getRoles();
       const response = await fetch(
         `http://localhost:3010/projects/scrum/${projectId}`
       ); // Replace with your API endpoint
@@ -374,47 +393,57 @@ function SprintBoardMain() {
 
   const onDragEnd = async (result) => {
     const { source, destination } = result;
-    if (!destination) return;
-    console.log("abc " + source.droppableId);
-    console.log("bcd " + destination.droppableId);
-    const sourceIndex = source.index;
-    const destinationIndex = destination.index;
-    console.log("cde " + sourceIndex);
-    console.log("def " + destinationIndex);
-    if (source.droppableId === destination.droppableId) {
-      dragCardInSameBoard(
-        sourceIndex,
-        destinationIndex,
-        destination.droppableId
-      );
-      return;
-    }
-    console.log("Ula");
-    try {
-      const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sourceIndex: source.index,
-            destinationIndex: destination.index,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to update Board: ${response.statusText}`);
+    const matchedboard = (data.find(item => item.id === result.source.droppableId)).card;
+    console.log(matchedboard);
+    const matchedcard = (matchedboard.find(item => item._id === result.draggableId))
+    const member = (matchedcard.members.find(item => item.member_id === id))
+    //klk ekhan theke start
+    if (role === 'Product owner') {
+      if (!destination) return;
+      console.log("abc " + source.droppableId);
+      console.log("bcd " + destination.droppableId);
+      const sourceIndex = source.index;
+      const destinationIndex = destination.index;
+      console.log("cde " + sourceIndex);
+      console.log("def " + destinationIndex);
+      if (source.droppableId === destination.droppableId) {
+        dragCardInSameBoard(
+          sourceIndex,
+          destinationIndex,
+          destination.droppableId
+        );
+        return;
       }
+      console.log("Ula");
+      try {
+        const response = await fetch(
+          `http://localhost:3010/projects/scrum/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sourceIndex: source.index,
+              destinationIndex: destination.index,
+            }),
+          }
+        );
 
-      // Process successful response here if needed
-    } catch (error) {
-      console.error("Error updating card item:", error.message);
-      // Handle the error or show a user-friendly message
+        if (!response.ok) {
+          throw new Error(`Failed to update Board: ${response.statusText}`);
+        }
+
+        // Process successful response here if needed
+      } catch (error) {
+        console.error("Error updating card item:", error.message);
+        // Handle the error or show a user-friendly message
+      }
+      setData((prevData) => dragCardInBoard(prevData, source, destination));
     }
-    setData((prevData) => dragCardInBoard(prevData, source, destination));
+    else {
+      setErrorModal(true);
+    }
   };
 
   const updateCard = (bid, cid, card) => {
@@ -470,6 +499,7 @@ function SprintBoardMain() {
   useEffect(() => {
     console.log(data);
   }, [data]);
+  const handleClose = () => setErrorModal(false);
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="">
@@ -498,6 +528,7 @@ function SprintBoardMain() {
                         onModalSave={handleSaveChanges}
                         addBoard={addBoard}
                         completeBoard={completeBoard}
+                        role={role}
                       />
                     );
                   }
@@ -520,6 +551,19 @@ function SprintBoardMain() {
             </div>
           </div>
         </DragDropContext>
+        <Modal show={errorModal} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Only Product Owner can select cards for current Sprint
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );

@@ -20,6 +20,7 @@ const ScrumCompleteBoard = (props) => {
           {props.card?.map((items, index) => (
             <ScrumCompletedCard
               bid={props.id}
+              completed={props.item.completed}
               id={items._id}
               index={index}
               key={items._id}
@@ -29,6 +30,7 @@ const ScrumCompleteBoard = (props) => {
               updateCard={props.updateCard}
               removeCard={props.removeCard}
               card={items}
+              onDrag={props.onDrag}
             />
           ))}
         </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 
 import {
   CheckSquare,
+  Move,
   CreditCard,
   Paperclip,
   Tag,
@@ -14,7 +15,7 @@ import SprintEditable from "../../Editable/SprintEditable";
 import SprintLabel from "../../Label/SprintLabel";
 import SprintModal from "../../Modal/SprintModal";
 import "./SprintCardDetails.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ActivitySelector from "./AcitivityButton/ActivitySelector";
 import EditableHeader from "../../../../kanban/board/components/Card/CardDetails/tasklist/EditableHeader";
 import PrioritySelector from "../../../../kanban/board/components/Card/CardDetails/priorityButtons/PrioritySelector";
@@ -23,6 +24,8 @@ import SprintCardEditable from "../../CardEditable/SprintCardEditable";
 import dependenciesImage from "./dependencies.png";
 import StartDateButton from "./Date/StartDateButton";
 import Dependencylist from "./Dependency/Dependencylist";
+import { checkSession } from "../../../../../sessioncheck/session";
+import { checkScrumRole } from "../../../checkScrumRole";
 export default function SprintCardDetails(props) {
   const colors = ["#61bd4f", "#f2d600", "#ff9f1a", "#eb5a46", "#c377e0"];
   const { projectId } = useParams();
@@ -38,6 +41,13 @@ export default function SprintCardDetails(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [pdfs, setPdf] = useState([]);
+  const [isOptionBarOpen, setIsOptionBarOpen] = useState(false);
+  var [role, setrole] = useState(null);
+  const [cardMember, setCardMember] = useState(true);
+  const navigate = useNavigate();
+  const toggleOptionBar = () => {
+    setIsOptionBarOpen(!isOptionBarOpen);
+  };
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -47,6 +57,10 @@ export default function SprintCardDetails(props) {
     const numericValue = parseFloat(inputValue);
     updateFields("storyPoints", numericValue);
     // Optionally, you can clear the input field after clicking the button
+  };
+  const moveCard = (board) => {
+    if (props.onClose) props.onClose(false);
+    props.onDrag(board, props.bid, props.index);
   };
   const fetchData = async () => {
     try {
@@ -67,6 +81,20 @@ export default function SprintCardDetails(props) {
     }
   };
   useEffect(() => {
+    const getRoles = async () => {
+      const userData = await checkSession();
+      if (userData.hasOwnProperty('message')) {
+        const datasend = { message: "Session Expired" }
+        navigate('/login', { state: datasend });
+      }
+      else {
+        const projectrole = await checkScrumRole(projectId, userData.id);
+        setrole(role = projectrole.role);
+        const member = (values.members.find(item => item.member_id === userData.id))
+        setCardMember(member ? true : false);
+      }
+    }
+    getRoles();
     fetchData();
   }, []);
   const Input = (props) => {
@@ -308,6 +336,7 @@ export default function SprintCardDetails(props) {
   };
 
   const removeTag = async (id) => {
+    console.log(id, projectId, props.bid, props.card._id);
     try {
       console.log("tag id ", id);
       const response = await fetch(
@@ -326,7 +355,7 @@ export default function SprintCardDetails(props) {
 
       // Assuming taskId is part of your state
       // Filter out the deleted task from your state
-      const tempTag = values.tags.filter((item) => item.id !== id);
+      const tempTag = values.tags.filter((item) => item._id !== id);
       setValues({
         ...values,
         tags: tempTag,
@@ -389,7 +418,7 @@ export default function SprintCardDetails(props) {
     const resultData = await response.json();
     const tagId = resultData.newSubDocumentId;
     values.tags.push({
-      id: tagId,
+      _id: tagId,
       tagName: value,
       color: color,
     });
@@ -632,8 +661,8 @@ export default function SprintCardDetails(props) {
                 ) : (
                   <div style={{ maxHeight: "400px", width: "700px" }}>
                     <h5
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setInput(true)}
+                      style={{ cursor: role === 'Product owner' ? "pointer" : 'default' }}
+                      onClick={() => setInput((role === 'Product owner') ? true : false)}
                     >
                       {values.cardName}
                     </h5>
@@ -658,10 +687,10 @@ export default function SprintCardDetails(props) {
                       {item.tagName.length > 10
                         ? item.tagName.slice(0, 6) + "..."
                         : item.tagName}
-                      <X
-                        onClick={() => removeTag(item.id)}
+                      {(role !== 'Stackholder' && !(role === 'Developer' && !cardMember)) && <X
+                        onClick={() => { console.log(item); removeTag(item._id); }}
                         style={{ width: "15px", height: "15px" }}
-                      />
+                      />}
                     </span>
                   ))
                 ) : (
@@ -694,6 +723,58 @@ export default function SprintCardDetails(props) {
                     </div>
                   </div>
                 </div>
+
+                <div className="my-2">
+                  {values.task.length !== 0 ? (
+                    values.task.map((item, index) => (
+                      <div
+                        className="task__list d-flex align-items-start gap-2"
+                        key={item._id}
+                      >
+                        {console.log(item)} {/* Log item to console */}
+                        <input
+                          className="task__checkbox"
+                          type="checkbox"
+                          defaultChecked={item.complete}
+                          disabled={(role !== 'Stackholder' && role !== 'Product owner' && !(role === 'Developer' && !cardMember)) ? false : true}
+                          onChange={() => {
+                            updateTask(item._id);
+                          }}
+                        />
+                        {/*next din start*/}
+                        {(role !== 'Stackholder' && role !== 'Product owner' && !(role === 'Developer' && !cardMember)) ? <EditableHeader
+                          value={item}
+                          id={item._id}
+                          initialValue={item.taskName}
+                          initialPoint={item.point}
+                          onSave={handleTaskClick}
+                          onClose={() => { }}
+                        /> : <b>{item.taskName}</b>}
+                        {(role !== 'Stackholder' && role !== 'Product owner' && !(role === 'Developer' && !cardMember)) && <Trash
+                          onClick={() => {
+                            removeTask(item._id);
+                          }}
+                          style={{
+                            cursor: "pointer",
+                            width: "18px", // Fix typo in 'width'
+                            height: "18px",
+                            marginLeft: "30px",
+                          }}
+                        />}
+                      </div>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+
+                  {(role !== 'Stackholder' && role !== 'Product owner' && !(role === 'Developer' && !cardMember)) && <SprintCardEditable
+                    parentClass={"task__editable"}
+                    name={"Add Task"}
+                    btnName={"Add task"}
+                    onSubmit={addTask}
+                  />}
+                </div>
+                <br />
                 <h6 className="text-2xl font-semibold mb-4">All PDFs</h6>
                 <div className="box-container">
                   {pdfs &&
@@ -701,20 +782,21 @@ export default function SprintCardDetails(props) {
                       <div key={pdf._id} className="pdf-box">
                         <div className="pdf-header">
                           <p className="pdf-title">{pdf.title}</p>
-                          <button
-                            className="delete-button"
-                            onClick={(e) =>
-                              handleDeleteFile(
-                                pdf._id,
-                                props.bid,
-                                props.card._id,
-                                e
-                              )
-                            }
-                          // handleDownload(pdf._id, props.bid, props.card._id, e)
-                          >
-                            X
-                          </button>
+                          {(role !== 'Stackholder' && role !== 'Product owner' && !(role === 'Developer' && !cardMember)) &&
+                            <button
+                              className="delete-button"
+                              onClick={(e) =>
+                                handleDeleteFile(
+                                  pdf._id,
+                                  props.bid,
+                                  props.card._id,
+                                  e
+                                )
+                              }
+                            // handleDownload(pdf._id, props.bid, props.card._id, e)
+                            >
+                              X
+                            </button>}
                         </div>
                         <button
                           className="bg-green-500 text-black py-2 px-4 rounded hover:bg-green-600"
@@ -725,65 +807,17 @@ export default function SprintCardDetails(props) {
                       </div>
                     ))}
                 </div>
-                <div className="my-2">
-                  {values.task.length !== 0 ? (
-                    values.task.map((item, index) => (
-                      <div
-                        className="task__list d-flex align-items-start gap-2"
-                        key={item.id}
-                      >
-                        {console.log(item)} {/* Log item to console */}
-                        <input
-                          className="task__checkbox"
-                          type="checkbox"
-                          defaultChecked={item.complete}
-                          onChange={() => {
-                            updateTask(item._id);
-                          }}
-                        />
-                        <EditableHeader
-                          value={item}
-                          id={item._id}
-                          initialValue={item.taskName}
-                          initialPoint={item.point}
-                          onSave={handleTaskClick}
-                          onClose={() => { }}
-                        />
-                        <Trash
-                          onClick={() => {
-                            removeTask(item._id);
-                          }}
-                          style={{
-                            cursor: "pointer",
-                            width: "18px", // Fix typo in 'width'
-                            height: "18px",
-                            marginLeft: "30px",
-                          }}
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    <></>
-                  )}
-
-                  <SprintCardEditable
-                    parentClass={"task__editable"}
-                    name={"Add Task"}
-                    btnName={"Add task"}
-                    onSubmit={addTask}
-                  />
-                </div>
               </div>
             </div>
             <div className="col-4">
               <h6>Add to card</h6>
               <div className="d-flex card__action__btn flex-column gap-2">
-                <button onClick={() => setLabelShow(true)}>
+                {(role !== 'Stackholder' && !(role === 'Developer' && !cardMember)) && <button onClick={() => setLabelShow(true)}>
                   <span className="icon__sm">
                     <Tag />
                   </span>
                   Add Label
-                </button>
+                </button>}
                 {labelShow && (
                   <SprintLabel
                     color={colors}
@@ -795,14 +829,22 @@ export default function SprintCardDetails(props) {
                 <ActivitySelector
                   initialPriority={values.progres}
                   setPriority={updateFields}
+                  role={role}
                 />
+                {
+                  role !== 'Developer' &&
+                  <div><h6>Story point of Card</h6></div>
+                }
                 <input
                   type="number"
                   value={inputValue}
                   onChange={handleInputChange}
                   placeholder="Enter value"
+                  disabled={role === 'Developer' ? false : true}
                 />
-                <button onClick={handleButtonClick}>Update Storypoints</button>
+                {
+                  role === 'Developer' &&
+                  < button onClick={handleButtonClick}>Update Storypoints</button>}
                 <StartDateButton
                   dueOrStart="Start"
                   handleDate={updateFields}
@@ -820,6 +862,8 @@ export default function SprintCardDetails(props) {
                 <PrioritySelector
                   initialPriority={values.priority}
                   setPriority={updateFields}
+                  role={role}
+                  cardMember={cardMember}
                 />
                 <button onClick={MemberButtonClick}>
                   <span className="icon__sm">
@@ -829,7 +873,7 @@ export default function SprintCardDetails(props) {
                   Members
                 </button>
                 {isMemberVisible && (
-                  <CardMember bid={props.bid} cardId={props.card._id} />
+                  <CardMember bid={props.bid} cardId={props.card._id} member_role={role} />
                 )}
                 {(props.type === "1" || props.type === "sprint") && (
                   <button onClick={DependencyButtonClick}>
@@ -850,37 +894,70 @@ export default function SprintCardDetails(props) {
                     cardId={props.card._id}
                     projectId={projectId}
                     addStartDate={addStartDate}
+                    role={role}
                   />
                 )}
-                <form className="space-y-4">
+                {(role !== 'Stackholder' && !(role === 'Developer' && !cardMember)) && <form className="space-y-4" >
                   <input
                     type="file"
                     accept=".pdf, .jpg, .jpeg, .png, .gif, .docx .txt"
                     onChange={handleFileChange}
                     ref={fileInputRef}
                     className="border rounded p-2"
+                    style={{ cursor: 'pointer' }}
                   />
 
                   <button
                     type="submit"
-                    style={{ color: "black" }}
+                    style={{ color: "black", cursor: 'pointer' }}
                     onClick={handleSubmit}
                     disabled={isUploadDisabled}
                   >
                     Upload
                   </button>
-                </form>
-                <button onClick={deleteCard}>
+                </form>}
+                {(role === 'Product owner') && <button onClick={deleteCard}>
                   <span className="icon__sm">
                     <Trash />
                   </span>
                   Delete Card
-                </button>
+                </button>}
+                {props.completed && (
+                  <div className="option-bar">
+                    {role === 'Product owner' && < button className="option-button" onClick={toggleOptionBar}>
+                      <span
+                        className="icon__sm"
+                        style={{ marginLeft: "2px", marginRight: "5px" }}
+                      >
+                        <Move />
+                      </span>
+                      Move Card
+                    </button>}
+                    {isOptionBarOpen && (
+                      <div className="dropdown-content">
+                        <button
+                          onClick={() => {
+                            moveCard("Backlog");
+                          }}
+                        >
+                          To Backlog
+                        </button>
+                        <button
+                          onClick={() => {
+                            moveCard("Sprint");
+                          }}
+                        >
+                          To Current Sprint
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </SprintModal>
+    </SprintModal >
   );
 }

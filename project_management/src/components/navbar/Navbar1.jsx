@@ -57,6 +57,7 @@ const Navbar1 = () => {
           }
           const fetchProjectData = async () => {
             try {
+              console.log("ks");
               const response = await fetch('http://localhost:3010/projects/kanban/', {
                 method: 'PUT',
                 headers: {
@@ -69,6 +70,10 @@ const Navbar1 = () => {
               if (!data.hasOwnProperty('message')) {
                 console.log('Kanban Projects find successfully:', projects);
                 setProjects(projects = data.projects);
+                console.log(projects);
+              }
+              else {
+                setProjects(projects = []);
               }
               const responseScrum = await fetch('http://localhost:3010/projects/scrum/', {
                 method: 'PUT',

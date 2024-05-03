@@ -43,7 +43,7 @@ const createProject = async (req, res) => {
     members: [
       {
         member_id: existingMember._id,
-        role: 'Product owner',
+        role: 'Scrum Master',
       },],
     weekdays: req.body.weekDays,
     creator: existingMember._id,

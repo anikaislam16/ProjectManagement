@@ -4,12 +4,16 @@ const kanbanProjectSchema = new mongoose.Schema({
   projectName: String,
   projectType: {
     type: String,
-    default:"Kanban"
+    default: "Kanban"
   },
   boards: [{ type: mongoose.Schema.Types.ObjectId, ref: "KanbanBoard" }],
   members: [{
     member_id: { type: mongoose.Schema.Types.ObjectId, ref: "Member" },
     role: String,
+    drag: {
+      type: String,
+      default: "disable"
+    },
   },],
   workflow: {
     type: Boolean,

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { Modal, Button } from 'react-bootstrap';
 import { useParams } from "react-router-dom";
 import SidebarContext from "../../../../sidebar_app/components/sidebar_context/SidebarContext";
 import "./BoardMain.css";
@@ -8,6 +9,7 @@ import Editable from "./components/Editable/Editable";
 import { useNavigate, useLocation } from "react-router-dom";
 import { checkSession } from "../../../sessioncheck/session";
 import { Dropdown } from "bootstrap";
+import { checkKanbanRole } from "../checkKanbanRole";
 const BoardMain = () => {
   const { open } = useContext(SidebarContext);
   const { projectId } = useParams();
@@ -20,8 +22,27 @@ const BoardMain = () => {
   var [a, seta] = useState(false);
   const location = useLocation();
   const [filter, setfilter] = useState(false);
+  var [role, setrole] = useState(null);
+  const [dragcntrl, setdragcntrl] = useState(false);
+  const [errorModal, setErrorModal] = useState(false);
+  const [id, setid] = useState(null);
   const initializeData = async () => {
     try {
+      const getRoles = async () => {
+        const userData = await checkSession();
+        if (userData.hasOwnProperty('message')) {
+          const datasend = { message: "Session Expired" }
+          navigate('/login', { state: datasend });
+        }
+        else {
+          setid(userData.id);
+          const projectrole = await checkKanbanRole(projectId, userData.id);
+          setrole(role = projectrole.role);
+          setdragcntrl(projectrole.drag === 'enable' ? true : false);
+          console.log(role);
+        }
+      }
+      getRoles();
       const response = await fetch(
         `http://localhost:3010/projects/kanban/${projectId}`
       ); // Replace with your API endpoint
@@ -416,51 +437,59 @@ const BoardMain = () => {
 
   const onDragEnd = async (result) => {
     const { source, destination } = result;
-    if (!destination) return;
-    console.log("abc " + source.droppableId);
-    console.log("bcd " + destination.droppableId);
-    const sourceIndex = source.index;
-    const destinationIndex = destination.index;
-    console.log("cde " + sourceIndex);
-    console.log("def " + destinationIndex);
-    if (source.droppableId === destination.droppableId) {
-      dragCardInSameBoard(
-        sourceIndex,
-        destinationIndex,
-        destination.droppableId
-      );
-      return;
-    }
-
-    // Ask for confirmation
-
-
-    console.log("Ula");
-    try {
-      const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            sourceIndex: source.index,
-            destinationIndex: destination.index,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to update Board: ${response.statusText}`);
+    const matchedboard = (data.find(item => item.id === result.source.droppableId)).card;
+    const matchedcard = (matchedboard.find(item => item._id === result.draggableId))
+    const member = (matchedcard.members.find(item => item.member_id === id))
+    if (role === 'admin' || (dragcntrl === true && role === 'developer' && member)) {
+      if (!destination) return;
+      console.log("abc " + source.droppableId);
+      console.log("bcd " + destination.droppableId);
+      const sourceIndex = source.index;
+      const destinationIndex = destination.index;
+      console.log("cde " + sourceIndex);
+      console.log("def " + destinationIndex);
+      if (source.droppableId === destination.droppableId) {
+        dragCardInSameBoard(
+          sourceIndex,
+          destinationIndex,
+          destination.droppableId
+        );
+        return;
       }
 
-      // Process successful response here if needed
-    } catch (error) {
-      console.error("Error updating card item:", error.message);
-      // Handle the error or show a user-friendly message
+      // Ask for confirmation
+
+
+      console.log("Ula");
+      try {
+        const response = await fetch(
+          `http://localhost:3010/projects/kanban/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sourceIndex: source.index,
+              destinationIndex: destination.index,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to update Board: ${response.statusText}`);
+        }
+
+        // Process successful response here if needed
+      } catch (error) {
+        console.error("Error updating card item:", error.message);
+        // Handle the error or show a user-friendly message
+      }
+      setData((prevData) => dragCardInBoard(prevData, source, destination));
     }
-    setData((prevData) => dragCardInBoard(prevData, source, destination));
+    else {
+      setErrorModal(true);
+    }
   };
 
   const updateCard = (bid, cid, card) => {
@@ -525,13 +554,14 @@ const BoardMain = () => {
   const filterfunction = () => {
     setfilter(!filter);
   }
+  const handleClose = () => setErrorModal(false);
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="center-content">
-        <button class="btn btn-primary filter-button" onClick={filterfunction}>
+        {role === 'developer' && <button class="btn btn-primary filter-button" onClick={filterfunction}>
           <img src="/filter_icon.png" alt="Filter Icon" class="filter-icon" style={{ height: '30px', width: '30px' }} />
           {filter ? 'See All Cards' : 'Filter My Cards'}
-        </button>
+        </button>}
         <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
           <Droppable
             droppableId="main-board"
@@ -564,9 +594,10 @@ const BoardMain = () => {
                       index={index}
                       length={data.length - 1}
                       filter={filter}
+                      role={role}
                     />
                   ))}
-                  {workflow === false && (
+                  {workflow === false && role === 'admin' && (
                     <Editable
                       class={"add__board"}
                       name={"Add Board"}
@@ -580,6 +611,19 @@ const BoardMain = () => {
             )}
           </Droppable>
         </DragDropContext>
+        <Modal show={errorModal} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            You are not authorized to drag and drop this Card.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );

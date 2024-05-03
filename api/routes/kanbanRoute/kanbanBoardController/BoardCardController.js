@@ -25,7 +25,7 @@ const addCard = async (req, res) => { //lagbe
       members: [
         {
           member_id: existingMember._id,
-          role: 'Admin',
+          role: 'admin',
         },], // Assuming members is an array
       creationTime: new Date(),
       board: [
@@ -289,7 +289,7 @@ const deleteCardField = async (req, res) => {//lagbe
     );
     let indexToDelete;
     //for the array type element
-    if (subDocumentKey === 'dependencies' || 'workflow') {
+    if (subDocumentKey === 'dependencies' || subDocumentId === 'workflow') {
       indexToDelete = cardToUpdate[subDocumentKey].indexOf(subDocumentId);
       console.log('dkfa', indexToDelete);
     }

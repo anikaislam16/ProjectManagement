@@ -74,7 +74,7 @@ export default function MyProject() {
     <div>
       {authorized ?
         <div className="container mt-5">
-          <h2 className="text-center mb-4">My Pojects</h2>
+          <h2 className="text-center mb-4">My Projects</h2>
           <div className="row">
             {projects.map((project) => (
               <div key={project._id} className="col-md-4 mb-4">

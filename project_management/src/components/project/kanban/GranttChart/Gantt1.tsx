@@ -6,7 +6,7 @@ import { initTasks, getStartEndDateForProject } from "./helpers.ts";
 import { ViewSwitcher } from "./ViewSwithcer.tsx";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import { slideStartDueDateFixed } from "./slideStartDueDateFixed.js"
-export default function Gantt1({ data }: { data: any[] }) {
+export default function Gantt1({ data, role }: { data: any[], role: string }) {
   const { open } = useContext(SidebarContext);
   console.log(data);
   const { projectId } = useParams();
@@ -160,7 +160,7 @@ export default function Gantt1({ data }: { data: any[] }) {
           <Gantt
             tasks={tasks}
             viewMode={view}
-            onDateChange={handleTaskChange}
+            onDateChange={role === 'admin' ? handleTaskChange : undefined}
             ganttHeight={400}
             onSelect={handleSelect}
             onExpanderClick={handleExpanderClick}

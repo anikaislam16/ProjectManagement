@@ -7,7 +7,7 @@ const cors = require("cors");
 const nodemailer = require('nodemailer');
 const { Userinfostore, UserinfoUpdate, updateMemberinfo } = require('./storeuser.js');
 const { Member } = require('../../../modules/MemberModule.js');
-const { findMemberbyId, memberget } = require('./findmemberbyId.js')
+const { findMemberbyId, memberget, findMemberRoleInProject } = require('./findmemberbyId.js')
 var bcrypt = require('bcryptjs');
 let origin = "";
 const transporter = nodemailer.createTransport({
@@ -28,7 +28,7 @@ const sendOtpEmail = (toEmail, otp) => {
         if (error) {
             console.error('Error sending email:', error);
         } else {
-            
+
         }
     })
 };
@@ -173,7 +173,7 @@ const signget = async (req, res) => {
         return res.status(200).json({ message: 'Email already exist' });
     }
     if (req.user) {
-       // console.log('nulld');
+        // console.log('nulld');
         const user1 = req.user;
         res.status(200).json({ message: "user Login", user: user1 });
     } else {
@@ -249,7 +249,7 @@ const sessionget = async (req, res) => {
         if (existingMember1) {
             const username = { ...req.session.user, id: existingMember1._id, picture: existingMember1.picture };
             res.status(200).json({ message: 'Session is present', user: username });//here req.session.user directly dile kaj krbe na.
-           // console.log(username);
+            // console.log(username);
         }
         else
             res.status(200).json({ message: 'No session found' });
@@ -298,4 +298,5 @@ sign.route('/login').get(logingooglematch).post(signget).put(googlesessionget).d
 sign.route('/loginmatch').post(loginmatch).get(sessionget).delete(sessiondel);
 sign.route('/login/forgetpass').post(findEmailotp);
 sign.route('/:id').get(findMemberbyId).put(memberget);
+sign.route('/:projectType/:projectId/member/:memberId').get(findMemberRoleInProject);
 module.exports = sign;

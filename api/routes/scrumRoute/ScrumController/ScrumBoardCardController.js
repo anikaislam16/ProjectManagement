@@ -33,7 +33,7 @@ const addCard = async (req, res) => {
       members: [
         {
           member_id: existingMember._id,
-          role: "Admin",
+          role: "Product owner",
         },
       ], // Assuming members is an array,
       // Assuming members is an array
@@ -229,7 +229,7 @@ const deleteCardField = async (req, res) => {
     // Find the index of the task, label, or member to delete within the array
     let indexToDelete;
     //for the array type element
-    if (subDocumentKey === 'dependencies' || 'workflow') {
+    if (subDocumentKey === 'dependencies' || subDocumentKey === 'workflow') {
       indexToDelete = cardToUpdate[subDocumentKey].indexOf(subDocumentId);
       console.log('dkfa', indexToDelete);
     }

@@ -34,7 +34,7 @@ export default function Board(props) {
   const handleModalClose = () => {
     setModalShow(false);
   };
-  const addCards = () => {};
+  const addCards = () => { };
   const handleInputChange = (field, value) => {
     console.log(value);
     setModalData({
@@ -86,7 +86,7 @@ export default function Board(props) {
           <div style={{ marginBottom: "5px" }}>
             <div
               onClick={() => {
-                setShow(true);
+                props.role === 'Product owner' && setShow(true);
               }}
               className="board__title"
               style={{ width: "500px", maxHeight: "400px", fontWeight: "bold" }}
@@ -96,7 +96,7 @@ export default function Board(props) {
             </div>
           </div>
         )}
-        {props.board.boardType !== "backlog" && (
+        {props.board.boardType !== "backlog" && props.role === 'Product owner' && (
           <Dropdown
             className="board__dropdown"
             show={dropdown}
@@ -151,14 +151,14 @@ export default function Board(props) {
           </div>
         )}
       </Droppable>
-      <div className="board__footer">
+      {props.role === 'Product owner' && <div className="board__footer">
         <SprintEditable
           name={"Add Card"}
           btnName={"Add Card"}
           placeholder={"Enter Card Title"}
           onSubmit={(value) => props.addCard(value, props.id)}
         />
-      </div>
+      </div>}
       <Modal show={modalShow} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Sprint</Modal.Title>

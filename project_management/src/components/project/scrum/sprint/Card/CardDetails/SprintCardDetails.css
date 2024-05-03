@@ -1,4 +1,4 @@
-.card__action__btn > button {
+.card__action__btn>button {
   background-color: var(--task-hover);
   color: var(--text-color);
   border: none;
@@ -25,23 +25,28 @@
   align-items: center;
   gap: 5px;
 }
-.card__action__btn > button:hover {
+
+.card__action__btn>button:hover {
   background-color: var(--task-hover);
   border: none;
 }
-.icon__sm > svg {
+
+.icon__sm>svg {
   height: 15px;
   width: 15px;
 }
+
 .icon__md {
   height: 20px;
   width: 20px;
 }
+
 .card__label {
   display: flex;
   justify-content: space-between;
 }
-.label__color > span {
+
+.label__color>span {
   height: 32px;
   box-sizing: border-box;
   min-width: 40px;
@@ -55,15 +60,19 @@
   float: left;
   margin: 0px 4px 4px 0px;
 }
-.label__color > span:hover {
+
+.label__color>span:hover {
   cursor: pointer;
 }
+
 .progress-bar {
   background-color: #61bd4f !important;
 }
+
 .task__editable {
   width: 30%;
 }
+
 .task__list {
   min-height: 20px;
   height: auto;
@@ -71,6 +80,7 @@
   padding-inline: 0.5rem;
   border-radius: 2px;
 }
+
 .task__list:hover {
   background-color: var(--task-hover);
 }
@@ -80,7 +90,8 @@
   width: 18px !important;
   cursor: pointer;
 }
-.task__list > div > p {
+
+.task__list>div>p {
   text-align: left;
   font-size: 16px;
 }
@@ -88,11 +99,13 @@
 .strike-through {
   text-decoration: line-through;
 }
+
 .box-container {
   display: flex;
   flex-wrap: wrap;
   width: 500px;
-  gap: 16px; /* Adjust the gap between boxes as needed */
+  gap: 16px;
+  /* Adjust the gap between boxes as needed */
 }
 
 .pdf-box {
@@ -101,13 +114,15 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  width: 230px; /* Adjust the width of each box as needed */
+  width: 230px;
+  /* Adjust the width of each box as needed */
 }
 
 .pdf-title {
   font-weight: bold;
   margin-bottom: 8px;
 }
+
 .pdf-box {
   position: relative;
 }
@@ -116,10 +131,90 @@
   position: absolute;
   top: 5px;
   right: 5px;
-  background-color: #ece4e4; /* Adjust the background color as needed */
-  color: #ffffff; /* Adjust the text color as needed */
+  background-color: #ece4e4;
+  /* Adjust the background color as needed */
+  color: #ffffff;
+  /* Adjust the text color as needed */
   border: none;
   padding: 5px;
   cursor: pointer;
   border-radius: 50%;
+}
+
+.option-bar {
+  position: relative;
+  display: inline-block;
+}
+
+.option-button {
+  background-color: #f5f5f5;
+  /* Whitish background */
+  color: black;
+  padding: 5px;
+  width: 285px;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dropdown-content {
+  position: absolute;
+  background-color: #f5f5f5;
+  /* Whitish background */
+  width: 270px;
+  /* Custom width */
+  height: auto;
+  /* Adjust height as needed */
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: calc(100% + 10px);
+  /* Position below the button */
+  left: 50%;
+  /* Position in the middle of the button */
+  transform: translateX(-50%);
+  /* Center horizontally */
+  opacity: 0;
+  /* Initially hidden */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 1;
+  /* Show on hover */
+  top: calc(100% + 5px);
+  /* Smooth transition */
+}
+
+.option-bar:hover .dropdown-content {
+  /* Adjust position */
+}
+
+.dropdown-content button {
+  color: black;
+
+  text-decoration: none;
+  display: block;
+  width: 270px;
+  height: 40px;
+  /* Button width to fill the dropdown */
+  text-align: left;
+  /* Align text to the left */
+  border: none;
+  /* Remove button border */
+  background-color: transparent;
+  /* Transparent background */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Smooth transition */
+}
+
+.dropdown-content button:hover {
+  background-color: #ddd;
+  /* Light gray background on hover */
+}
+
+.option-bar:hover .dropdown-content {
+  display: block;
+}
+
+.option-bar:hover .option-button {
+  background-color: #e0e0e0;
+  /* Slightly darker background on hover */
 }

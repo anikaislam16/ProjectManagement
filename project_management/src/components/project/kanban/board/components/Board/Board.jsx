@@ -36,7 +36,7 @@ export default function Board(props) {
   });
   var cnt = 0;
   return (
-    <div className="Ssboard">
+    <div className="Ssboard" style={{ width: '400px' }}>
       <div className="board__top">
         {show ? (
           <div>
@@ -48,12 +48,13 @@ export default function Board(props) {
                 props.setName(e.target.value, props.id);
               }}
             />
+
           </div>
         ) : (
           <div>
             <p
               onClick={() => {
-                setShow(true);
+                props.role === 'admin' && setShow(true);
               }}
               className="board__title"
             >
@@ -67,7 +68,7 @@ export default function Board(props) {
             </p>
           </div>
         )}
-        <Dropdown
+        {props.role === 'admin' && <Dropdown
           className="board__dropdown"
           show={dropdown}
           style={{ backgroundColor: "#F1F8F5" }}
@@ -85,7 +86,7 @@ export default function Board(props) {
             )}
             {/* Add more Dropdown.Items for other actions */}
           </Dropdown.Menu>
-        </Dropdown>
+        </Dropdown>}
       </div>
       <Droppable droppableId={props.id.toString()}>
         {(provided) => (
@@ -118,14 +119,14 @@ export default function Board(props) {
           </div>
         )}
       </Droppable>
-      <div className="board__footer">
+      {props.role === 'admin' && <div className="board__footer">
         <Editable
           name={"Add Card"}
           btnName={"Add Card"}
           placeholder={"Enter Card Title"}
           onSubmit={(value) => props.addCard(value, props.id)}
         />
-      </div>
+      </div>}
     </div>
   );
 }

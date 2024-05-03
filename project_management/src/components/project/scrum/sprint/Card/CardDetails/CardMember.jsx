@@ -181,13 +181,13 @@ const CardMember = (props) => {
     });
 
     return (
-        <div className="card-member-box">
+        <div className="card-member-box" style={{ cursor: props.member_role === 'Scrum Master' ? 'pointer' : 'default' }}>
             <h3>Available Members</h3>
             <ul className="list-group">
                 {sortedMembers.map((member) => (
                     <li
                         key={member.id}
-                        onClick={() => handleMemberClick(member.member_id, member.role)}
+                        onClick={() => (props.member_role === 'Scrum Master') ? handleMemberClick(member.member_id, member.role) : null}
                         className={`list-group-item d-flex justify-content-between align-items-center ${selectedMembers.includes(member.member_id) ? 'active' : ''
                             }`}
                     >

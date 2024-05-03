@@ -347,7 +347,7 @@ const DependencyList = (props) => {
                         className={`list-group-item d-flex justify-content-between align-items-center`}
                     >
                         {dependency.matchingCard.cardName} ({dependency.Name})
-                        <span
+                        {props.role === 'admin' && <span
                             className="badge "
                             onClick={() => RemoveDependency(index)}
                             style={{
@@ -358,7 +358,7 @@ const DependencyList = (props) => {
                             onMouseLeave={() => setIsHovered(false)}
                         >
                             ❌
-                        </span>
+                        </span>}
                     </li>
                 ))}
             </ul>
@@ -376,9 +376,9 @@ const DependencyList = (props) => {
                 </Modal>
             )}
             <div className="d-flex justify-content-end">
-                <Button variant="primary" onClick={() => setShowModal(true)}>
+                {props.role === 'admin' ? <Button variant="primary" onClick={() => setShowModal(true)}>
                     Add Dependency
-                </Button>
+                </Button> : <br />}
 
                 <Modal show={showModal} onHide={handleCloseModal}>
                     <Modal.Header closeButton>

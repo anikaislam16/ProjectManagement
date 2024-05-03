@@ -1,5 +1,6 @@
-const { Member } = require("../../../modules/MemberModule")
-
+const { Member } = require("../../../modules/MemberModule");
+const { KanbanProject } = require("../../../modules/KanbanModule");
+const { ScrumProject } = require("../../../modules/ScrumModule");
 const findMemberbyId = async (req, res) => {
     const memberId = req.params.id;
     console.log(memberId);
@@ -30,4 +31,34 @@ const memberget = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
-module.exports = { findMemberbyId, memberget };
+const findMemberRoleInProject = async (req, res) => {
+    const { projectType, projectId, memberId } = await req.params;
+    try {
+        // Find the project with the specific _id
+        let project;
+        console.log("fg", projectType, projectId, memberId)
+        if (projectType === 'kanban') {
+            project = await KanbanProject.findById(projectId);
+        }
+        else {
+            project = await ScrumProject.findById(projectId);
+        }
+        if (!project) {
+            return res.status(404).send('Project not found');
+        }
+
+        // Find the member in the project's members array
+        const member = project.members.find(m => m.member_id.toString() === memberId);
+
+        if (!member) {
+            return res.status(404).send('Member not found in the project');
+        }
+
+        // Respond with the found member
+        res.json(member);
+    } catch (error) {
+        console.error('Failed to find member:', error);
+        res.status(500).send('Server error');
+    }
+}
+module.exports = { findMemberbyId, memberget, findMemberRoleInProject };

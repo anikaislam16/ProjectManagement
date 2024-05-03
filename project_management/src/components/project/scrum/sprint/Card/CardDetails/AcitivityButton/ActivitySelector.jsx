@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import "./ActivitySelector.css";
 
-const ActivitySelector = ({ initialPriority, setPriority }) => {
+const ActivitySelector = ({ initialPriority, setPriority, role }) => {
   const [selectedPriority, setSelectedPriority] = useState(
     initialPriority || "todo"
   );
@@ -27,7 +27,7 @@ const ActivitySelector = ({ initialPriority, setPriority }) => {
   const priorityClassName = `priority-selector-${selectedPriority.toLowerCase()}`;
 
   return (
-    <div className={priorityClassName} onClick={handlePriorityClick}>
+    <div className={priorityClassName} onClick={() => role === 'Scrum Master' && handlePriorityClick} style={{ cursor: role === 'Scrum Master' ? 'pointer' : 'default' }}>
       {selectedPriority}
       <div className={`options-container ${optionsVisible ? "visible" : ""}`}>
         <div

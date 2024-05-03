@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Gantt1 from "./Gantt1";
-
+import { checkSession } from "../../../sessioncheck/session"
+import { checkScrumRole } from "../checkScrumRole";
 const GanttInitializer = () => {
   const [data, setData] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const { projectId } = useParams();
+  var [role, setrole] = useState(null);
+  const navigate = useNavigate();
   const initializeData = async () => {
     try {
       const response = await fetch(
@@ -30,15 +33,27 @@ const GanttInitializer = () => {
       console.error("Error fetching data:", error);
     }
   };
+  const getRoles = async () => {
+    const userData = await checkSession();
+    if (userData.hasOwnProperty('message')) {
+      const datasend = { message: "Session Expired" }
+      navigate('/login', { state: datasend });
+    }
+    else {
+      const projectrole = await checkScrumRole(projectId, userData.id);
+      setrole(role = projectrole.role);
+    }
+  }
   useEffect(() => {
     console.log("g " + projectId);
     console.log("h " + isInitialized);
     if (!isInitialized) {
       initializeData();
+      getRoles();
     }
   }, [isInitialized]);
   return (
-    <div>{isInitialized ? <Gantt1 data={data} /> : <p>Loading...</p>}</div>
+    <div>{isInitialized ? <Gantt1 data={data} role={role} /> : <p>Loading...</p>}</div>
   );
 };
 

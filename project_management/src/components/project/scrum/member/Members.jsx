@@ -1,15 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import SidebarContext from "../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum.jsx";
 import InviteMemberForm from "./InviteMemberForm";
 import './Member.css';
 import InvitePopup from "./InvitePopup.jsx";
+import { checkSession } from "../../../sessioncheck/session.js";
+import { checkScrumRole } from "../checkScrumRole.js";
 const MemberScrum = () => {
+  const navigate = useNavigate();
   const { open } = useContext(SidebarContext);
   const { projectId } = useParams();
   const [projectName, setProjectName] = useState(null);
   const [members, setMembers] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  var [role, setrole] = useState(null);
+  const [userId, setuserId] = useState(null);
   const handleClosePopup = () => {
     setShowPopup(false);
   };
@@ -63,12 +68,23 @@ const MemberScrum = () => {
         console.error('Error fetching data:', error.message);
       }
     };
-
+    const getRoles = async () => {
+      const userData = await checkSession();
+      if (userData.hasOwnProperty('message')) {
+        const datasend = { message: "Session Expired" }
+        navigate('/login', { state: datasend });
+      }
+      else {
+        const projectrole = await checkScrumRole(projectId, userData.id);
+        setrole(role = projectrole.role);
+      }
+    }
     fetchData();
+    getRoles();
   }, [projectId]);
   const handleRemoveMember = async (memberId, role) => {
-    const adminCount = members.filter(member => member.role === 'Product owner').length;
-    if (adminCount === 1 && role === 'Product owner') {
+    const adminCount = members.filter(member => member.role === 'Scrum Master').length;
+    if (adminCount === 1 && role === 'Scrum Master') {
       // Show the InvitePopup with the specified message
       setShowPopup(true);
     }
@@ -101,6 +117,9 @@ const MemberScrum = () => {
         console.error('Error in handleRemoveMember:', error.message);
         // Optionally, handle error scenarios here
       }
+      if (userId === memberId) {
+        navigate(`/`);
+      }
     }
   };
   const handleInvite = (newMember) => {
@@ -112,22 +131,25 @@ const MemberScrum = () => {
       <div className="center-content">
         <h3 className="mb-4">All Current members of {projectName}</h3>
 
-        <div className="list-group-container">
-          <ul className="list-group">
+        <div className="list-group-container" style={{ maxHeight: '450px' }}>
+          <ul className="list-group" style={role === 'Scrum Master' ? { maxHeight: '300px' } : { maxHeight: '430px' }}>
             {members.map((member, index) => (
               <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                <div className="col-4">
+                <div className={role === 'Scrum Master' ? "col-4" : "col-9"}>
                   <div>{index + 1}. {member.username}</div>
                   <div className="text-muted"><h6 style={{ color: 'gray' }}>{member.email}</h6></div>
                 </div>
-                <div className="col-7">
+                <div className={role === 'Scrum Master' ? "col-6" : "col-3"}>
                   {member.role}
                 </div>
-                <div className="col-1">
-                  <button className="btn btn-danger" onClick={() => handleRemoveMember(member.member_id, member.role)}>
-                    Remove
-                  </button>
-                </div>
+                {role === 'Scrum Master' &&
+                  <div className="col-2">
+                    <div class="d-flex justify-content-start align-items-center">
+                      <button className="btn btn-danger" onClick={() => handleRemoveMember(member.member_id, member.role)}>
+                        Remove
+                      </button>
+                    </div>
+                  </div>}
               </li>
 
             ))}
@@ -135,10 +157,12 @@ const MemberScrum = () => {
         </div>
 
       </div>
-      <div>
-        <InviteMemberForm members={members} onInvite={handleInvite} />
-      </div>
-      <InvitePopup show={showPopup} handleClose={handleClosePopup} message={"Project must have at least 1 Product owner"} />
+      {
+        role === 'Scrum Master' &&
+        <div>
+          <InviteMemberForm members={members} onInvite={handleInvite} />
+        </div>}
+      <InvitePopup show={showPopup} handleClose={handleClosePopup} message={"Project must have at least 1 Scrum Master"} />
     </div >
   );
 };

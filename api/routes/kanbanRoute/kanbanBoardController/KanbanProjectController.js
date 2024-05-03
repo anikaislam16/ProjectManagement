@@ -47,7 +47,7 @@ const createProject = async (req, res) => {
     members: [
       {
         member_id: existingMember._id,
-        role: 'Admin',
+        role: 'admin',
       },],
     weekdays: req.body.weekDays,
     creator: existingMember._id,
@@ -188,5 +188,27 @@ const getProjectByMember = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+const updateDeveloperControl = async (req, res) => {
+  const { id, memberId } = req.params;
+  try {
+    const kanbanProject = await KanbanProject.findOne({ _id: id });
 
-module.exports = { getAllProjects, getProjectById, createProject, updateProject, deleteProject, deleteMemberfromProject, addMemberInProject, getProjectByMember };
+    if (!kanbanProject) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+    const member = kanbanProject.members.find(m => m.member_id.equals(memberId));
+    if (member) {
+      console.log(member);
+      member.drag = (member.drag === 'enable') ? 'disable' : 'enable';
+      await kanbanProject.save();  // Save the changes back to the database
+      console.log('Member drag status toggled successfully');
+      res.status(200).json({ member });
+    } else {
+      console.log('Member not found');
+    }
+  }
+  catch (error) {
+    console.error('Error toggling member drag status:', error);
+  }
+}
+module.exports = { getAllProjects, getProjectById, createProject, updateProject, deleteProject, deleteMemberfromProject, addMemberInProject, getProjectByMember, updateDeveloperControl };

@@ -6,17 +6,38 @@ import { v4 as uuidv4 } from "uuid";
 import SidebarContextScrum from "../../../../sidebar_app/components_scrum/sidebar_context/SidebarContextScrum";
 import "./ScrumBoardInitializer.css";
 import ScrumBoard from "./Board/ScrumBoard";
+import { useNavigate, useLocation } from "react-router-dom";
+import { checkScrumRole } from "../checkScrumRole";
+import { checkSession } from "../../../sessioncheck/session";
 const ScrumBoardInitializer = () => {
   const { open } = useContext(SidebarContextScrum);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const { projectId } = useParams();
+  const navigate = useNavigate();
   const [datas, setDatas] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false);
   var [dep, setdep] = useState([]);
   const [data, setData] = useState([]);
   const [filter, setfilter] = useState(false);
+  var [role, setrole] = useState(null);
+  const [errorModal, setErrorModal] = useState(false);
+  const [id, setid] = useState(null);
   const initializeData = async () => {
     try {
+      const getRoles = async () => {
+        const userData = await checkSession();
+        if (userData.hasOwnProperty('message')) {
+          const datasend = { message: "Session Expired" }
+          navigate('/login', { state: datasend });
+        }
+        else {
+          setid(userData.id);
+          const projectrole = await checkScrumRole(projectId, userData.id);
+          setrole(role = projectrole.role);
+          console.log(role);
+        }
+      }
+      getRoles();
       const response = await fetch(
         `http://localhost:3010/projects/scrum/${projectId}`
       ); // Replace with your API endpoint
@@ -212,116 +233,122 @@ const ScrumBoardInitializer = () => {
   };
   const onDragEnd = async (result) => {
     const { source, destination } = result;
-    if (!destination) return;
-    console.log("abc " + source.droppableId);
-    console.log("bcd " + destination.droppableId);
-    const sourceIndex = source.index;
-    const destinationIndex = destination.index;
-    console.log("cde " + sourceIndex);
-    console.log("def " + destinationIndex);
 
-    const findSourceBoard = data.find(
-      (board) => board.id === source.droppableId
-    );
-    console.log(findSourceBoard);
-    const findDestBoard = data.find(
-      (board) => board.id === destination.droppableId
-    );
-    // Ensure that findSourceBoard.card is defined and is an array
-    let sourceCard = null;
-    let DestCard = null;
-    if (
-      findSourceBoard &&
-      findSourceBoard.card &&
-      Array.isArray(findSourceBoard.card)
-    ) {
-      sourceCard = findSourceBoard.card[sourceIndex];
+    if (role === 'Scrum Master') {
+      if (!destination) return;
+      console.log("abc " + source.droppableId);
+      console.log("bcd " + destination.droppableId);
+      const sourceIndex = source.index;
+      const destinationIndex = destination.index;
+      console.log("cde " + sourceIndex);
+      console.log("def " + destinationIndex);
 
-      if (sourceCard) {
-        console.log("Found Source Card:", sourceCard.index);
-        // Additional operations with the found source card can be added here
-      } else {
-        console.log("Card not found at index:", sourceIndex);
-      }
-    } else {
-      console.log(
-        "Invalid data structure for findSourceBoard or findSourceBoard.card"
+      const findSourceBoard = data.find(
+        (board) => board.id === source.droppableId
       );
-    }
-    if (
-      findDestBoard &&
-      findDestBoard.card &&
-      Array.isArray(findDestBoard.card)
-    ) {
-      DestCard = findDestBoard.card[destinationIndex];
-
-      if (DestCard) {
-        console.log("Found Dest Card:", DestCard.index);
-        // Additional operations with the found source card can be added here
-      } else {
-        console.log("Card not found at index:", DestCard);
-      }
-    } else {
-      console.log(
-        "Invalid data structure for findSourceBoard or findSourceBoard.card"
+      console.log(findSourceBoard);
+      const findDestBoard = data.find(
+        (board) => board.id === destination.droppableId
       );
-    }
-    console.log(findDestBoard);
-    if (String(source.droppableId) !== String(destination.droppableId)) {
-      const url = `http://localhost:3010/projects/scrum/${projectId}/${datas._id}/${sourceCard._id}/dependency/card/check`;
-      await fetch(url)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Failed to fetch: ${response.statusText}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          // Process the fetched data
-          console.log(data.dependentCardNames);
-          if (data.dependentCardNames.length > 0) {
-            setdep(dep = data.dependentCardNames)
-            setShowErrorModal(true);
-            console.log(dep.length);
-          }
-        })
-        .catch(error => {
-          // Handle errors
-          console.error('Fetch error:', error);
-        });
-    }
-    if (dep.length === 0) {
-      if (source.droppableId === destination.droppableId) {
-        await ChangePosition(datas._id, sourceCard.index, DestCard.index);
-      } else {
-        if (DestCard) {
-          if (sourceCard.index < DestCard.index) {
-            await ChangePosition(datas._id, sourceCard.index, DestCard.index - 1);
-          } else
-            await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+      // Ensure that findSourceBoard.card is defined and is an array
+      let sourceCard = null;
+      let DestCard = null;
+      if (
+        findSourceBoard &&
+        findSourceBoard.card &&
+        Array.isArray(findSourceBoard.card)
+      ) {
+        sourceCard = findSourceBoard.card[sourceIndex];
+
+        if (sourceCard) {
+          console.log("Found Source Card:", sourceCard.index);
+          // Additional operations with the found source card can be added here
         } else {
-          if (destinationIndex > 0) {
-            DestCard = findDestBoard.card[destinationIndex - 1];
+          console.log("Card not found at index:", sourceIndex);
+        }
+      } else {
+        console.log(
+          "Invalid data structure for findSourceBoard or findSourceBoard.card"
+        );
+      }
+      if (
+        findDestBoard &&
+        findDestBoard.card &&
+        Array.isArray(findDestBoard.card)
+      ) {
+        DestCard = findDestBoard.card[destinationIndex];
+
+        if (DestCard) {
+          console.log("Found Dest Card:", DestCard.index);
+          // Additional operations with the found source card can be added here
+        } else {
+          console.log("Card not found at index:", DestCard);
+        }
+      } else {
+        console.log(
+          "Invalid data structure for findSourceBoard or findSourceBoard.card"
+        );
+      }
+      console.log(findDestBoard);
+      if (String(source.droppableId) !== String(destination.droppableId)) {
+        const url = `http://localhost:3010/projects/scrum/${projectId}/${datas._id}/${sourceCard._id}/dependency/card/check`;
+        await fetch(url)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to fetch: ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            // Process the fetched data
+            console.log(data.dependentCardNames);
+            if (data.dependentCardNames.length > 0) {
+              setdep(dep = data.dependentCardNames)
+              setShowErrorModal(true);
+              console.log(dep.length);
+            }
+          })
+          .catch(error => {
+            // Handle errors
+            console.error('Fetch error:', error);
+          });
+      }
+      if (dep.length === 0) {
+        if (source.droppableId === destination.droppableId) {
+          await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+        } else {
+          if (DestCard) {
             if (sourceCard.index < DestCard.index) {
+              await ChangePosition(datas._id, sourceCard.index, DestCard.index - 1);
+            } else
               await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+          } else {
+            if (destinationIndex > 0) {
+              DestCard = findDestBoard.card[destinationIndex - 1];
+              if (sourceCard.index < DestCard.index) {
+                await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+              }
             }
           }
-        }
 
-        if (destination.droppableId === "1") {
-          await updateCardProgress("progres", "todo", sourceCard._id);
-        } else if (destination.droppableId === "2") {
-          await updateCardProgress("progres", "progress", sourceCard._id);
-        } else if (destination.droppableId === "3") {
-          await updateCardProgress("progres", "hold", sourceCard._id);
-        } else if (destination.droppableId === "4") {
-          await updateCardProgress("progres", "testing", sourceCard._id);
-        } else if (destination.droppableId === "5") {
-          await updateCardProgress("progres", "done", sourceCard._id);
+          if (destination.droppableId === "1") {
+            await updateCardProgress("progres", "todo", sourceCard._id);
+          } else if (destination.droppableId === "2") {
+            await updateCardProgress("progres", "progress", sourceCard._id);
+          } else if (destination.droppableId === "3") {
+            await updateCardProgress("progres", "hold", sourceCard._id);
+          } else if (destination.droppableId === "4") {
+            await updateCardProgress("progres", "testing", sourceCard._id);
+          } else if (destination.droppableId === "5") {
+            await updateCardProgress("progres", "done", sourceCard._id);
+          }
         }
       }
+      initializeData();
     }
-    initializeData();
+    else {
+      setErrorModal(true);
+    }
   };
   const switchCardsInDb = async (boardId, sourceIndex, destinationIndex) => {
     try {
@@ -397,13 +424,15 @@ const ScrumBoardInitializer = () => {
   const filterfunction = () => {
     setfilter(!filter);
   }
+  const handleClose = () => setErrorModal(false);
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="">
-        <button class="btn btn-primary filter-button" onClick={filterfunction}>
+
+        {role === 'Developer' && <button class="btn btn-primary filter-button" onClick={filterfunction}>
           <img src="/filter_icon.png" alt="Filter Icon" class="filter-icon" style={{ height: '30px', width: '30px' }} />
           {filter ? 'See All Cards' : 'Filter My Cards'}
-        </button>
+        </button>}
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="BoardMain">
             <div className="app_outer">
@@ -460,6 +489,19 @@ const ScrumBoardInitializer = () => {
           </Modal>
         )}
       </div>
+      <Modal show={errorModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Only Scrum Master can drag the card status
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

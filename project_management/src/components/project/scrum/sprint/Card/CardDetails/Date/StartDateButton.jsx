@@ -4,6 +4,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Clock } from "react-feather";
 import { Button, Modal, Form } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import { checkSession } from "../../../../../../sessioncheck/session";
+import { checkScrumRole } from "../../../../checkScrumRole";
 const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId }) => {
   var [selectedDate, setSelectedDate] = useState(
     initialDate ? new Date(initialDate) : null
@@ -14,6 +16,7 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
   const { projectId } = useParams();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const buttonRef = useRef(null);
+  var [role, setrole] = useState(null);
   //  setSelectedDate(selectedDate = new Date(initialDate));
   console.log(initialDate);
   console.log(selectedDate);
@@ -192,6 +195,14 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
     setIsDatePickerOpen(!isDatePickerOpen);
   };
   useEffect(() => {
+    const getRoles = async () => {
+      const userData = await checkSession();
+      const projectrole = await checkScrumRole(projectId, userData.id);
+      setrole(role = projectrole.role);
+    }
+    getRoles();
+  })
+  useEffect(() => {
     if (initialDate === null) {
 
     }
@@ -225,6 +236,7 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
           textAlign: "left", // Align text to the left
           // Add any other styles as needed
         }}
+        disabled={role === 'Scrum Master' ? false : true}
       >
         <span className="icon__sm">
           <Clock />

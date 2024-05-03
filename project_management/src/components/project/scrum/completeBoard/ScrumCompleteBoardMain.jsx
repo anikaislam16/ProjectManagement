@@ -15,6 +15,7 @@ function ScrumCompleteBoardMain() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSprint, setSprint] = useState(0);
   const [backlogId, setBacklogId] = useState("");
+  const [currentSprintId, setCurrentSprintId] = useState("");
   const initializeData = async () => {
     try {
       const response = await fetch(
@@ -26,6 +27,12 @@ function ScrumCompleteBoardMain() {
       const result = await response.json();
       setSprint(result.boards.length);
       console.log(result.boards[result.boards.length - 1]);
+      const d = result.boards[result.boards.length - 1];
+      setBacklogId(result.boards[0]._id);
+      if (d.started === true) {
+        setCurrentSprintId(d._id);
+      }
+      console.log(d._id);
       // Format the data and update the state
       const formattedData = result.boards
         .filter((board) => board.completed) // Filter out only completed boards
@@ -46,7 +53,7 @@ function ScrumCompleteBoardMain() {
             boardType: board.boardType,
           };
         });
-      setBacklogId(formattedData[0].id);
+
       setData(formattedData);
       setIsInitialized(true);
       setSprint(formattedData.length);
@@ -273,11 +280,11 @@ function ScrumCompleteBoardMain() {
       const updatedData = prevData.map((board) =>
         board.id === boardId
           ? {
-              ...board,
-              sprintStart: modalData.sprintStart,
-              sprintEnd: modalData.sprintEnd,
-              goal: modalData.goal,
-            }
+            ...board,
+            sprintStart: modalData.sprintStart,
+            sprintEnd: modalData.sprintEnd,
+            goal: modalData.goal,
+          }
           : board
       );
       return updatedData;
@@ -362,35 +369,27 @@ function ScrumCompleteBoardMain() {
     }
   };
 
-  const onDragEnd = async (result) => {
-    const { source, destination } = result;
-    if (!destination) return;
-    console.log("abc " + source.droppableId);
-    console.log("bcd " + destination.droppableId);
-    const sourceIndex = source.index;
-    const destinationIndex = destination.index;
-    console.log("cde " + sourceIndex);
-    console.log("def " + destinationIndex);
-    if (source.droppableId === destination.droppableId) {
-      dragCardInSameBoard(
-        sourceIndex,
-        destinationIndex,
-        destination.droppableId
-      );
+  const onDragEnd = async (board, srcId, index) => {
+    let boardId = "";
+    if (board === "Backlog") {
+      boardId = backlogId;
+    } else if (board === "Sprint" && currentSprintId !== "") {
+      boardId = currentSprintId;
+    } else {
+      alert("No active sprint available");
       return;
     }
-    console.log("Ula");
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
+        `http://localhost:3010/projects/scrum/${projectId}/cards/reorderCards/${srcId}/${boardId}/${index}/${"0"}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            sourceIndex: source.index,
-            destinationIndex: destination.index,
+            sourceIndex: index,
+            destinationIndex: 0,
           }),
         }
       );
@@ -398,13 +397,13 @@ function ScrumCompleteBoardMain() {
       if (!response.ok) {
         throw new Error(`Failed to update Board: ${response.statusText}`);
       }
-
+      await initializeData();
+      alert(`Succesfully Moved to ${board}`);
       // Process successful response here if needed
     } catch (error) {
       console.error("Error updating card item:", error.message);
       // Handle the error or show a user-friendly message
     }
-    setData((prevData) => dragCardInBoard(prevData, source, destination));
   };
 
   const updateCard = (bid, cid, card) => {
@@ -482,6 +481,7 @@ function ScrumCompleteBoardMain() {
             onModalSave={handleSaveChanges}
             addBoard={addBoard}
             completeBoard={completeBoard}
+            onDrag={onDragEnd}
           />
         ))}
       </div>

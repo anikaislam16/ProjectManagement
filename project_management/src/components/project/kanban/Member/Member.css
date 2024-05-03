@@ -1,6 +1,6 @@
 /* Add these styles to your CSS file or style block */
 .list-group-container {
-  max-height: 600px;
+  max-height: 450px;
   /* Set the maximum height as needed */
   overflow-y: auto;
   border: 1px solid #ffffff;

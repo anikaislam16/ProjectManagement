@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import "./PrioritySelector.css";
 
-const PrioritySelector = ({ initialPriority, setPriority }) => {
+const PrioritySelector = ({ initialPriority, setPriority, role, cardMember }) => {
   const [selectedPriority, setSelectedPriority] = useState(
     initialPriority || "low"
   );
@@ -27,7 +27,7 @@ const PrioritySelector = ({ initialPriority, setPriority }) => {
   const priorityClassName = `priority-selector-${selectedPriority.toLowerCase()}`;
 
   return (
-    <div className={priorityClassName} onClick={handlePriorityClick}>
+    <div className={priorityClassName} onClick={(role === 'admin' || role === 'Product owner') ? handlePriorityClick : null} style={{ cursor: (role === 'admin' || role === 'Product owner') ? 'pointer' : 'default' }}>
       {selectedPriority}
       <div className={`options-container ${optionsVisible ? "visible" : ""}`}>
         <div

@@ -8,7 +8,8 @@ const {
   deleteProject,
   deleteMemberfromProject,
   addMemberInProject,
-  getProjectByMember
+  getProjectByMember,
+  updateDeveloperControl
 } = require("./kanbanBoardController/KanbanProjectController");
 // Correct import
 const {
@@ -63,7 +64,7 @@ router
 router.route("/:id/:boardId/:cardId/:subDocumentKey/:subDocumentId").put(updateCardField) //card er moddhe array type element gula update k update kora jai. board id r card id r card er subdocument er id diye.
   .post(deleteCardFieldbyMember)
   .delete(deleteCardField); //card er moddhe array type element er kono member delete kora jai.
-router.route("/member/member/:id/:memberId").delete(deleteMemberfromProject).post(addMemberInProject);
+router.route("/member/member/:id/:memberId").delete(deleteMemberfromProject).post(addMemberInProject).put(updateDeveloperControl);
 router.route("/")
 
 module.exports = router;
