@@ -58,7 +58,7 @@ const Sidebar = ({ projectId }) => {
           closeMenu === false ? "logoContainer" : "logoContainer active"
         }
       >
-        <h6 className="title">{projectName}</h6>
+        <h6 className="titles">{projectName}</h6>
       </div>
       <div
         className={

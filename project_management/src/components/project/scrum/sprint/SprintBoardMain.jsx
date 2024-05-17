@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState, useContext } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { DragDropContext } from "react-beautiful-dnd";
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button } from "react-bootstrap";
 import useLocalStorage from "use-local-storage";
 import { v4 as uuidv4 } from "uuid";
 import "./SprintBoardMain.css";
@@ -30,17 +30,16 @@ function SprintBoardMain() {
     try {
       const getRoles = async () => {
         const userData = await checkSession();
-        if (userData.hasOwnProperty('message')) {
-          const datasend = { message: "Session Expired" }
-          navigate('/login', { state: datasend });
-        }
-        else {
+        if (userData.hasOwnProperty("message")) {
+          const datasend = { message: "Session Expired" };
+          navigate("/login", { state: datasend });
+        } else {
           setid(userData.id);
           const projectrole = await checkScrumRole(projectId, userData.id);
-          setrole(role = projectrole.role);
+          setrole((role = projectrole.role));
           console.log(role);
         }
-      }
+      };
       getRoles();
       const response = await fetch(
         `http://localhost:3010/projects/scrum/${projectId}`
@@ -80,15 +79,15 @@ function SprintBoardMain() {
   };
 
   useEffect(() => {
-    seta(a = true);
-    console.log(a)
-  }, [location.pathname])
+    seta((a = true));
+    console.log(a);
+  }, [location.pathname]);
   useEffect(() => {
     console.log(data);
     if (!isInitialized || a) {
       initializeData();
-      console.log('hell');
-      seta(a = false);
+      console.log("hell");
+      seta((a = false));
     }
   }, [isInitialized, a]);
   const call = async () => {
@@ -302,11 +301,11 @@ function SprintBoardMain() {
       const updatedData = prevData.map((board) =>
         board.id === boardId
           ? {
-            ...board,
-            sprintStart: modalData.sprintStart,
-            sprintEnd: modalData.sprintEnd,
-            goal: modalData.goal,
-          }
+              ...board,
+              sprintStart: modalData.sprintStart,
+              sprintEnd: modalData.sprintEnd,
+              goal: modalData.goal,
+            }
           : board
       );
       return updatedData;
@@ -393,12 +392,16 @@ function SprintBoardMain() {
 
   const onDragEnd = async (result) => {
     const { source, destination } = result;
-    const matchedboard = (data.find(item => item.id === result.source.droppableId)).card;
+    const matchedboard = data.find(
+      (item) => item.id === result.source.droppableId
+    ).card;
     console.log(matchedboard);
-    const matchedcard = (matchedboard.find(item => item._id === result.draggableId))
-    const member = (matchedcard.members.find(item => item.member_id === id))
+    const matchedcard = matchedboard.find(
+      (item) => item._id === result.draggableId
+    );
+    const member = matchedcard.members.find((item) => item.member_id === id);
     //klk ekhan theke start
-    if (role === 'Product owner') {
+    if (role === "Product owner") {
       if (!destination) return;
       console.log("abc " + source.droppableId);
       console.log("bcd " + destination.droppableId);
@@ -414,7 +417,7 @@ function SprintBoardMain() {
         );
         return;
       }
-      console.log("Ula");
+      //console.log("Ula");
       try {
         const response = await fetch(
           `http://localhost:3010/projects/scrum/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
@@ -440,8 +443,7 @@ function SprintBoardMain() {
         // Handle the error or show a user-friendly message
       }
       setData((prevData) => dragCardInBoard(prevData, source, destination));
-    }
-    else {
+    } else {
       setErrorModal(true);
     }
   };

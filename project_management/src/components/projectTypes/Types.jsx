@@ -11,7 +11,15 @@ const Types = () => {
   const navigate = useNavigate();
   const [showWeekdays, setShowWeekdays] = useState(false);
   const [selectedWeekdays, setSelectedWeekdays] = useState([]);
-  const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const weekdays = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
 
   const toggleShowWeekdays = () => {
     setShowWeekdays(!showWeekdays);
@@ -31,7 +39,7 @@ const Types = () => {
   };
 
   const getSelectedWeekdaysString = () => {
-    return selectedWeekdays.join(', ');
+    return selectedWeekdays.join(", ");
   };
 
   const handleTypeItemClick = (item) => {
@@ -51,7 +59,7 @@ const Types = () => {
       const user = await checkSession();
       console.log(user);
       if (user.message === "Session Expired") {
-        navigate('/login', { state: user });
+        navigate("/login", { state: user });
       }
       console.log(selectedWeekdays);
       //  const time = new Date().toISOString().split('T')[0];
@@ -62,7 +70,11 @@ const Types = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ projectName: projectName, weekDays: selectedWeekdays, ...user }),
+          body: JSON.stringify({
+            projectName: projectName,
+            weekDays: selectedWeekdays,
+            ...user,
+          }),
         }
       );
 
@@ -122,9 +134,6 @@ const Types = () => {
       </div>
       <div className="type-item" onClick={() => handleTypeItemClick("kanban")}>
         Kanban
-      </div>
-      <div className="type-item" onClick={() => handleTypeItemClick("tdd")}>
-        Test Driven Development
       </div>
 
       {/* Input Modal */}

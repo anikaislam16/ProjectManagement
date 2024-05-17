@@ -395,10 +395,34 @@ const reorderCardsInDiffBoard = async (req, res) => {
       status: movedCard.progres,
       priority: movedCard.priority,
     };
-    if (board2.name === "Backlog") {
+
+    const isCardRemoved = board1.removed.some(
+      (removedCard) =>
+        removedCard.card_id.toString() === moveInfo.card_id.toString()
+    );
+  
+    const moveInfoCardIdString = moveInfo.card_id.toString();
+
+    if (board2.name !== 'Backlog')
+    {
+       const filteredRemovedCards = board2.removed.filter((removedCard) => {
+         //console.log(removedCard.card_id);
+         const removedCardIdString = removedCard.card_id.toString();
+         return removedCardIdString !== moveInfoCardIdString;
+       });
+      board2.removed = filteredRemovedCards;
+     }
+  
+
+    
+
+    //console.log(filteredRemovedCards);
+    //console.log("Sprint Removed Before");
+    //console.log(board1.removed);
+    if (!isCardRemoved && board2.name === "Backlog") {
       board1.removed.push(moveInfo);
     }
-    console.log(movedCard);
+    //console.log(movedCard);
     // Save the changes to the boards
     await board1.save();
     await board2.save();

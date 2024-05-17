@@ -5,16 +5,14 @@ import SidebarContext from "../../../../sidebar_app/components/sidebar_context/S
 import { initTasks, getStartEndDateForProject } from "./helpers.ts";
 import { ViewSwitcher } from "./ViewSwithcer.tsx";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import { slideStartDueDateFixed } from "./slideStartDueDateFixed.js"
-export default function Gantt1({ data, role }: { data: any[], role: string }) {
+import { slideStartDueDateFixed } from "./slideStartDueDateFixed.js";
+export default function Gantt1({ data, role }: { data: any[]; role: string }) {
   const { open } = useContext(SidebarContext);
   console.log(data);
   const { projectId } = useParams();
   const [view, setView] = useState<ViewMode>(ViewMode.Day);
 
-  var [tasks, setTasks] = useState<Task[]>(
-    initTasks(data)
-  );
+  var [tasks, setTasks] = useState<Task[]>(initTasks(data));
   const [isChecked, setIsChecked] = useState(true);
   let columnWidth = 32;
   if (view === ViewMode.Month) {
@@ -52,7 +50,7 @@ export default function Gantt1({ data, role }: { data: any[], role: string }) {
     //console.log(tasks);
     newTasks = slideStartDueDateFixed(data, task);
     console.log(data);
-    setTasks(tasks = initTasks(data));
+    setTasks((tasks = initTasks(data)));
     //ekhane newTasks array genarate kora hosse. jetai task change hbe, seta update hocche. bakita as usual newTasks array te dhukse..
     newTasks = tasks.map((t) => (t.id === task.id ? task : t));
     console.log(newTasks);
@@ -72,7 +70,7 @@ export default function Gantt1({ data, role }: { data: any[], role: string }) {
         );
       }
     }
-    setTasks(tasks = newTasks);
+    setTasks((tasks = newTasks));
     console.log(tasks);
     for (let i = 0; i < tasks.length; i++) {
       if (tasks[i].type === "project") {
@@ -109,8 +107,7 @@ export default function Gantt1({ data, role }: { data: any[], role: string }) {
         throw new Error(`Failed to update task: ${response.statusText}`);
       }
     }
-
-  }
+  };
   const handleSelect = (task: Task, isSelected: boolean) => {
     console.log(task.name + " has " + (isSelected ? "selected" : "unselected"));
   };
@@ -147,20 +144,49 @@ export default function Gantt1({ data, role }: { data: any[], role: string }) {
         />
         {/* <button onClick={addDependencyToTask0}>Add Dependency to Task[0]</button> */}
         <br />
-        <h3>Gantt With Unlimited Height</h3>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <div style={{ width: '10px', height: '10px', backgroundColor: '#4CAF50' }}></div>
+        <h3>Gantt Chart</h3>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#4CAF50",
+            }}
+          ></div>
           normal
-          <div style={{ marginLeft: '10px', width: '10px', height: '10px', backgroundColor: '#f7655b' }}></div>
+          <div
+            style={{
+              marginLeft: "10px",
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#f7655b",
+            }}
+          ></div>
           overdue
-          <div style={{ marginLeft: '10px', width: '10px', height: '10px', backgroundColor: '#f04695' }}></div>
+          <div
+            style={{
+              marginLeft: "10px",
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#f04695",
+            }}
+          ></div>
           was overdue and finished
         </div>
-        <div onWheel={(e) => e.preventDefault()} style={{ overflowX: "hidden" }}>
+        <div
+          onWheel={(e) => e.preventDefault()}
+          style={{ overflowX: "hidden" }}
+        >
           <Gantt
             tasks={tasks}
             viewMode={view}
-            onDateChange={role === 'admin' ? handleTaskChange : undefined}
+            onDateChange={role === "admin" ? handleTaskChange : undefined}
             ganttHeight={400}
             onSelect={handleSelect}
             onExpanderClick={handleExpanderClick}
