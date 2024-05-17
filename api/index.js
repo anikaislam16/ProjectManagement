@@ -43,7 +43,7 @@ connectToMongoDB();
 
 // Define a route for the index page
 app.get("/", (req, res) => {
-  res.send("Welcome to the Backend Index Page!");
+  res.send("Welcome to the Project Management");
 });
 
 
