@@ -12,24 +12,65 @@ var socket;
 var selectedChatCompare;
 const ChatBox = () => {
   const { selectedChat, setSelectedChat, user, setUser } = ChatState();
+
   const [showModal, setShowModal] = useState(false);
   const [textAreaValue, setTextAreaValue] = useState("");
   const [messages, setMessages] = useState([]);
-  const ENDPOINT = "http://localhost:3010";
   const [socketConnected, setSocketConnected] = useState(false);
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
+  const [notificationOn, setNotificationOn] = useState(true);
+  const handleToggleNotification = async () => {
+    try {
+      // Toggle the notification status locally
+      setNotificationOn((prevState) => !prevState);
+
+      // Call the updateNotification function to update the notification status in the database
+      await updateNotification();
+    } catch (error) {
+      console.error("Error updating notification:", error);
+      // Revert the local state to its previous value if an error occurs
+      setNotificationOn((prevState) => !prevState);
+    }
+  };
   useEffect(() => {
-    socket = io(ENDPOINT);
+    socket = io(process.env.REACT_APP_HOST);
     socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
 
     // eslint-disable-next-line
   }, []);
+  const updateNotification = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/message/updatenotification`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            questionId: selectedChat._id,
+            userId: user,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update notification");
+      }
+
+      const updatedQuestion = await response.json();
+      return updatedQuestion;
+    } catch (error) {
+      throw new Error(`Error updating notification: ${error.message}`);
+    }
+  };
+
   const handleToggleLike = async (memberId, messageId) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/message/toggle-like?memberId=${memberId}&messageId=${messageId}`,
+        `${process.env.REACT_APP_HOST}/message/toggle-like?memberId=${memberId}&messageId=${messageId}`,
         {
           method: "POST",
           headers: {
@@ -69,17 +110,20 @@ const ChatBox = () => {
     // Add your save logic here, for example, sending the textAreaValue to a server
     try {
       // Make a POST request to your backend endpoint
-      const response = await fetch("http://localhost:3010/message/sendMsg", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sender: user,
-          content: textAreaValue,
-          question: selectedChat._id,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/message/sendMsg`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sender: user,
+            content: textAreaValue,
+            question: selectedChat._id,
+          }),
+        }
+      );
 
       // Check if the request was successful
       if (response.ok) {
@@ -108,7 +152,7 @@ const ChatBox = () => {
     try {
       // Make a GET request to your backend endpoint with chatId as a query parameter
       const response = await fetch(
-        `http://localhost:3010/message/getmessage?chatId=${selectedChat._id}`
+        `${process.env.REACT_APP_HOST}/message/getmessage?chatId=${selectedChat._id}`
       );
 
       // Check if the request was successful
@@ -116,6 +160,12 @@ const ChatBox = () => {
         const messages = await response.json();
         console.log("Messages retrieved successfully:", messages);
         setMessages(messages);
+        const isUserInNotificationOffArray = messages.some((message) =>
+          message.question.notificationOffarray.includes(user)
+        );
+
+        // Update the notificationOn state variable based on the result
+        setNotificationOn(!isUserInNotificationOffArray);
         socket.emit("join chat", selectedChat._id);
       } else {
         // Handle errors from the server
@@ -133,7 +183,7 @@ const ChatBox = () => {
   const EditMessage = async (newContent, messageId) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/message/update-message?messageId=${messageId}`,
+        `${process.env.REACT_APP_HOST}/message/update-message?messageId=${messageId}`,
         {
           method: "PUT",
           headers: {
@@ -223,8 +273,14 @@ const ChatBox = () => {
   });
   return (
     <div>
-      <div className="title">
+      <div
+        className="title"
+        style={{ display: "flex", justifyContent: "space-between" }}
+      >
         <h6>{selectedChat.question}</h6>
+        <button onClick={handleToggleNotification}>
+          {notificationOn ? "Notification On" : "Notification Off"}
+        </button>
       </div>
       <div className="messageBody">
         <ScrollableChat

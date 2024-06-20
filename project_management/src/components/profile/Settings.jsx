@@ -4,7 +4,7 @@ import "./SettingsPage.css"; // Import your custom CSS file
 import "@fortawesome/fontawesome-free/css/all.css";
 import { Modal, Button } from "react-bootstrap";
 import ChangePass from "./changePass";
-import { checkSession } from '../sessioncheck/session';
+import { checkSession } from "../sessioncheck/session";
 const Profile_main = () => {
   var [profilePicture, setProfilePicture] = useState(null); // Initial profile picture
   var [letter, setletter] = useState("");
@@ -24,20 +24,19 @@ const Profile_main = () => {
   useEffect(() => {
     if (location.state === null) {
       setauthorized(false);
-    }
-    else {
+    } else {
       const id = location.state.userId;
       const getusrId = async () => {
         const user = await checkSession();
-        if (user.id === id)
-          setauthorized(true);
-        else
-          setauthorized(false);
-      }
+        if (user.id === id) setauthorized(true);
+        else setauthorized(false);
+      };
       getusrId();
       console.log(id);
       const fetchUserData = async () => {
-        const response = await fetch(`http://localhost:3010/signup/${id}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_HOST}/signup/${id}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
@@ -99,7 +98,7 @@ const Profile_main = () => {
             console.log(pictureByte);
             try {
               const response = await fetch(
-                "http://localhost:3010/signup/updateMember",
+                `${process.env.REACT_APP_HOST}/signup/updateMember`,
                 {
                   method: "PUT",
                   headers: {
@@ -160,7 +159,7 @@ const Profile_main = () => {
     try {
       console.log(value, user._id);
       const response = await fetch(
-        "http://localhost:3010/signup/updateMember",
+        `${process.env.REACT_APP_HOST}/signup/updateMember`,
         {
           method: "PUT",
           headers: {
@@ -232,7 +231,7 @@ const Profile_main = () => {
     const comparePassword = async (email, password) => {
       try {
         const response = await fetch(
-          "http://localhost:3010/signup/loginmatch",
+          `${process.env.REACT_APP_HOST}/signup/loginmatch`,
           {
             method: "POST",
             headers: {
@@ -279,7 +278,7 @@ const Profile_main = () => {
   };
   return (
     <div>
-      {authorized ?
+      {authorized ? (
         <div className="container mt-5">
           <h2 className="text-center mb-4">Settings</h2>
           <div className="row">
@@ -319,7 +318,10 @@ const Profile_main = () => {
                       </div>
                     </div>
                   </div>
-                  <div id="warningSize" style={{ color: "red", display: "none" }}>
+                  <div
+                    id="warningSize"
+                    style={{ color: "red", display: "none" }}
+                  >
                     *picture size should be below 1MB
                   </div>
                 </div>
@@ -473,7 +475,10 @@ const Profile_main = () => {
               </Button>
             </Modal.Footer>
           </Modal>
-        </div> : <h2>This page is unauthorized for You</h2>}
+        </div>
+      ) : (
+        <h2>This page is unauthorized for You</h2>
+      )}
     </div>
   );
 };

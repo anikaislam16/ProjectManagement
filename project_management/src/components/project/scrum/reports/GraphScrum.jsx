@@ -13,7 +13,7 @@ const GraphScrum = () => {
   const initializeData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
       ); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error("Network response was not ok");

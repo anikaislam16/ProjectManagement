@@ -26,20 +26,19 @@ const ScrumBoardInitializer = () => {
     try {
       const getRoles = async () => {
         const userData = await checkSession();
-        if (userData.hasOwnProperty('message')) {
-          const datasend = { message: "Session Expired" }
-          navigate('/login', { state: datasend });
-        }
-        else {
+        if (userData.hasOwnProperty("message")) {
+          const datasend = { message: "Session Expired" };
+          navigate("/login", { state: datasend });
+        } else {
           setid(userData.id);
           const projectrole = await checkScrumRole(projectId, userData.id);
-          setrole(role = projectrole.role);
+          setrole((role = projectrole.role));
           console.log(role);
         }
-      }
+      };
       getRoles();
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
       ); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -169,7 +168,7 @@ const ScrumBoardInitializer = () => {
   };
   const updateCardProgress = async (fieldName, value, cardId) => {
     const response = await fetch(
-      `http://localhost:3010/projects/scrum/${projectId}/${datas._id}/${cardId}`,
+      `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${datas._id}/${cardId}`,
       {
         method: "PUT",
         headers: {
@@ -183,11 +182,10 @@ const ScrumBoardInitializer = () => {
     );
     if (!response.ok) {
       throw new Error(`Failed t update task :${response.statusText}`);
-    }
-    else {
+    } else {
       value = new Date();
       const response1 = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${datas._id}/${cardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${datas._id}/${cardId}`,
         {
           method: "PUT",
           headers: {
@@ -208,7 +206,7 @@ const ScrumBoardInitializer = () => {
   const ChangePosition = async (boardId, sourceIndex, destinationIndex) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
         {
           method: "PUT",
           headers: {
@@ -234,7 +232,7 @@ const ScrumBoardInitializer = () => {
   const onDragEnd = async (result) => {
     const { source, destination } = result;
 
-    if (role === 'Scrum Master') {
+    if (role === "Scrum Master") {
       if (!destination) return;
       console.log("abc " + source.droppableId);
       console.log("bcd " + destination.droppableId);
@@ -291,26 +289,26 @@ const ScrumBoardInitializer = () => {
       }
       console.log(findDestBoard);
       if (String(source.droppableId) !== String(destination.droppableId)) {
-        const url = `http://localhost:3010/projects/scrum/${projectId}/${datas._id}/${sourceCard._id}/dependency/card/check`;
+        const url = `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${datas._id}/${sourceCard._id}/dependency/card/check`;
         await fetch(url)
-          .then(response => {
+          .then((response) => {
             if (!response.ok) {
               throw new Error(`Failed to fetch: ${response.statusText}`);
             }
             return response.json();
           })
-          .then(data => {
+          .then((data) => {
             // Process the fetched data
             console.log(data.dependentCardNames);
             if (data.dependentCardNames.length > 0) {
-              setdep(dep = data.dependentCardNames)
+              setdep((dep = data.dependentCardNames));
               setShowErrorModal(true);
               console.log(dep.length);
             }
           })
-          .catch(error => {
+          .catch((error) => {
             // Handle errors
-            console.error('Fetch error:', error);
+            console.error("Fetch error:", error);
           });
       }
       if (dep.length === 0) {
@@ -319,14 +317,22 @@ const ScrumBoardInitializer = () => {
         } else {
           if (DestCard) {
             if (sourceCard.index < DestCard.index) {
-              await ChangePosition(datas._id, sourceCard.index, DestCard.index - 1);
+              await ChangePosition(
+                datas._id,
+                sourceCard.index,
+                DestCard.index - 1
+              );
             } else
               await ChangePosition(datas._id, sourceCard.index, DestCard.index);
           } else {
             if (destinationIndex > 0) {
               DestCard = findDestBoard.card[destinationIndex - 1];
               if (sourceCard.index < DestCard.index) {
-                await ChangePosition(datas._id, sourceCard.index, DestCard.index);
+                await ChangePosition(
+                  datas._id,
+                  sourceCard.index,
+                  DestCard.index
+                );
               }
             }
           }
@@ -345,15 +351,14 @@ const ScrumBoardInitializer = () => {
         }
       }
       initializeData();
-    }
-    else {
+    } else {
       setErrorModal(true);
     }
   };
   const switchCardsInDb = async (boardId, sourceIndex, destinationIndex) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
         {
           method: "PUT",
           headers: {
@@ -385,7 +390,7 @@ const ScrumBoardInitializer = () => {
     console.log(targetId, cardId);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${targetId}/${cardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${targetId}/${cardId}`,
         {
           method: "DELETE",
           headers: {
@@ -417,22 +422,31 @@ const ScrumBoardInitializer = () => {
     // Find the matching board and card
   };
   const closeErrorModal = () => {
-    setdep(dep = []);
+    setdep((dep = []));
     console.log(dep.length);
     setShowErrorModal(false);
   };
   const filterfunction = () => {
     setfilter(!filter);
-  }
+  };
   const handleClose = () => setErrorModal(false);
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="">
-
-        {role === 'Developer' && <button class="btn btn-primary filter-button" onClick={filterfunction}>
-          <img src="/filter_icon.png" alt="Filter Icon" class="filter-icon" style={{ height: '30px', width: '30px' }} />
-          {filter ? 'See All Cards' : 'Filter My Cards'}
-        </button>}
+        {role === "Developer" && (
+          <button
+            class="btn btn-primary filter-button"
+            onClick={filterfunction}
+          >
+            <img
+              src="/filter_icon.png"
+              alt="Filter Icon"
+              class="filter-icon"
+              style={{ height: "30px", width: "30px" }}
+            />
+            {filter ? "See All Cards" : "Filter My Cards"}
+          </button>
+        )}
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="BoardMain">
             <div className="app_outer">
@@ -473,19 +487,21 @@ const ScrumBoardInitializer = () => {
             <Modal.Body>
               {dep.length > 0 && (
                 <div>
-                  <p style={{ textAlign: 'center', color: 'red' }}>
-                    Before moving this card, complete the dependent card first. Dependent cards are:
+                  <p style={{ textAlign: "center", color: "red" }}>
+                    Before moving this card, complete the dependent card first.
+                    Dependent cards are:
                   </p>
-                  <p style={{ textAlign: 'center' }}>
-                    [    {dep.join(', ')}]
-                  </p>
+                  <p style={{ textAlign: "center" }}>[ {dep.join(", ")}]</p>
                 </div>
               )}
-              <Button variant="primary" onClick={closeErrorModal} style={{ float: 'right' }}>
+              <Button
+                variant="primary"
+                onClick={closeErrorModal}
+                style={{ float: "right" }}
+              >
                 Close
               </Button>
             </Modal.Body>
-
           </Modal>
         )}
       </div>
@@ -493,9 +509,7 @@ const ScrumBoardInitializer = () => {
         <Modal.Header closeButton>
           <Modal.Title>Error</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Only Scrum Master can drag the card status
-        </Modal.Body>
+        <Modal.Body>Only Scrum Master can drag the card status</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close

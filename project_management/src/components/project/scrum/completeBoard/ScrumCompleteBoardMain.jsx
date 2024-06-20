@@ -19,7 +19,7 @@ function ScrumCompleteBoardMain() {
   const initializeData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
       ); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -71,7 +71,7 @@ function ScrumCompleteBoardMain() {
   }, [isInitialized]);
   const call = async () => {
     const response = await fetch(
-      `http://localhost:3010/projects/scrum/${projectId}`
+      `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
     ); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -86,7 +86,7 @@ function ScrumCompleteBoardMain() {
   const updateBoard = async (fieldName, title, bid) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${bid}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${bid}`,
         {
           method: "PUT",
           headers: {
@@ -165,7 +165,7 @@ function ScrumCompleteBoardMain() {
         navigate("/login", { state: user });
       }
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${boardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${boardId}`,
         {
           method: "POST",
           headers: {
@@ -209,7 +209,7 @@ function ScrumCompleteBoardMain() {
     // console.log(targetId, cardId);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${targetId}/${cardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${targetId}/${cardId}`,
         {
           method: "DELETE",
           headers: {
@@ -246,7 +246,7 @@ function ScrumCompleteBoardMain() {
   const saveModalToDb = async (boardId, fieldName, value) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${boardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${boardId}`,
         {
           method: "PUT",
           headers: {
@@ -280,11 +280,11 @@ function ScrumCompleteBoardMain() {
       const updatedData = prevData.map((board) =>
         board.id === boardId
           ? {
-            ...board,
-            sprintStart: modalData.sprintStart,
-            sprintEnd: modalData.sprintEnd,
-            goal: modalData.goal,
-          }
+              ...board,
+              sprintStart: modalData.sprintStart,
+              sprintEnd: modalData.sprintEnd,
+              goal: modalData.goal,
+            }
           : board
       );
       return updatedData;
@@ -294,7 +294,7 @@ function ScrumCompleteBoardMain() {
     try {
       // Make API call to add a board
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`,
         {
           method: "POST",
           headers: {
@@ -341,7 +341,7 @@ function ScrumCompleteBoardMain() {
   const removeBoard = async (bid) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${bid}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${bid}`,
         {
           method: "DELETE",
           headers: {
@@ -381,7 +381,9 @@ function ScrumCompleteBoardMain() {
     }
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/cards/reorderCards/${srcId}/${boardId}/${index}/${"0"}`,
+        `${
+          process.env.REACT_APP_HOST
+        }/projects/scrum/${projectId}/cards/reorderCards/${srcId}/${boardId}/${index}/${"0"}`,
         {
           method: "PUT",
           headers: {
@@ -425,7 +427,7 @@ function ScrumCompleteBoardMain() {
   const completeBoard = async (sourceId) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder`,
         {
           method: "PUT",
           headers: {

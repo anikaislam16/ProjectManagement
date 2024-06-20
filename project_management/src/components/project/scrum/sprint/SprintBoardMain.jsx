@@ -42,7 +42,7 @@ function SprintBoardMain() {
       };
       getRoles();
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
       ); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -92,7 +92,7 @@ function SprintBoardMain() {
   }, [isInitialized, a]);
   const call = async () => {
     const response = await fetch(
-      `http://localhost:3010/projects/scrum/${projectId}`
+      `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
     ); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -107,7 +107,7 @@ function SprintBoardMain() {
   const updateBoard = async (fieldName, title, bid) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${bid}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${bid}`,
         {
           method: "PUT",
           headers: {
@@ -186,7 +186,7 @@ function SprintBoardMain() {
         navigate("/login", { state: user });
       }
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${boardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${boardId}`,
         {
           method: "POST",
           headers: {
@@ -230,7 +230,7 @@ function SprintBoardMain() {
     // console.log(targetId, cardId);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${targetId}/${cardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${targetId}/${cardId}`,
         {
           method: "DELETE",
           headers: {
@@ -267,7 +267,7 @@ function SprintBoardMain() {
   const saveModalToDb = async (boardId, fieldName, value) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${boardId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${boardId}`,
         {
           method: "PUT",
           headers: {
@@ -315,7 +315,7 @@ function SprintBoardMain() {
     try {
       // Make API call to add a board
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`,
         {
           method: "POST",
           headers: {
@@ -362,7 +362,7 @@ function SprintBoardMain() {
   const removeBoard = async (bid) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}/${bid}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/${bid}`,
         {
           method: "DELETE",
           headers: {
@@ -420,7 +420,7 @@ function SprintBoardMain() {
       //console.log("Ula");
       try {
         const response = await fetch(
-          `http://localhost:3010/projects/scrum/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
+          `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
           {
             method: "PUT",
             headers: {
@@ -467,7 +467,7 @@ function SprintBoardMain() {
   const completeBoard = async (sourceId) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder/reorder`,
         {
           method: "PUT",
           headers: {

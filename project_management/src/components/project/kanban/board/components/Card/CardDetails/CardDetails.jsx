@@ -44,7 +44,7 @@ export default function CardDetails(props) {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}`
       );
 
       if (!response.ok) {
@@ -62,17 +62,18 @@ export default function CardDetails(props) {
   useEffect(() => {
     const getRoles = async () => {
       const userData = await checkSession();
-      if (userData.hasOwnProperty('message')) {
-        const datasend = { message: "Session Expired" }
-        navigate('/login', { state: datasend });
-      }
-      else {
+      if (userData.hasOwnProperty("message")) {
+        const datasend = { message: "Session Expired" };
+        navigate("/login", { state: datasend });
+      } else {
         const projectrole = await checkKanbanRole(projectId, userData.id);
-        setrole(role = projectrole.role);
-        const member = (values.members.find(item => item.member_id === userData.id))
+        setrole((role = projectrole.role));
+        const member = values.members.find(
+          (item) => item.member_id === userData.id
+        );
         setCardMember(member ? true : false);
       }
-    }
+    };
     getRoles();
     fetchData();
   }, []);
@@ -111,7 +112,9 @@ export default function CardDetails(props) {
   // };
   const fetchPDFById = async (pdfId) => {
     try {
-      const response = await fetch(`http://localhost:3010/pdf/getpdf/${pdfId}`);
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/pdf/getpdf/${pdfId}`
+      );
       if (response.ok) {
         const result = await response.json();
         console.log("PDF details:", result.pdf);
@@ -139,7 +142,7 @@ export default function CardDetails(props) {
     console.log(pdfTitle, pdfType);
     try {
       const response = await fetch(
-        `http://localhost:3010/pdf/download-pdf/${pdfId}`,
+        `${process.env.REACT_APP_HOST}/pdf/download-pdf/${pdfId}`,
         {
           method: "GET",
         }
@@ -170,7 +173,7 @@ export default function CardDetails(props) {
   const fetchAllPDFs = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/pdf/${props.bid}/${props.card._id}/kanban/all-pdfs`
+        `${process.env.REACT_APP_HOST}/pdf/${props.bid}/${props.card._id}/kanban/all-pdfs`
       );
       if (response) {
         const result = await response.json();
@@ -203,7 +206,7 @@ export default function CardDetails(props) {
 
     try {
       const response = await fetch(
-        `http://localhost:3010/pdf/${props.bid}/${props.card._id}/upload-pdf`,
+        `${process.env.REACT_APP_HOST}/pdf/${props.bid}/${props.card._id}/upload-pdf`,
         {
           method: "POST",
           body: formData,
@@ -243,13 +246,16 @@ export default function CardDetails(props) {
     const description = "kanban";
     try {
       // Make a DELETE request to your backend API
-      const response = await fetch(`http://localhost:3010/pdf/${fileId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ boardId, cardId, description }), // Pass boardId and cardId in the request body
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/pdf/${fileId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ boardId, cardId, description }), // Pass boardId and cardId in the request body
+        }
+      );
 
       // Check if the response is successful (status code 2xx)
       if (response.ok) {
@@ -278,7 +284,7 @@ export default function CardDetails(props) {
       const pointNum = parseInt(point);
       // Make the API request to update the card item
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
         {
           method: "PUT",
           headers: {
@@ -337,7 +343,7 @@ export default function CardDetails(props) {
   const setPriority = async (priority) => {
     values.priority = priority;
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
+      `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
       {
         method: "PUT",
         headers: {
@@ -358,7 +364,7 @@ export default function CardDetails(props) {
   const addDueDate = async (date) => {
     values.dueDate = date;
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
+      `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
       {
         method: "PUT",
         headers: {
@@ -380,7 +386,7 @@ export default function CardDetails(props) {
   const removeTask = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -420,7 +426,7 @@ export default function CardDetails(props) {
     console.log(updatedPoint);
     const p = parseInt(updatedPoint);
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
+      `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
       {
         method: "PUT",
         headers: {
@@ -461,7 +467,7 @@ export default function CardDetails(props) {
     const Iscomplete = values.task[taskIndex].complete;
     console.log(Iscomplete);
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
+      `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}/task/${id}`,
       {
         method: "PUT",
         headers: {
@@ -481,7 +487,7 @@ export default function CardDetails(props) {
   };
   const updateTitle = async (value) => {
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
+      `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
       {
         method: "PUT",
         headers: {
@@ -524,7 +530,7 @@ export default function CardDetails(props) {
     try {
       console.log("tag id ", id);
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}/tags/${id}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}/tags/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -556,7 +562,7 @@ export default function CardDetails(props) {
   const deleteCard = async () => {
     //  try {
     //   const response = await fetch(
-    //     `http://localhost:3010/projects/kanban/${projectId}/${targetId}/${cardId}/`,
+    //     `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${targetId}/${cardId}/`,
     //     {
     //       method: "DELETE",
     //       headers: {
@@ -578,20 +584,19 @@ export default function CardDetails(props) {
   };
   const updateFields = async (fieldName, value) => {
     let date;
-    if (fieldName === 'dueDate' || fieldName === 'startDate') {
+    if (fieldName === "dueDate" || fieldName === "startDate") {
       date = new Date(value);
       if (fieldName === "dueDate") {
         date.setHours(23, 59, 0, 0);
         console.log(date);
       }
       values[fieldName] = date;
-    }
-    else {
+    } else {
       date = value;
       values[fieldName] = date;
     }
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
+      `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
       {
         method: "PUT",
         headers: {
@@ -613,7 +618,7 @@ export default function CardDetails(props) {
     // Make the API request to update the card item
     console.log(props);
     const response = await fetch(
-      `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
+      `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${props.bid}/${props.card._id}`,
       {
         method: "PUT",
         headers: {
@@ -680,7 +685,7 @@ export default function CardDetails(props) {
             <div className="col-12">
               <div className="d-flex align-items-center pt-3 gap-2">
                 <CreditCard className="icon__md" />
-                {(input) ? (
+                {input ? (
                   <Input
                     title={values.cardName}
                     onClick={() => alert("Button clicked!")}
@@ -688,8 +693,10 @@ export default function CardDetails(props) {
                 ) : (
                   <div style={{ maxHeight: "400px", width: "700px" }}>
                     <h5
-                      style={{ cursor: role === 'admin' ? "pointer" : "default" }}
-                      onClick={() => setInput((role === 'admin') ? true : false)}
+                      style={{
+                        cursor: role === "admin" ? "pointer" : "default",
+                      }}
+                      onClick={() => setInput(role === "admin" ? true : false)}
                     >
                       {values.cardName}
                     </h5>
@@ -715,10 +722,13 @@ export default function CardDetails(props) {
                       {item.tagName.length > 10
                         ? item.tagName.slice(0, 10) + "..."
                         : item.tagName}
-                      {(role !== 'client' && !(role === 'developer' && !cardMember)) && <X
-                        onClick={() => removeTag(item._id)}
-                        style={{ width: "20px", height: "15px" }}
-                      />}
+                      {role !== "client" &&
+                        !(role === "developer" && !cardMember) && (
+                          <X
+                            onClick={() => removeTag(item._id)}
+                            style={{ width: "20px", height: "15px" }}
+                          />
+                        )}
                     </span>
                   ))
                 ) : (
@@ -765,44 +775,57 @@ export default function CardDetails(props) {
                           className="task__checkbox"
                           type="checkbox"
                           defaultChecked={item.complete}
-                          disabled={(role !== 'client' && !(role === 'developer' && !cardMember)) ? false : true}
+                          disabled={
+                            role !== "client" &&
+                            !(role === "developer" && !cardMember)
+                              ? false
+                              : true
+                          }
                           onChange={() => {
                             updateTask(item._id);
                           }}
                         />
-                        {(role !== 'client' && !(role === 'developer' && !cardMember)) ?
+                        {role !== "client" &&
+                        !(role === "developer" && !cardMember) ? (
                           <EditableHeader
                             value={item}
                             id={item._id}
                             initialValue={item.taskName}
                             initialPoint={item.point}
                             onSave={handleTaskClick}
-                            onClose={() => { }}
+                            onClose={() => {}}
                           />
-                          : <b>{item.taskName}</b>}
-                        {(role !== 'client' && !(role === 'developer' && !cardMember)) && <Trash
-                          onClick={() => {
-                            removeTask(item._id);
-                          }}
-                          style={{
-                            cursor: "pointer",
-                            width: "18px", // Fix typo in 'width'
-                            height: "18px",
-                            marginLeft: "30px",
-                          }}
-                        />}
+                        ) : (
+                          <b>{item.taskName}</b>
+                        )}
+                        {role !== "client" &&
+                          !(role === "developer" && !cardMember) && (
+                            <Trash
+                              onClick={() => {
+                                removeTask(item._id);
+                              }}
+                              style={{
+                                cursor: "pointer",
+                                width: "18px", // Fix typo in 'width'
+                                height: "18px",
+                                marginLeft: "30px",
+                              }}
+                            />
+                          )}
                       </div>
                     ))
                   ) : (
                     <></>
                   )}
-                  {(role !== 'client' && !(role === 'developer' && !cardMember)) &&
-                    <SprintCardEditable
-                      parentClass={"task__editable"}
-                      name={"Add Task"}
-                      btnName={"Add task"}
-                      onSubmit={addTask}
-                    />}
+                  {role !== "client" &&
+                    !(role === "developer" && !cardMember) && (
+                      <SprintCardEditable
+                        parentClass={"task__editable"}
+                        name={"Add Task"}
+                        btnName={"Add task"}
+                        onSubmit={addTask}
+                      />
+                    )}
                 </div>
                 <br />
                 <h6 className="text-2xl font-semibold mb-4">All PDFs</h6>
@@ -811,20 +834,23 @@ export default function CardDetails(props) {
                     <div key={pdf._id} className="pdf-box">
                       <div className="pdf-header">
                         <p className="pdf-title">{pdf.title}</p>
-                        {(role !== 'client' && !(role === 'developer' && !cardMember)) && <button
-                          className="delete-button"
-                          onClick={(e) =>
-                            handleDeleteFile(
-                              pdf._id,
-                              props.bid,
-                              props.card._id,
-                              e
-                            )
-                          }
-                        // handleDownload(pdf._id, props.bid, props.card._id, e)
-                        >
-                          X
-                        </button>}
+                        {role !== "client" &&
+                          !(role === "developer" && !cardMember) && (
+                            <button
+                              className="delete-button"
+                              onClick={(e) =>
+                                handleDeleteFile(
+                                  pdf._id,
+                                  props.bid,
+                                  props.card._id,
+                                  e
+                                )
+                              }
+                              // handleDownload(pdf._id, props.bid, props.card._id, e)
+                            >
+                              X
+                            </button>
+                          )}
                       </div>
                       <button
                         className="bg-green-500 text-black py-2 px-4 rounded hover:bg-green-600"
@@ -841,12 +867,15 @@ export default function CardDetails(props) {
             <div className="col-4">
               <h6>Add to card</h6>
               <div className="d-flex card__action__btn flex-column gap-2">
-                {(role !== 'client' && !(role === 'developer' && !cardMember)) && <button onClick={() => setLabelShow(true)}>
-                  <span className="icon__sm">
-                    <Tag />
-                  </span>
-                  Add Label
-                </button>}
+                {role !== "client" &&
+                  !(role === "developer" && !cardMember) && (
+                    <button onClick={() => setLabelShow(true)}>
+                      <span className="icon__sm">
+                        <Tag />
+                      </span>
+                      Add Label
+                    </button>
+                  )}
                 {labelShow && (
                   <Label
                     color={colors}
@@ -884,7 +913,11 @@ export default function CardDetails(props) {
                 </button>
 
                 {isMemberVisible && (
-                  <CardMember bid={props.bid} cardId={props.card._id} member_role={role} />
+                  <CardMember
+                    bid={props.bid}
+                    cardId={props.card._id}
+                    member_role={role}
+                  />
                 )}
                 <button onClick={DependencyButtonClick}>
                   <span>
@@ -906,37 +939,45 @@ export default function CardDetails(props) {
                     role={role}
                   />
                 )}
-                {(role !== 'client' && !(role === 'developer' && !cardMember)) &&
-                  <form className="space-y-4">
-                    <input
-                      type="file"
-                      accept=".pdf, .jpg, .jpeg, .png, .gif, .docx .txt"
-                      onChange={handleFileChange}
-                      ref={fileInputRef}
-                      className="border rounded p-2"
-                    />
+                {role !== "client" &&
+                  !(role === "developer" && !cardMember) && (
+                    <form className="space-y-4">
+                      <input
+                        type="file"
+                        accept=".pdf, .jpg, .jpeg, .png, .gif, .docx .txt"
+                        onChange={handleFileChange}
+                        ref={fileInputRef}
+                        className="border rounded p-2"
+                      />
 
-                    <button
-                      type="submit"
-                      style={{ color: "black", marginTop: "5px", cursor: 'pointer' }}
-                      onClick={handleSubmit}
-                      disabled={isUploadDisabled}
-                    >
-                      Upload
-                    </button>
-                  </form>}
+                      <button
+                        type="submit"
+                        style={{
+                          color: "black",
+                          marginTop: "5px",
+                          cursor: "pointer",
+                        }}
+                        onClick={handleSubmit}
+                        disabled={isUploadDisabled}
+                      >
+                        Upload
+                      </button>
+                    </form>
+                  )}
 
-                {role === 'admin' && <button onClick={deleteCard}>
-                  <span className="icon__sm">
-                    <Trash />
-                  </span>
-                  Delete Card
-                </button>}
+                {role === "admin" && (
+                  <button onClick={deleteCard}>
+                    <span className="icon__sm">
+                      <Trash />
+                    </span>
+                    Delete Card
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </Modal >
+    </Modal>
   );
 }

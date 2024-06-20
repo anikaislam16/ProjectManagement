@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Gantt1 from "./Gantt1";
-import { checkSession } from "../../../sessioncheck/session"
+import { checkSession } from "../../../sessioncheck/session";
 import { checkScrumRole } from "../checkScrumRole";
 const GanttInitializer = () => {
   const [data, setData] = useState([]);
@@ -12,13 +12,15 @@ const GanttInitializer = () => {
   const initializeData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
       ); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const result = await response.json();
-      result.boards = result.boards.filter(board => board.completed === false && board.boardType !== 'backlog');
+      result.boards = result.boards.filter(
+        (board) => board.completed === false && board.boardType !== "backlog"
+      );
       console.log(result.workflow);
       // Format the data and update the state
       const formattedData = result.boards.map((board) => ({
@@ -35,15 +37,14 @@ const GanttInitializer = () => {
   };
   const getRoles = async () => {
     const userData = await checkSession();
-    if (userData.hasOwnProperty('message')) {
-      const datasend = { message: "Session Expired" }
-      navigate('/login', { state: datasend });
-    }
-    else {
+    if (userData.hasOwnProperty("message")) {
+      const datasend = { message: "Session Expired" };
+      navigate("/login", { state: datasend });
+    } else {
       const projectrole = await checkScrumRole(projectId, userData.id);
-      setrole(role = projectrole.role);
+      setrole((role = projectrole.role));
     }
-  }
+  };
   useEffect(() => {
     console.log("g " + projectId);
     console.log("h " + isInitialized);
@@ -53,7 +54,9 @@ const GanttInitializer = () => {
     }
   }, [isInitialized]);
   return (
-    <div>{isInitialized ? <Gantt1 data={data} role={role} /> : <p>Loading...</p>}</div>
+    <div>
+      {isInitialized ? <Gantt1 data={data} role={role} /> : <p>Loading...</p>}
+    </div>
   );
 };
 

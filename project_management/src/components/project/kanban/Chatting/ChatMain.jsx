@@ -7,7 +7,7 @@ import "./ChatMain.css";
 import io from "socket.io-client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChatState } from "./context/ChatContextProvider";
-const socket = io.connect("http://localhost:3010");
+const socket = io.connect(process.env.REACT_APP_HOST);
 export default function ChatMain() {
   const {
     selectedChat,

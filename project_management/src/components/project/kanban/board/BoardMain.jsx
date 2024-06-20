@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import SidebarContext from "../../../../sidebar_app/components/sidebar_context/SidebarContext";
 import "./BoardMain.css";
@@ -30,21 +30,20 @@ const BoardMain = () => {
     try {
       const getRoles = async () => {
         const userData = await checkSession();
-        if (userData.hasOwnProperty('message')) {
-          const datasend = { message: "Session Expired" }
-          navigate('/login', { state: datasend });
-        }
-        else {
+        if (userData.hasOwnProperty("message")) {
+          const datasend = { message: "Session Expired" };
+          navigate("/login", { state: datasend });
+        } else {
           setid(userData.id);
           const projectrole = await checkKanbanRole(projectId, userData.id);
-          setrole(role = projectrole.role);
-          setdragcntrl(projectrole.drag === 'enable' ? true : false);
+          setrole((role = projectrole.role));
+          setdragcntrl(projectrole.drag === "enable" ? true : false);
           console.log(role);
         }
-      }
+      };
       getRoles();
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`
       ); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -70,7 +69,7 @@ const BoardMain = () => {
     console.log(projectId);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`
       );
       const result = await response.json();
 
@@ -87,7 +86,7 @@ const BoardMain = () => {
   const setProjectWorkFlow = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`,
         {
           method: "PUT",
           headers: {
@@ -114,16 +113,16 @@ const BoardMain = () => {
     }
   };
   useEffect(() => {
-    seta(a = true);
-    console.log(a)
-  }, [location.pathname])
+    seta((a = true));
+    console.log(a);
+  }, [location.pathname]);
   useEffect(() => {
     console.log("g " + projectId);
     console.log("h " + isInitialized);
     if (!isInitialized || a) {
       initializeData();
-      console.log("hek")
-      seta(a = false);
+      console.log("hek");
+      seta((a = false));
     }
     if (projectId && isInitialized) {
       fetchProjectName();
@@ -136,7 +135,7 @@ const BoardMain = () => {
   const setName = async (title, bid) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${bid}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${bid}`,
         {
           method: "PUT",
           headers: {
@@ -178,7 +177,7 @@ const BoardMain = () => {
   //   );
   //   // try {
   //   //   const response = await fetch(
-  //   //     `http://localhost:3010/projects/kanban/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
+  //   //     `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
   //   //     {
   //   //       method: "PUT",
   //   //       headers: {
@@ -237,7 +236,7 @@ const BoardMain = () => {
     const tempData = [...data];
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${boardId}/cards/reorderCards/${sourceIndex}/${destinationIndex}`,
         {
           method: "PUT",
           headers: {
@@ -289,7 +288,7 @@ const BoardMain = () => {
         navigate("/login", { state: user });
       }
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${boardId}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${boardId}`,
         {
           method: "POST",
           headers: {
@@ -331,7 +330,7 @@ const BoardMain = () => {
     // console.log(targetId, cardId);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${targetId}/${cardId}/`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${targetId}/${cardId}/`,
         {
           method: "DELETE",
           headers: {
@@ -370,7 +369,7 @@ const BoardMain = () => {
     try {
       // Make API call to add a board
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`,
         {
           method: "POST",
           headers: {
@@ -407,7 +406,7 @@ const BoardMain = () => {
   const removeBoard = async (bid) => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${bid}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${bid}`,
         {
           method: "DELETE",
           headers: {
@@ -437,10 +436,17 @@ const BoardMain = () => {
 
   const onDragEnd = async (result) => {
     const { source, destination } = result;
-    const matchedboard = (data.find(item => item.id === result.source.droppableId)).card;
-    const matchedcard = (matchedboard.find(item => item._id === result.draggableId))
-    const member = (matchedcard.members.find(item => item.member_id === id))
-    if (role === 'admin' || (dragcntrl === true && role === 'developer' && member)) {
+    const matchedboard = data.find(
+      (item) => item.id === result.source.droppableId
+    ).card;
+    const matchedcard = matchedboard.find(
+      (item) => item._id === result.draggableId
+    );
+    const member = matchedcard.members.find((item) => item.member_id === id);
+    if (
+      role === "admin" ||
+      (dragcntrl === true && role === "developer" && member)
+    ) {
       if (!destination) return;
       console.log("abc " + source.droppableId);
       console.log("bcd " + destination.droppableId);
@@ -459,11 +465,10 @@ const BoardMain = () => {
 
       // Ask for confirmation
 
-
       console.log("Ula");
       try {
         const response = await fetch(
-          `http://localhost:3010/projects/kanban/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
+          `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/cards/reorderCards/${source.droppableId}/${destination.droppableId}/${source.index}/${destination.index}`,
           {
             method: "PUT",
             headers: {
@@ -486,8 +491,7 @@ const BoardMain = () => {
         // Handle the error or show a user-friendly message
       }
       setData((prevData) => dragCardInBoard(prevData, source, destination));
-    }
-    else {
+    } else {
       setErrorModal(true);
     }
   };
@@ -553,15 +557,25 @@ const BoardMain = () => {
   // }, [data, isInitialized]);
   const filterfunction = () => {
     setfilter(!filter);
-  }
+  };
   const handleClose = () => setErrorModal(false);
   return (
     <div className={`center-div ${open ? "sidebar-open" : ""}`}>
       <div className="center-content">
-        {role === 'developer' && <button class="btn btn-primary filter-button" onClick={filterfunction}>
-          <img src="/filter_icon.png" alt="Filter Icon" class="filter-icon" style={{ height: '30px', width: '30px' }} />
-          {filter ? 'See All Cards' : 'Filter My Cards'}
-        </button>}
+        {role === "developer" && (
+          <button
+            class="btn btn-primary filter-button"
+            onClick={filterfunction}
+          >
+            <img
+              src="/filter_icon.png"
+              alt="Filter Icon"
+              class="filter-icon"
+              style={{ height: "30px", width: "30px" }}
+            />
+            {filter ? "See All Cards" : "Filter My Cards"}
+          </button>
+        )}
         <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
           <Droppable
             droppableId="main-board"
@@ -597,7 +611,7 @@ const BoardMain = () => {
                       role={role}
                     />
                   ))}
-                  {workflow === false && role === 'admin' && (
+                  {workflow === false && role === "admin" && (
                     <Editable
                       class={"add__board"}
                       name={"Add Board"}

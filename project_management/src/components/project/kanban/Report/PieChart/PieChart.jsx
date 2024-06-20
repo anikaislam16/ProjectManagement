@@ -176,7 +176,7 @@ function PieChartKanban() {
   const initializeData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -229,7 +229,9 @@ function PieChartKanban() {
   }, [selectedBoard]);
   const getMemberById = async (memberId) => {
     try {
-      const response = await fetch(`http://localhost:3010/members/${memberId}`);
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/members/${memberId}`
+      );
       if (!response.ok) {
         throw new Error(
           `Failed to fetch member by ID. Status: ${response.status}`

@@ -3,7 +3,11 @@ const router = express.Router();
 const {
   createQuestion,
   findChats,
-  findChatsForMe
+  findChatsForMe,
+  findNotice,
+  addUserToQuestion,
+  removeUserFromQuestion,
+  updateNotification
 } = require("./messageController/ChatController");
 const {
   createMessage,
@@ -18,7 +22,7 @@ router.post("/sendMsg", async (req, res) => {
   try {
     // Call the createMessage function and pass the request body
     const savedMessage = await createMessage(req.body);
-    console.log(savedMessage)
+   
     // Send a success response
     res.status(201).json(savedMessage);
   } catch (error) {
@@ -79,4 +83,8 @@ router.post("/toggle-like", async (req, res) => {
 });
 router.post("/findChats", findChats);
 router.post("/findChatsForMe", findChatsForMe);
+router.post("/findNotice", findNotice);
+router.put("/add-users", addUserToQuestion);
+router.put("/remove-users", removeUserFromQuestion);
+router.put('/updatenotification', updateNotification);
 module.exports = router;

@@ -11,19 +11,21 @@ export default function MyProject() {
   useEffect(() => {
     if (location.state === null) {
       setauthorized(false);
-    }
-    else {
+    } else {
       setauthorized(true);
-      setid(id = location.state.userId);
+      setid((id = location.state.userId));
       const fetchProjectData = async () => {
         try {
-          const response = await fetch("http://localhost:3010/projects/kanban/", {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ memberId: id }),
-          });
+          const response = await fetch(
+            `${process.env.REACT_APP_HOST}/projects/kanban/`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ memberId: id }),
+            }
+          );
           const data = await response.json();
           console.log(data);
           if (!data.hasOwnProperty("message")) {
@@ -31,7 +33,7 @@ export default function MyProject() {
             setProjects((projects = data.projects));
           }
           const responseScrum = await fetch(
-            "http://localhost:3010/projects/scrum/",
+            `${process.env.REACT_APP_HOST}/projects/scrum/`,
             {
               method: "PUT",
               headers: {
@@ -72,7 +74,7 @@ export default function MyProject() {
   };
   return (
     <div>
-      {authorized ?
+      {authorized ? (
         <div className="container mt-5">
           <h2 className="text-center mb-4">My Projects</h2>
           <div className="row">
@@ -162,7 +164,10 @@ export default function MyProject() {
               </div>
             ))}
           </div>
-        </div> : <h2>This page is unauthorized for You</h2>}
+        </div>
+      ) : (
+        <h2>This page is unauthorized for You</h2>
+      )}
     </div>
   );
 }

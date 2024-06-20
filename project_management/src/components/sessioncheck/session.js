@@ -1,8 +1,11 @@
 const checkSession = async () => {
-    const response = await fetch('http://localhost:3010/signup/loginmatch', {
+    const response = await fetch(
+      `${process.env.REACT_APP_HOST}/signup/loginmatch`,
+      {
         method: "GET",
-        credentials: 'include', // Include cookies
-    });
+        credentials: "include", // Include cookies
+      }
+    );
 
     if (response.ok) {
         console.log("success");
@@ -10,10 +13,13 @@ const checkSession = async () => {
         console.log(data.message);
         console.log(data);
         if (data.message === 'No session found') {
-            const response = await fetch('http://localhost:3010/signup/login', {
+            const response = await fetch(
+              `${process.env.REACT_APP_HOST}/signup/login`,
+              {
                 method: "PUT",
-                credentials: 'include', // Include cookies
-            });
+                credentials: "include", // Include cookies
+              }
+            );
 
             if (response.ok) {
                 const data = await response.json();

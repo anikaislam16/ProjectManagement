@@ -11,6 +11,8 @@ import { useLocation } from "react-router-dom";
 import { checkSession } from "../../../../../sessioncheck/session";
 import { useNavigate } from "react-router-dom";
 
+import { checkKanbanRole } from "../../../checkKanbanRole";
+import { checkScrumRole } from "../../../../scrum/checkScrumRole";
 const MyChats = () => {
   const {
     selectedChat,
@@ -21,7 +23,9 @@ const MyChats = () => {
     setUsers,
     chatOwner,
   } = ChatState();
+  const [data, setData] = useState([]);
   const location = useLocation();
+  const [role, setrole] = useState(null);
   // Sample chat data
   const [chats, setChats] = useState([]);
   const [projectType, setprojectType] = useState("");
@@ -37,6 +41,28 @@ const MyChats = () => {
   };
   const [showModal, setShowModal] = useState(false);
   const [textValue, setTextValue] = useState("");
+  const initializeData = async () => {
+    const isKanbanInPath = location.pathname.includes("kanban");
+    const type = isKanbanInPath ? "kanban" : "scrum";
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/projects/${type}/${projectId}`
+      ); // Replace with your API endpoint
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      //console.log(result);
+      // Format the data and update the state
+
+      //console.log(formattedData);
+
+      setData(result.members);
+      getAllMembers(result.members);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleClose = () => {
     setShowModal(false);
@@ -44,9 +70,10 @@ const MyChats = () => {
     setTitleValue("");
   };
   const handleShow = () => setShowModal(true);
-  const getAllMembers = async () => {
+  const getAllMembers = async (data) => {
+    console.log(data);
     try {
-      const response = await fetch("http://localhost:3010/members"); // Assuming your API endpoint is '/api/members'
+      const response = await fetch(`${process.env.REACT_APP_HOST}/members`); // Assuming your API endpoint is '/api/members'
       if (!response.ok) {
         throw new Error("Failed to fetch members");
       }
@@ -59,9 +86,16 @@ const MyChats = () => {
         name: member.name,
       }));
       console.log("User IDs and Names:", userIdsAndNames);
+      console.log(data);
+      // Extract member_ids from data array
+      const memberIds = data.map((d) => d.member_id);
 
-      // Update users state variable
-      setUsers(userIdsAndNames);
+      // Filter userIdsAndNames based on the memberIds array
+      const filteredUserIdsAndNames = userIdsAndNames.filter((user) =>
+        memberIds.includes(user.userId)
+      );
+      setUsers(filteredUserIdsAndNames);
+      console.log("Filtered User IDs and Names:", filteredUserIdsAndNames);
     } catch (error) {
       console.error("Error fetching members:", error);
       // Handle error here, such as displaying an error message to the user
@@ -79,18 +113,43 @@ const MyChats = () => {
   useEffect(() => {
     const isKanbanInPath = location.pathname.includes("kanban");
     const type = isKanbanInPath ? "kanban" : "scrum";
+    initializeData();
     setprojectType(type);
-    getAllMembers();
+
     getUser();
   }, []);
+
+  useEffect(() => {
+    console.log(type, user);
+    const fetchKanbanRole = async () => {
+      const projectrole = await checkKanbanRole(projectId, user);
+      console.log(projectrole);
+      setrole(projectrole.role);
+    };
+    const fetchScrumRole = async () => {
+      const projectrole = await checkScrumRole(projectId, user);
+      setrole(projectrole.role);
+    };
+    if (projectType === "kanban") {
+      console.log("FFFF");
+      fetchKanbanRole();
+    } else if (projectType === "scrum") {
+      fetchScrumRole();
+    }
+  }, [type, user]);
+  useEffect(() => {
+    console.log(role);
+  }, [role]);
   const fetchChats = async () => {
     var ChatBody = null;
     var api = null;
     console.log(chatOwner);
     if (chatOwner === "You" || type === "You") {
-      api = "http://localhost:3010/message/findChatsForMe";
+      api = `${process.env.REACT_APP_HOST}/message/findChatsForMe`;
     } else if ((chatOwner === "others") | (type === "others")) {
-      api = "http://localhost:3010/message/findChats";
+      api = `${process.env.REACT_APP_HOST}/message/findChats`;
+    } else if (type === "notice") {
+      api = `${process.env.REACT_APP_HOST}/message/findNotice`;
     }
     try {
       const response = await fetch(api, {
@@ -109,8 +168,14 @@ const MyChats = () => {
       }
       console.log(user, projectId, projectType);
       const data = await response.json();
-      console.log(data);
-      setChats(data);
+      const processedData = data.map((item) => ({
+        ...item,
+        question: item.question.split("#")[0],
+      }));
+
+      //console.log("Processed Data:", processedData);
+
+      setChats(processedData); // Set the processed data in the state
     } catch (error) {}
   };
   useEffect(() => {
@@ -142,6 +207,7 @@ const MyChats = () => {
         kanbanProject: projectId,
         users: usersArray,
         groupAdmin: user,
+        projectType: "kanban",
       };
     } else if (projectType === "scrum") {
       newQuestion = {
@@ -149,10 +215,11 @@ const MyChats = () => {
         scrumProject: projectId,
         users: usersArray,
         groupAdmin: user,
+        projectType: "scrum",
       };
     }
     try {
-      const response = await fetch(`http://localhost:3010/message`, {
+      const response = await fetch(`${process.env.REACT_APP_HOST}/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -162,7 +229,7 @@ const MyChats = () => {
 
       if (!response.ok) {
         throw new Error(
-          `Failed to add card. Server responded with ${response.status} ${response.statusText}`
+          `Failed to add Question. Server responded with ${response.status} ${response.statusText}`
         );
       }
       const result = await response.json();
@@ -170,7 +237,7 @@ const MyChats = () => {
       if (response.ok) {
         try {
           const response = await fetch(
-            `http://localhost:3010/message/sendMsg`,
+            `${process.env.REACT_APP_HOST}/message/sendMsg`,
             {
               method: "POST",
               headers: {
@@ -217,9 +284,16 @@ const MyChats = () => {
             {chat.question}
           </div>
         ))}
-      <Button variant="primary" onClick={handleShow}>
-        Add Question
-      </Button>
+      {type === "You" && (
+        <Button variant="primary" onClick={handleShow}>
+          Add Question
+        </Button>
+      )}
+      {/* {type === "notice" && (role === "admin" || role === "Scrum Master") && (
+        <Button variant="primary" onClick={handleShow}>
+          Add Question
+        </Button>
+      )} */}
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Questions</Modal.Title>

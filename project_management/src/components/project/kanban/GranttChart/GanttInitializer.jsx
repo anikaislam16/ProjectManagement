@@ -12,7 +12,7 @@ const GanttInitializer = () => {
   const initializeData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`
       ); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -35,15 +35,14 @@ const GanttInitializer = () => {
   };
   const getRoles = async () => {
     const userData = await checkSession();
-    if (userData.hasOwnProperty('message')) {
-      const datasend = { message: "Session Expired" }
-      navigate('/login', { state: datasend });
-    }
-    else {
+    if (userData.hasOwnProperty("message")) {
+      const datasend = { message: "Session Expired" };
+      navigate("/login", { state: datasend });
+    } else {
       const projectrole = await checkKanbanRole(projectId, userData.id);
-      setrole(role = projectrole.role);
+      setrole((role = projectrole.role));
     }
-  }
+  };
   useEffect(() => {
     console.log("g " + projectId);
     console.log("h " + isInitialized);
@@ -53,7 +52,9 @@ const GanttInitializer = () => {
     }
   }, [isInitialized]);
   return (
-    <div>{isInitialized ? <Gantt1 data={data} role={role} /> : <p>Loading...</p>}</div>
+    <div>
+      {isInitialized ? <Gantt1 data={data} role={role} /> : <p>Loading...</p>}
+    </div>
   );
 };
 

@@ -3,4 +3,9 @@
 # dependencies
 /node_modules
 
+<<<<<<< Updated upstream
 vercel.json
+=======
+
+.env
+>>>>>>> Stashed changes

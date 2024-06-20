@@ -6,12 +6,18 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { checkSession } from "../../../../../../../sessioncheck/session";
 import { checkKanbanRole } from "../../../../../checkKanbanRole";
-const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId }) => {
+const StartDateButton = ({
+  dueOrStart,
+  handleDate,
+  initialDate,
+  value,
+  cardId,
+}) => {
   var [selectedDate, setSelectedDate] = useState(
     initialDate ? new Date(initialDate) : null
   );
   const [showModal, setShowModal] = useState(false);
-  var [msg, setmsg] = useState(null)
+  var [msg, setmsg] = useState(null);
   var [strtdate, setstart] = useState(null);
   const { projectId } = useParams();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -24,21 +30,20 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
     setIsDatePickerOpen(false);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`
       );
       if (response.ok) {
         const data = await response.json();
         console.log(data);
         const allCards = data.boards.flatMap((project) => project.cards);
-        console.log(allCards)
+        console.log(allCards);
         const foundCard = allCards.find((card) => card._id === cardId);
         console.log(foundCard);
-        if (value === 'startDate') {
-
-          let stdate = null;//eta all dependent card er moddhe max duedate store rakhe
+        if (value === "startDate") {
+          let stdate = null; //eta all dependent card er moddhe max duedate store rakhe
           foundCard.dependencies.forEach((id) => {
             const Card = allCards.find((card) => card._id === id);
-            console.log(Card.dueDate)
+            console.log(Card.dueDate);
             if (new Date(Card.dueDate) > new Date(stdate) || stdate === null) {
               stdate = Card.dueDate;
               console.log(stdate);
@@ -50,23 +55,27 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
             const d = new Date(stdate);
             d.setDate(d.getDate() + 1);
             d.setHours(0, 0, 0, 0);
-            setstart(strtdate = new Date(d));
+            setstart((strtdate = new Date(d)));
             setShowModal(true);
-            setmsg(`Start Date can not be set before ${strtdate.toDateString()} , as it dependent to other Cards.`)
+            setmsg(
+              `Start Date can not be set before ${strtdate.toDateString()} , as it dependent to other Cards.`
+            );
             // Now, `stdate` has been updated to the next day with hours set to 00:00:00.000
             date = new Date(d);
             console.log(date);
           }
-          if (new Date(date) > new Date(foundCard.dueDate) && foundCard.dueDate != null) {
+          if (
+            new Date(date) > new Date(foundCard.dueDate) &&
+            foundCard.dueDate != null
+          ) {
             date = new Date(foundCard.dueDate);
             date.setHours(0, 0, 0, 0);
             setstart(new Date(date));
             setShowModal(true);
-            setmsg(` Start Date can not be set after Due Date`)
+            setmsg(` Start Date can not be set after Due Date`);
           }
-        }
-        else {
-          console.log('kd');
+        } else {
+          console.log("kd");
           const fixingDuration = (currentCard, visited) => {
             console.log(foundCard);
             if (currentCard._id === cardId) {
@@ -76,9 +85,9 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
                 date = new Date(d);
                 console.log(date);
                 setShowModal(true);
-                setmsg(`Due Date can not be set Before Start Date`)
+                setmsg(`Due Date can not be set Before Start Date`);
               }
-              currentCard.dueDate = new Date(date)
+              currentCard.dueDate = new Date(date);
             }
             // Check if the current card is already visited (indicating a cycle)
             if (visited.includes(currentCard._id)) {
@@ -90,21 +99,32 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
 
             // Recursively check each dependency
             for (const workflowId of currentCard.workflow || []) {
-              var workflowCard = allCards.find((card) => card._id === workflowId);
+              var workflowCard = allCards.find(
+                (card) => card._id === workflowId
+              );
               console.log(workflowCard, workflowCard.startDate);
               const boardWithWorkflow = data.boards.find((board) =>
                 board.cards.some((card) => card._id === workflowId)
               );
               const workflowboardId = boardWithWorkflow._id;
-              console.log(new Date(workflowCard.startDate) <= new Date(currentCard.dueDate))
-              console.log(new Date(workflowCard.startDate), new Date(currentCard.dueDate))
-              if (new Date(workflowCard.startDate) <= new Date(currentCard.dueDate)) {
+              console.log(
+                new Date(workflowCard.startDate) <=
+                  new Date(currentCard.dueDate)
+              );
+              console.log(
+                new Date(workflowCard.startDate),
+                new Date(currentCard.dueDate)
+              );
+              if (
+                new Date(workflowCard.startDate) <=
+                new Date(currentCard.dueDate)
+              ) {
                 console.log(workflowCard);
-                const dayDifference =
-                  Math.round((
-                    new Date(currentCard.dueDate) - new Date(workflowCard.startDate)
-                  ) /
-                    (24 * 60 * 60 * 1000));
+                const dayDifference = Math.round(
+                  (new Date(currentCard.dueDate) -
+                    new Date(workflowCard.startDate)) /
+                    (24 * 60 * 60 * 1000)
+                );
                 console.log(dayDifference);
                 var startDate = new Date(currentCard.dueDate);
                 startDate.setDate(startDate.getDate() + 1);
@@ -113,12 +133,17 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
                 var dueDate = new Date(workflowCard.dueDate);
                 dueDate.setDate(dueDate.getDate() + dayDifference);
                 dueDate.setHours(23, 59, 0, 0);
-                console.log(workflowCard)
+                console.log(workflowCard);
                 workflowCard.dueDate = dueDate;
                 console.log(dueDate);
                 console.log(workflowCard.startDate, workflowCard.dueDate);
                 console.log(workflowCard);
-                setStartDueDate(workflowboardId, workflowId, workflowCard.startDate, workflowCard.dueDate);
+                setStartDueDate(
+                  workflowboardId,
+                  workflowId,
+                  workflowCard.startDate,
+                  workflowCard.dueDate
+                );
               }
               //ekhon dependentCard er sathe current card er compare krbo
               fixingDuration(workflowCard, [...visited]);
@@ -127,8 +152,13 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
             // If not found in the current card or its dependencies, return false
             return false;
           };
-          const setStartDueDate = async (workflowboardid, workflowcardid, startDate, dueDate) => {
-            const apiUrl = `http://localhost:3010/projects/kanban/${projectId}/${workflowboardid}/${workflowcardid}`;
+          const setStartDueDate = async (
+            workflowboardid,
+            workflowcardid,
+            startDate,
+            dueDate
+          ) => {
+            const apiUrl = `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${workflowboardid}/${workflowcardid}`;
             //  console.log(card);
             try {
               const response = await fetch(apiUrl, {
@@ -146,7 +176,7 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
                 const data = await response.json();
                 console.log(data);
                 const response1 = await fetch(
-                  `http://localhost:3010/projects/kanban/${projectId}/${workflowboardid}/${workflowcardid}`,
+                  `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${workflowboardid}/${workflowcardid}`,
                   {
                     method: "PUT",
                     headers: {
@@ -175,8 +205,7 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
           const visited = [];
           fixingDuration(foundCard, visited);
         }
-      }
-      else {
+      } else {
         console.error("Failed to fetch project data");
       }
     } catch (error) {
@@ -193,15 +222,14 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
     const getRoles = async () => {
       const userData = await checkSession();
       const projectrole = await checkKanbanRole(projectId, userData.id);
-      setrole(role = projectrole.role);
-    }
+      setrole((role = projectrole.role));
+    };
     getRoles();
-  })
+  });
   useEffect(() => {
     if (initialDate === null) {
-
     }
-    setSelectedDate(initialDate ? new Date(initialDate) : null)
+    setSelectedDate(initialDate ? new Date(initialDate) : null);
   }, [initialDate]);
   const handleCloseModal = () => {
     setShowModal(false);
@@ -231,13 +259,13 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
           textAlign: "left", // Align text to the left
           // Add any other styles as needed
         }}
-        disabled={role === 'admin' ? false : true}
+        disabled={role === "admin" ? false : true}
       >
         <span className="icon__sm">
           <Clock />
         </span>
-
-        {" " + dueOrStart} Date: {selectedDate ? selectedDate.toDateString() : ""}
+        {" " + dueOrStart} Date:{" "}
+        {selectedDate ? selectedDate.toDateString() : ""}
       </button>
       {isDatePickerOpen && (
         <DatePicker
@@ -265,7 +293,6 @@ const StartDateButton = ({ dueOrStart, handleDate, initialDate, value, cardId })
         id="calendar-portal"
         style={{ position: "absolute", zIndex: 9999 }}
       />
-
     </div>
   );
 };

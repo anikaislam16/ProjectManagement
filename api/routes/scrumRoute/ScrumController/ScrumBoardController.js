@@ -16,6 +16,7 @@ const handleErrors = (res, error) => {
   res.status(500).json({ message: "Internal Server Error" });
 };
 const addBoard = async (req, res) => {
+  console.log("HELLLLLLLLLL")
   console.log(req.params.id);
   try {
     const project = await ScrumProject.findById(req.params.id);

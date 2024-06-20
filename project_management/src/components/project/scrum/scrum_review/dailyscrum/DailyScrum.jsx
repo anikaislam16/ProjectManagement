@@ -55,7 +55,7 @@ export default function DailyScrum() {
   // Destructure the context value
   const { open } = useContext(SidebarContextScrum);
   const fetchDailyScrumsByName = async (paramType, paramValue) => {
-    const url = `http://localhost:3010/projects/scrum/DailyScrum?paramType=${paramType}&paramValue=${paramValue}`;
+    const url = `${process.env.REACT_APP_HOST}/projects/scrum/DailyScrum?paramType=${paramType}&paramValue=${paramValue}`;
 
     try {
       const response = await fetch(url);
@@ -86,7 +86,7 @@ export default function DailyScrum() {
   const onSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/DailyScrum/${reviewId}`,
+        `${process.env.REACT_APP_HOST}/projects/scrum/DailyScrum/${reviewId}`,
         {
           method: "PUT",
           headers: {

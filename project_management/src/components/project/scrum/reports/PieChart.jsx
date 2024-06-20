@@ -166,7 +166,7 @@ function PieChart() {
   const initializeData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -225,7 +225,9 @@ function PieChart() {
   }, [selectedBoard]);
   const getMemberById = async (memberId) => {
     try {
-      const response = await fetch(`http://localhost:3010/members/${memberId}`);
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/members/${memberId}`
+      );
       if (!response.ok) {
         throw new Error(
           `Failed to fetch member by ID. Status: ${response.status}`

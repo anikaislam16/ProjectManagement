@@ -78,7 +78,7 @@ export default function Gantt1({ data, role }: { data: any[]; role: string }) {
       }
 
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
         {
           method: "PUT",
           headers: {
@@ -91,7 +91,7 @@ export default function Gantt1({ data, role }: { data: any[]; role: string }) {
         }
       );
       const response1 = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}/${tasks[i].project}/${tasks[i].id}`,
         {
           method: "PUT",
           headers: {

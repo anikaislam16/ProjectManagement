@@ -1,9 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./Types.css"; // Import your CSS file
 import { checkSession } from "../sessioncheck/session.js";
+import { addNoticeBoxToProject } from "../project/kanban/Chatting/Chatlogic.js";
 const Types = () => {
   const [showModal, setShowModal] = useState(false);
   const [projectName, setProjectName] = useState("");
@@ -11,6 +12,9 @@ const Types = () => {
   const navigate = useNavigate();
   const [showWeekdays, setShowWeekdays] = useState(false);
   const [selectedWeekdays, setSelectedWeekdays] = useState([]);
+  const [id, setid] = useState(null);
+  const [noticeArray, setNoticeArray] = useState([]);
+
   const weekdays = [
     "Monday",
     "Tuesday",
@@ -61,10 +65,12 @@ const Types = () => {
       if (user.message === "Session Expired") {
         navigate("/login", { state: user });
       }
-      console.log(selectedWeekdays);
+      console.log(process.env.REACT_APP_HOST);
+      setNoticeArray((prevArray) => [...prevArray, user.id]);
+
       //  const time = new Date().toISOString().split('T')[0];
       const response = await fetch(
-        `http://localhost:3010/projects/${selectedType}`,
+        `${process.env.REACT_APP_HOST}/projects/${selectedType}`,
         {
           method: "POST",
           headers: {
@@ -85,14 +91,24 @@ const Types = () => {
       }
 
       const result = await response.json();
-      console.log("Response:", result);
+
       const projectId = result._id;
       if (result._id) {
         console.log("Project data stored successfully");
+        console.log("Response:", result);
+
+        await addNoticeBoxToProject(
+          selectedType,
+          projectId,
+          projectName + "#" + projectId,
+          Array.isArray(user.id) ? user.id : [user.id], // ensures user.id is always an array
+          user.id
+        );
+
         if (selectedType === "scrum") {
           try {
             const response = await fetch(
-              `http://localhost:3010/projects/${selectedType}/${result._id}`,
+              `${process.env.REACT_APP_HOST}/projects/${selectedType}/${result._id}`,
               {
                 method: "POST",
                 headers: {

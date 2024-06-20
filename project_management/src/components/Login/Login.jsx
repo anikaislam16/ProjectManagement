@@ -12,32 +12,36 @@ const Login = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch('http://localhost:3010/signup/loginmatch', {
-          method: "GET",
-          credentials: 'include', // Include cookies
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_HOST}/signup/loginmatch`,
+          {
+            method: "GET",
+            credentials: "include", // Include cookies
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
           console.log(data.message);
-          if (data.message === 'Session is present')
-            navigate('/');
+          if (data.message === "Session is present") navigate("/");
           else {
-            const response = await fetch('http://localhost:3010/signup/login', {
-              method: "PUT",
-              credentials: 'include', // Include cookies
-            });
+            const response = await fetch(
+              `${process.env.REACT_APP_HOST}/signup/login`,
+              {
+                method: "PUT",
+                credentials: "include", // Include cookies
+              }
+            );
 
             if (response.ok) {
               const data = await response.json();
-              console.log(data.message)
-              if (data.message === 'Session is present')
-                navigate('/');
+              console.log(data.message);
+              if (data.message === "Session is present") navigate("/");
             }
           }
         }
       } catch (error) {
-        console.error('Error checking session:', error);
+        console.error("Error checking session:", error);
       }
     };
     checkSession();
@@ -71,14 +75,17 @@ const Login = () => {
   };
   async function loginUser(email, password) {
     try {
-      const response = await fetch(`http://localhost:${port}/signup/loginmatch`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Include credentials (cookies)
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/signup/loginmatch`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include credentials (cookies)
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!response.ok) {
         // Handle error response
