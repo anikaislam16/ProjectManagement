@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Dashboard from "../../Images/dashboard.svg";
 import News from "../../Images/news.svg";
 import Performance from "../../Images/performance.svg";
@@ -7,11 +7,16 @@ import Transactions from "../../Images/transactions.svg";
 import { ChevronDown } from "react-feather";
 import chatting from "../../Images/chatting.svg";
 import "../../css/main.scss";
+import testing from "../../Images/testing.png";
 import SidebarContext from "../sidebar_context/SidebarContext";
+import conversation from "../../Images/conversation.png"
+import { checkKanbanRole } from "../../../components/project/kanban/checkKanbanRole";
+import { checkSession } from "../../../components/sessioncheck/session";
 const Sidebar = ({ projectId }) => {
   const { open, setOpen } = useContext(SidebarContext);
   console.log("open  " + open);
   console.log("fddf " + projectId);
+  const navigate = useNavigate();
   const location = useLocation();
   const [projectName, setProjectName] = useState("");
   const [closeMenu, setCloseMenu] = useState(false);
@@ -48,6 +53,20 @@ const Sidebar = ({ projectId }) => {
     console.log("g " + projectId);
 
     if (projectId) {
+      const getRoles = async () => {
+        const userData = await checkSession();
+        if (userData.hasOwnProperty('message')) {
+          const datasend = { message: "Session Expired" }
+          navigate('/login', { state: datasend });
+        }
+        else {
+          const projectrole = await checkKanbanRole(projectId, userData.id);
+          if (projectrole === "not valid") {
+            navigate('/unauthorized');
+          }
+        }
+      }
+      getRoles();
       fetchProjectName();
     }
   }, [projectId]);
@@ -58,7 +77,7 @@ const Sidebar = ({ projectId }) => {
           closeMenu === false ? "logoContainer" : "logoContainer active"
         }
       >
-        <h6 className="titles">{projectName}</h6>
+        <h6 className="title">{projectName}</h6>
       </div>
       <div
         className={
@@ -194,8 +213,28 @@ const Sidebar = ({ projectId }) => {
             }
           >
             <NavLink to={`/project/kanban/${projectId}/chat`}>
-              <img src={chatting} alt="News" />
-              <span className="text-hidden">Live Issue Board</span>
+              <img
+                src={conversation}
+                alt="News"
+                style={{ width: "30px", height: "30px" }}
+              />
+              <span className="text-hidden">Issues</span>
+            </NavLink>
+          </li>
+          <li
+            className={
+              location.pathname === `/project/kanban/${projectId}/tdd`
+                ? "active"
+                : ""
+            }
+          >
+            <NavLink to={`/project/kanban/${projectId}/tdd/requirements`}>
+              <img
+                src={testing}
+                alt="News"
+                style={{ width: "30px", height: "30px" }}
+              />
+              <span className="text-hidden">TDD</span>
             </NavLink>
           </li>
         </ul>
