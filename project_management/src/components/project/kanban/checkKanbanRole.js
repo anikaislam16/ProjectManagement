@@ -8,5 +8,9 @@ const checkKanbanRole = async (projectId, memberId) => {
         console.log(data);
         return data;
     }
+    else {
+        const data = "not valid";
+        return data;
+    }
 }
 module.exports = { checkKanbanRole };

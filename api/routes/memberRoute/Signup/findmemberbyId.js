@@ -1,6 +1,7 @@
 const { Member } = require("../../../modules/MemberModule");
 const { KanbanProject } = require("../../../modules/KanbanModule");
 const { ScrumProject } = require("../../../modules/ScrumModule");
+const nodemailer = require('nodemailer');
 const findMemberbyId = async (req, res) => {
     const memberId = req.params.id;
     console.log(memberId);
@@ -61,4 +62,41 @@ const findMemberRoleInProject = async (req, res) => {
         res.status(500).send('Server error');
     }
 }
-module.exports = { findMemberbyId, memberget, findMemberRoleInProject };
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'abdurrayhancse19018@gmail.com', // Replace with your Gmail email
+        pass: 'geoz zrbf zsss ncki',  // Replace with your Gmail password or an App Password if using 2-factor authentication
+    },
+});
+const sendOtpEmail = (toEmail, text) => {
+    const mailOptions = {
+        from: 'abdurrayhancse19018@gmail.com',  // Replace with your Gmail email
+        to: toEmail,
+        subject: 'OTP Verification',
+        text: `${text}`,
+    }
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+        } else {
+
+        }
+    })
+};
+const sendNotificationEmail = (toEmail, subject, html) => {
+    const mailOptions = {
+        from: 'abdurrayhancse19018@gmail.com',  // Replace with your Gmail email
+        to: toEmail,
+        subject: subject,
+        html: html,
+    }
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+        } else {
+            console.log('Email sent:', info.response);
+        }
+    })
+};
+module.exports = { findMemberbyId, memberget, findMemberRoleInProject, sendOtpEmail, sendNotificationEmail };

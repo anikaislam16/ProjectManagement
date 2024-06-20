@@ -77,6 +77,10 @@ const boardSchema = new mongoose.Schema({
           default: [],
         },
       ],
+      tddActive: {
+        type: Boolean,
+        default: false, // Default value should be a boolean, not a number
+      }
     },
   ],
 });

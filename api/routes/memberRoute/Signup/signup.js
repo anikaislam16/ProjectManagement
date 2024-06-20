@@ -7,31 +7,10 @@ const cors = require("cors");
 const nodemailer = require('nodemailer');
 const { Userinfostore, UserinfoUpdate, updateMemberinfo } = require('./storeuser.js');
 const { Member } = require('../../../modules/MemberModule.js');
-const { findMemberbyId, memberget, findMemberRoleInProject } = require('./findmemberbyId.js')
+const { findMemberbyId, memberget, findMemberRoleInProject, sendOtpEmail } = require('./findmemberbyId.js')
 var bcrypt = require('bcryptjs');
 let origin = "";
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'abdurrayhancse19018@gmail.com', // Replace with your Gmail email
-        pass: 'geoz zrbf zsss ncki',  // Replace with your Gmail password or an App Password if using 2-factor authentication
-    },
-});
-const sendOtpEmail = (toEmail, otp) => {
-    const mailOptions = {
-        from: 'abdurrayhancse19018@gmail.com',  // Replace with your Gmail email
-        to: toEmail,
-        subject: 'OTP Verification',
-        text: `Your OTP for email verification is: ${otp}`,
-    }
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Error sending email:', error);
-        } else {
 
-        }
-    })
-};
 // setup session
 sign.use(
     session({
@@ -58,7 +37,8 @@ var signpost = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000);
 
     // Send the OTP to the provided email
-    sendOtpEmail(email, otp);
+    const text = `Your OTP for email verification is: ${otp}`
+    sendOtpEmail(email, text);
 
     // Respond with success message
     return res.status(200).json({ message: otp });
@@ -76,7 +56,8 @@ const findEmailotp = async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000);
 
         // Send the OTP to the provided email
-        sendOtpEmail(email, otp);
+        const text = `Your OTP for email verification is: ${otp}`
+        sendOtpEmail(email, text);
 
         // Respond with success message
         return res.status(200).json({ message: otp });

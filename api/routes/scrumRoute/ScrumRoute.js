@@ -1,5 +1,5 @@
 const express = require("express");
-const {ScrumBoard}=require('../../modules/ScrumBoards')
+const { ScrumBoard } = require('../../modules/ScrumBoards')
 const router = express.Router();
 const {
   getAllProjects,
@@ -34,7 +34,7 @@ const {
   reorderCards,
   updateDocuments,
 } = require("./ScrumController/ScrumBoardCardController");
-  
+
 
 const {
   getDailyScrumsByParam,
@@ -42,20 +42,6 @@ const {
   updateDailyScrum,
 } = require("./ScrumController/ScrumReviewController");
 router.use(logRequestInfo);
-router.post("/add-tdd", async (req, res) => {
-  try {
-    // Update documents to add the new attribute
-    await ScrumBoard.updateMany({}, { $set: { "cards.$[].Tdd": false } });
-    res
-      .status(200)
-      .json({ message: "Tdd attribute added successfully to all documents." });
-  } catch (error) {
-    console.error("Error adding Tdd attribute:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while adding Tdd attribute." });
-  }
-});
 router.route("/").get(getAllProjects).post(createProject).put(getProjectByMember);
 // project id diye project er schema change kora hbe.
 

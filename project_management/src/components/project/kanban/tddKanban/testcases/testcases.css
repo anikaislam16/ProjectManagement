@@ -1,0 +1,61 @@
+/* Add your custom CSS styles here */
+.modal-dialog {
+    max-width: 600px;
+}
+
+.modal-body input[type="text"],
+.modal-body select {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.cont {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.card {
+    display: flex;
+    /* gap: 10px; */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.header {
+    display: flex;
+    flex: 1;
+    margin-left: 13px;
+}
+
+.header-item {
+    flex: 1;
+}
+
+.item-details {
+    display: flex;
+    flex: 3;
+    gap: 10px;
+}
+
+.detail {
+    flex: 1;
+}
+
+.action-icons {
+    display: flex;
+    flex: 1;
+    gap: 10px;
+    align-items: center;
+}
+
+.icon-button {
+    border: none;
+    background-color: transparent;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+}

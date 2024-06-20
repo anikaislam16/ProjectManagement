@@ -1,0 +1,64 @@
+.container {
+    margin-top: 20px;
+}
+
+.card-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.task-header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.test-case {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.test-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.test-item p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.dropdown {
+    margin-left: 10px;
+}
+
+.dropdown-menu {
+    min-width: 100px;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+/* Add these styles to your TestCard.css file */
+.dropdown-menu .pass {
+    background-color: #28a745;
+    /* Green */
+}
+
+.dropdown-menu .refactor {
+    background-color: #ffc107;
+    /* Yellow */
+}
+
+.dropdown-menu .failed {
+    background-color: #dc3545;
+    /* Red */
+}
+
+.task-status {
+    display: inline-block;
+    margin-right: 5px;
+    /* Adjust margin as needed */
+}

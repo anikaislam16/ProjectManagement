@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Dashboard from "../../Images/dashboard.svg";
 import chatting from "../../Images/chatting.svg";
 import { ChevronDown } from "react-feather";
@@ -18,9 +18,12 @@ import { Modal, Button } from "react-bootstrap";
 // import { useLocation } from "react-router-dom";
 import "../../css/main.scss";
 import SidebarContextScrum from "../sidebar_context/SidebarContextScrum";
+import { checkScrumRole } from "../../../components/project/scrum/checkScrumRole";
+import { checkSession } from "../../../components/sessioncheck/session";
 const SidebarScrum = ({ projectId }) => {
   const { open, setOpen } = useContext(SidebarContextScrum);
   console.log("open  " + open);
+  const navigate = useNavigate();
   console.log("fddf " + projectId);
   const location = useLocation();
   const [graph, setGraph] = useState("");
@@ -36,7 +39,7 @@ const SidebarScrum = ({ projectId }) => {
   const handleReportsClick = () => {
     setShowOptionBar(!showOptionBar); // Toggle option bar visibility
   };
-  const handleOptionClick = (s) => {};
+  const handleOptionClick = (s) => { };
   const fetchProjectName = async () => {
     console.log(projectId);
     try {
@@ -59,6 +62,20 @@ const SidebarScrum = ({ projectId }) => {
     console.log("g " + projectId);
 
     if (projectId) {
+      const getRoles = async () => {
+        const userData = await checkSession();
+        if (userData.hasOwnProperty('message')) {
+          const datasend = { message: "Session Expired" }
+          navigate('/login', { state: datasend });
+        }
+        else {
+          const projectrole = await checkScrumRole(projectId, userData.id);
+          if (projectrole === "not valid") {
+            navigate('/unauthorized');
+          }
+        }
+      }
+      getRoles();
       fetchProjectName();
     }
   }, [projectId]);
@@ -225,10 +242,10 @@ const SidebarScrum = ({ projectId }) => {
           <li
             className={
               location.pathname === `/project/scrum/${projectId}/chat` ||
-              location.pathname === `/project/scrum/${projectId}/chatbox/You` ||
-              location.pathname ===
+                location.pathname === `/project/scrum/${projectId}/chatbox/You` ||
+                location.pathname ===
                 `/project/scrum/${projectId}/chatbox/others` ||
-              location.pathname === `/project/scrum/${projectId}/chatbox/notice`
+                location.pathname === `/project/scrum/${projectId}/chatbox/notice`
                 ? "active"
                 : ""
             }
@@ -267,7 +284,7 @@ const SidebarScrum = ({ projectId }) => {
                 : ""
             }
           >
-            <NavLink to={`/project/scrum/${projectId}/tdd`}>
+            <NavLink to={`/project/scrum/${projectId}/tdd/requirements`}>
               <img
                 src={testing}
                 alt="News"

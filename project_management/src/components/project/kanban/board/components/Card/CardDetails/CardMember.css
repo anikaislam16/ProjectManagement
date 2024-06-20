@@ -57,3 +57,57 @@
     background-color: #555;
     /* Change the color as needed */
 }
+
+
+
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-body h5 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.custom-form-check {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.custom-form-check .form-check-label {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+/* App.css */
+
+.custom-radio .form-check-input:checked+.form-check-label::before {
+    background-color: #007bff;
+    /* Change to desired color */
+}
+
+.custom-radio .form-check-input:focus+.form-check-label::before {
+    box-shadow: 0 0 0 1px #007bff, 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.custom-radio .form-check-input:checked+.form-check-label::after {
+    border-color: #007bff;
+    /* Change to desired color */
+}
+
+.custom-radio .form-check-input:disabled+.form-check-label {
+    color: #6c757d;
+    /* Change to desired color */
+}
+
+.custom-radio .form-check-input:disabled+.form-check-label::before {
+    background-color: #f8f9fa;
+    /* Change to desired color */
+}
+
+.custom-radio .form-check-input:disabled:checked+.form-check-label::before {
+    background-color: #6c757d;
+    /* Change to desired color */
+}

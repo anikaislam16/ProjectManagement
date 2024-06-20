@@ -44,6 +44,12 @@ import Requirement from "./components/project/scrum/tdd/requirements/Requirement
 import TestDesign from "./components/project/scrum/tdd/design/TestDesign.jsx";
 import TestPlan from "./components/project/scrum/tdd/plan/TestPlan.jsx";
 import TestCases from "./components/project/scrum/tdd/testcases/TestCases.jsx";
+import Unauthorized from "./Unauthorized.jsx";
+import RequirementKanban from "./components/project/kanban/tddKanban/requirements/Requirement.jsx";
+import TddMainKanban from "./components/project/kanban/tddKanban/tddMain.jsx";
+import TestCasesKanban from "./components/project/kanban/tddKanban/testcases/TestCases.jsx";
+import TestDesignKanban from "./components/project/kanban/tddKanban/design/TestDesign.jsx";
+import TestPlanKanban from "./components/project/kanban/tddKanban/plan/TestPlan.jsx";
 function App() {
   return (
     <div className="App">
@@ -52,6 +58,7 @@ function App() {
           <Navbar1 />
           <Routes>
             <Route path="/" element={<Home />}></Route>
+            <Route pate="/unauthorized" element={<Unauthorized />} > </Route>
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup/otp" element={<OTP />} />
             <Route path="/signup/password" element={<Password />} />
@@ -66,6 +73,12 @@ function App() {
               path="/project/kanban/:projectId/"
               element={<ProjectKanban />}
             >
+              <Route path="tdd" element={<TddMainKanban />}>
+                <Route path="requirements" element={<RequirementKanban />} />
+                <Route path="design" element={<TestDesignKanban />} />
+                <Route path="design/test" element={<TestCasesKanban />} />
+                <Route path="plan" element={<TestPlanKanban />} />
+              </Route>
               <Route path="gantt" element={<GanttInitializer />} />
               <Route path="members" element={<Members />} />
               <Route index element={<BoardMain />} />
@@ -80,8 +93,8 @@ function App() {
               <Route path="tdd" element={<TddMain />}>
                 <Route path="requirements" element={<Requirement />} />
                 <Route path="design" element={<TestDesign />} />
+                <Route path="design/test" element={<TestCases />} />
                 <Route path="plan" element={<TestPlan />} />
-                <Route path="test" element={<TestCases />} />
               </Route>
               <Route path="gantt" element={<ScurmGanttInitializer />}></Route>
               <Route path="completed" element={<ScrumCompleteBoardMain />}>

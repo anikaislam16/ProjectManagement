@@ -2,10 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import './CardMember.css'; // Import your CSS file
 import { useParams } from "react-router-dom";
+import { Button } from 'react-bootstrap';
+import ReplaceMemberModal from './ReplaceMemberModal.jsx';
 const CardMember = (props) => {
     const [selectedMembers, setSelectedMembers] = useState([]);
     const { projectId } = useParams();
     const [availableMembers, setMembers] = useState([]);
+    const [replaceMemberModal, showReplaceMemberModal] = useState(false);
+    var [replaceMember, setReplaceMember] = useState({});
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -99,36 +103,68 @@ const CardMember = (props) => {
         wait();
 
     }, [projectId]);
+    const removeMemberfromCard = async (memberId) => {
+        console.log(memberId);
+        setSelectedMembers((prevMembers) =>
+            prevMembers.filter((id) => id !== memberId)
+        );
+        const key = 'members';
+        const apiUrl = `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.cardId}/${key}/${memberId}`;
 
-    const handleMemberClick = async (memberId, role) => { //ekhane memberId selected list e ase kina ta check kora hoi. jodi thake, tahole baad dibe. r na thakle include krbe.
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                // Optionally, you can return the updated data or handle it as needed
+            } else {
+                console.error('Error updating members:', response.statusText);
+                // Handle errors
+            }
+        } catch (error) {
+            console.error('Error updating members:', error.message);
+            // Handle errors
+        }
+    }
+    const handleMemberClick = async (memberId, role, memberName) => { //ekhane memberId selected list e ase kina ta check kora hoi. jodi thake, tahole baad dibe. r na thakle include krbe.
         console.log('Selected Members:', selectedMembers);
         const isSelected = selectedMembers.includes(memberId);
         if (isSelected) {
-            setSelectedMembers((prevMembers) =>
-                prevMembers.filter((id) => id !== memberId)
-            );
-            const key = 'members';
-            const apiUrl = `http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.cardId}/${key}/${memberId}`;
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data);
-                    // Optionally, you can return the updated data or handle it as needed
-                } else {
-                    console.error('Error updating members:', response.statusText);
-                    // Handle errors
+            const response = await fetch(`http://localhost:3010/projects/kanban/${projectId}/${props.bid}/${props.cardId}
+            `);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data.card.task);
+                let cnt_task = 0;
+                for (const task of data.card.task) {
+                    try {
+                        const response_task = await fetch(`http://localhost:3010/test/kanban/${task._id}`);
+                        if (!response_task.ok) {
+                            continue;
+                        }
+                        const data_task = await response_task.json();
+                        const count = data_task.filter(item => item.creator_id === memberId).length;
+                        cnt_task += count;
+                    }
+                    catch (error) {
+                        console.error('Error fetching test cases:', error);
+                    }
                 }
-            } catch (error) {
-                console.error('Error updating members:', error.message);
-                // Handle errors
+                console.log(cnt_task)
+                if (cnt_task > 0) {
+                    setReplaceMember(replaceMember = { name: memberName, id: memberId });
+                    console.log(replaceMember);
+                    showReplaceMemberModal(true);
+                }
+                else {
+                    removeMemberfromCard(memberId, role);
+                }
             }
         }
         //ekhane fetch api te object pathabo. = (field name, new value) new value o 1ta obj. jeta member_id r role store kore. update card name use kore krbo
@@ -165,7 +201,51 @@ const CardMember = (props) => {
             //eta delete card name use kore korbo. ekhane, param er moddhei, boardId,cardId,field name, r field er je id k delete krbo ta pathabo.
         }
     };
+    const handleReplacement = async (deletedMemberId, replacedId) => {
+        console.log(deletedMemberId, replacedId)
+        if (deletedMemberId === replacedId) {
+            try {
+                console.log(`http://localhost:3010/test/kanban/${projectId}/manytest/${props.bid}/${props.cardId}`)
+                console.log(deletedMemberId, replacedId);
+                const response = await fetch(`http://localhost:3010/test/kanban/${projectId}/manytest/${props.bid}/${props.cardId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ deletedMemberId })
+                });
 
+                if (!response.ok) {
+                    throw new Error('Failed to delete tests');
+                }
+
+                console.log('Tests deleted successfully');
+            } catch (error) {
+                console.error('Error:', error.message);
+            }
+        }
+        else {
+            try {
+                const response = await fetch(`http://localhost:3010/test/kanban/${projectId}/manytest/${props.bid}/${props.cardId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ deletedMemberId, replacedId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to replace tests');
+                }
+
+                console.log('Tests replaced successfully');
+            } catch (error) {
+                console.error('Error:', error.message);
+            }
+        }
+        showReplaceMemberModal(false);
+        removeMemberfromCard(deletedMemberId);
+    }
     // Move selected members to the beginning
     const sortedMembers = availableMembers.sort((a, b) => {
         const isSelectedA = selectedMembers.includes(a.member_id);
@@ -179,15 +259,14 @@ const CardMember = (props) => {
             return 0;
         }
     });
-
     return (
         <div className="card-member-box" style={{ cursor: props.member_role === 'admin' ? 'pointer' : 'default' }}>
             <h3>Available Members</h3>
             <ul className="list-group">
                 {sortedMembers.map((member) => (
                     <li
-                        key={member.id}
-                        onClick={() => (props.member_role === 'admin') ? handleMemberClick(member.member_id, member.role) : null}
+                        key={member.member_id}
+                        onClick={() => (props.member_role === 'admin') ? handleMemberClick(member.member_id, member.role, member.username) : null}
                         className={`list-group-item d-flex justify-content-between align-items-center ${selectedMembers.includes(member.member_id) ? 'active' : ''
                             }`}
                     >
@@ -201,6 +280,14 @@ const CardMember = (props) => {
                     </li>
                 ))}
             </ul>
+            (<ReplaceMemberModal
+                show={replaceMemberModal}
+                handleClose={() => showReplaceMemberModal(false)}
+                handleChange={handleReplacement}
+                replaceMember={replaceMember}
+                members={sortedMembers}
+                count={selectedMembers.length}
+            />)
         </div>
     );
 };

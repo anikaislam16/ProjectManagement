@@ -27,7 +27,8 @@ const ActivitySelector = ({ initialPriority, setPriority, role }) => {
   const priorityClassName = `priority-selector-${selectedPriority.toLowerCase()}`;
 
   return (
-    <div className={priorityClassName} onClick={() => role === 'Scrum Master' && handlePriorityClick} style={{ cursor: role === 'Scrum Master' ? 'pointer' : 'default' }}>
+    <div className={priorityClassName} onClick={() => role === 'Scrum Master' && handlePriorityClick()}
+      style={{ cursor: role === 'Scrum Master' ? 'pointer' : 'default' }}>
       {selectedPriority}
       <div className={`options-container ${optionsVisible ? "visible" : ""}`}>
         <div
