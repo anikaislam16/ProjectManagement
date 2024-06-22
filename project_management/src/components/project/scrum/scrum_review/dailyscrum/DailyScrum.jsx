@@ -7,13 +7,31 @@ import HTMLReactParser from "html-react-parser";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { ChatState } from "../../../kanban/Chatting/context/ChatContextProvider";
+import { checkSession } from "../../../../sessioncheck/session";
+import { checkScrumRole } from "../../checkScrumRole";
+import { get } from "jodit/esm/core/helpers";
 export default function DailyScrum() {
   const location = useLocation();
   const { reviewId } = useParams();
+  const { projectId } = useParams();
   const { pathname } = location;
   const editor = useRef(null);
+  var [role, setrole] = useState("");
   const [content, setContent] = useState("");
   const [name, setName] = useState("");
+  useEffect(() => {
+    const getRoles = async () => {
+      const userData = await checkSession();
+      if (userData.hasOwnProperty("message")) {
+        const datasend = { message: "Session Expired" };
+        navigate("/login", { state: datasend });
+      } else {
+        const projectrole = await checkScrumRole(projectId, userData.id);
+        setrole((role = projectrole.role));
+      }
+    };
+    getRoles();
+  }, [role]);
   const config = useMemo(
     () => ({
       readonly: false,
@@ -122,9 +140,14 @@ export default function DailyScrum() {
         config={config}
         onChange={(newContent) => setContent(newContent)}
       />
-      <Button style={{ margin: "10px", alignItems: "center" }} onClick={onSave}>
-        Update/Add
-      </Button>
+      {role === "Scrum Master" && (
+        <Button
+          style={{ margin: "10px", alignItems: "center" }}
+          onClick={onSave}
+        >
+          Update/Add
+        </Button>
+      )}
     </div>
   );
 }
