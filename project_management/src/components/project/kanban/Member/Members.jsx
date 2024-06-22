@@ -6,6 +6,7 @@ import "./Member.css";
 import InvitePopup from "./InvitePopup.jsx";
 import { checkSession } from "../../../sessioncheck/session.js";
 import { checkKanbanRole } from "../checkKanbanRole.js";
+import CardSelectionModal from "./CardSelectionModal.jsx";
 const Members = () => {
   const navigate = useNavigate();
   const { open } = useContext(SidebarContext);
@@ -16,6 +17,8 @@ const Members = () => {
   const [showPopup, setShowPopup] = useState(false);
   var [role, setrole] = useState(null);
   const [userId, setuserId] = useState(null);
+  const [testReplaceModal, showTestReplaceModal] = useState(false);
+  var [deletedMemberId, setDeletedMemberId] = useState(null);
   const handleClosePopup = () => {
     setShowPopup(false);
   };
@@ -132,6 +135,52 @@ const Members = () => {
     fetchData();
     getRoles();
   }, [projectId]);
+  const deleteMemberfromProject = async (memberId) => {
+    const updatedMembers = members.filter(
+      (member) => member.member_id !== memberId
+    );
+
+    // Update the state with the filtered array
+    setMembers(updatedMembers);
+
+    try {
+      // Send a DELETE request to remove the member on the server
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/projects/kanban/member/member/${projectId}/${memberId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            // Add any additional headers as needed
+          },
+        }
+      );
+
+      if (response.ok) {
+        console.log(`Member with ID ${memberId} successfully deleted.`);
+        try {
+          const result = await removeUserFromQuestion(
+            projectId,
+            projectType,
+            memberId
+          );
+          console.log("User removal result:", result);
+        } catch (error) {
+          console.error("Error in handleRemoveUser:", error);
+        }
+        // Optionally, handle success scenarios here
+      } else {
+        console.error("Error deleting member:", response.statusText);
+        // Optionally, handle error scenarios here
+      }
+    } catch (error) {
+      console.error("Error in handleRemoveMember:", error.message);
+      // Optionally, handle error scenarios here
+    }
+    if (userId === memberId) {
+      navigate(`/`);
+    }
+  }
   const handleRemoveMember = async (memberId, role) => {
     const adminCount = members.filter(
       (member) => member.role === "admin"
@@ -142,50 +191,12 @@ const Members = () => {
       setShowPopup(true);
     } else {
       setShowPopup(false);
-      // Filter out the member with the specified memberId
-      const updatedMembers = members.filter(
-        (member) => member.member_id !== memberId
-      );
-
-      // Update the state with the filtered array
-      setMembers(updatedMembers);
-
-      try {
-        // Send a DELETE request to remove the member on the server
-        const response = await fetch(
-          `${process.env.REACT_APP_HOST}/projects/kanban/member/member/${projectId}/${memberId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              // Add any additional headers as needed
-            },
-          }
-        );
-
-        if (response.ok) {
-          console.log(`Member with ID ${memberId} successfully deleted.`);
-          try {
-            const result = await removeUserFromQuestion(
-              projectId,
-              projectType,
-              memberId
-            );
-            console.log("User removal result:", result);
-          } catch (error) {
-            console.error("Error in handleRemoveUser:", error);
-          }
-          // Optionally, handle success scenarios here
-        } else {
-          console.error("Error deleting member:", response.statusText);
-          // Optionally, handle error scenarios here
-        }
-      } catch (error) {
-        console.error("Error in handleRemoveMember:", error.message);
-        // Optionally, handle error scenarios here
+      if (role === "developer") {
+        setDeletedMemberId(deletedMemberId = memberId);
+        showTestReplaceModal(true);
       }
-      if (userId === memberId) {
-        navigate(`/`);
+      else {
+        deleteMemberfromProject(memberId);
       }
     }
   };
@@ -324,6 +335,14 @@ const Members = () => {
         handleClose={handleClosePopup}
         message={"Project must have at least 1 admin"}
       />
+      (<CardSelectionModal
+        show={testReplaceModal}
+        handleClose={() => showTestReplaceModal(false)}
+        member_id={deletedMemberId}
+        member={members}
+        projectId={projectId}
+        onDelete={deleteMemberfromProject}
+      />)
     </div>
   );
 };

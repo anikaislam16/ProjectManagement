@@ -109,6 +109,7 @@ const deleteMemberfromProject = async (req, res) => {
     const Memberdetails = await Member.findOne({ _id: memberId });
     // Remove the member from the members array based on memberId
     kanbanProject.members = kanbanProject.members.filter(member => member.member_id.toString() !== memberId);
+
     console.log(Memberdetails.email, Memberdetails.name, kanbanProject.projectName, foundMember.role);
     sendRemovingProjectEmail(Memberdetails.email, Memberdetails.name, kanbanProject.projectName, foundMember.role);
     // Save the updated KanbanProject

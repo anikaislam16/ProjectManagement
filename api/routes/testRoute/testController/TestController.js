@@ -270,6 +270,7 @@ const replaceAllTestInCardByCreator = async (req, res) => {
         const taskFromTestSchema = await TestCase.findOne({ task_id: task._id });
         if (taskFromTestSchema !== null && taskFromTestSchema.test_cases.length !== 0) {
           taskFromTestSchema.test_cases.forEach(testCase => {
+            console.log(deletedMemberId, testCase.creator);
             if (testCase.creator.equals(deletedMemberId)) {
               testCase.creator = replacedId;
             }
@@ -278,7 +279,7 @@ const replaceAllTestInCardByCreator = async (req, res) => {
           await taskFromTestSchema.save();
         }
       }
-      res.status(200).json({ message: "All tests created by the member have been deleted." });
+      res.status(200).json({ message: "All tests created by the member have been Replaced." });
     }
     else {
       res.status(404).json({ message: "Card not found." });

@@ -30,6 +30,7 @@ const SidebarScrum = ({ projectId }) => {
   const [projectName, setProjectName] = useState("");
   const [closeMenu, setCloseMenu] = useState(false);
   const [showOptionBar, setShowOptionBar] = useState(false);
+  var [role, setrole] = useState(null);
   console.log(location.pathname);
   console.log(location);
   const handleCloseMenu = () => {
@@ -73,6 +74,7 @@ const SidebarScrum = ({ projectId }) => {
           if (projectrole === "not valid") {
             navigate('/unauthorized');
           }
+          setrole(role = projectrole.role);
         }
       }
       getRoles();
@@ -277,7 +279,7 @@ const SidebarScrum = ({ projectId }) => {
               <span className="text-hidden">Review</span>
             </NavLink>
           </li>
-          <li
+          {role === "Developer" && (<li
             className={
               location.pathname === `/project/scrum/${projectId}/tdd`
                 ? "active"
@@ -292,7 +294,7 @@ const SidebarScrum = ({ projectId }) => {
               />
               <span className="text-hidden">TDD</span>
             </NavLink>
-          </li>
+          </li>)}
         </ul>
       </div>
 

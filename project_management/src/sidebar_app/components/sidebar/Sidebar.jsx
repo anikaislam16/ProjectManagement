@@ -22,6 +22,7 @@ const Sidebar = ({ projectId }) => {
   const [closeMenu, setCloseMenu] = useState(false);
   const [showOptionBar, setShowOptionBar] = useState(false);
   const [graph, setGraph] = useState("");
+  var [role, setrole] = useState(null);
   console.log(location.pathname);
   console.log(location);
   const handleCloseMenu = () => {
@@ -64,6 +65,7 @@ const Sidebar = ({ projectId }) => {
           if (projectrole === "not valid") {
             navigate('/unauthorized');
           }
+          setrole(role = projectrole.role);
         }
       }
       getRoles();
@@ -221,7 +223,7 @@ const Sidebar = ({ projectId }) => {
               <span className="text-hidden">Issues</span>
             </NavLink>
           </li>
-          <li
+          {role === "developer" && (<li
             className={
               location.pathname === `/project/kanban/${projectId}/tdd`
                 ? "active"
@@ -236,7 +238,7 @@ const Sidebar = ({ projectId }) => {
               />
               <span className="text-hidden">TDD</span>
             </NavLink>
-          </li>
+          </li>)}
         </ul>
       </div>
       <Outlet />
