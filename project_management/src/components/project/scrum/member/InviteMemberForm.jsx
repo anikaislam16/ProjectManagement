@@ -52,7 +52,7 @@ const InviteMemberForm = ({ members, onInvite }) => {
   const formik = useFormik({
     initialValues: {
       email: "",
-      role: "developer",
+      role: "Product owner",
     },
     validationSchema: Yup.object({
       email: Yup.string()
