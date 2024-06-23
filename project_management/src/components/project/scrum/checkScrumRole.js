@@ -1,5 +1,5 @@
 const checkScrumRole = async (projectId, memberId) => {
-    const response = await fetch(`http://localhost:3010/signup/scrum/${projectId}/member/${memberId}`, {
+    const response = await fetch(`${process.env.REACT_APP_HOST}/signup/scrum/${projectId}/member/${memberId}`, {
         method: "GET",
         credentials: 'include', // Include cookies
     });

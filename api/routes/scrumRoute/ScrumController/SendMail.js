@@ -8,13 +8,13 @@ const transporter = nodemailer.createTransport({
 });
 const sendJoingProjectEmail = (toEmail, username, projectId, projectName, role) => {
     const mailOptions = {
-        from: 'abdurrayhancse19018@gmail.com',  // Replace with your Gmail email
-        to: toEmail,
-        subject: `Joining request for ${projectName} as a ${role}`,
-        html: `<p>Congratulations ${username}, you have been selected for the project named ${projectName} as a ${role}.</p>
+      from: "abdurrayhancse19018@gmail.com", // Replace with your Gmail email
+      to: toEmail,
+      subject: `Joining request for ${projectName} as a ${role}`,
+      html: `<p>Congratulations ${username}, you have been selected for the project named ${projectName} as a ${role}.</p>
       <p>Click the button below to check the board:</p>
-      <a href="http://localhost:3000/project/scrum/${projectId}" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`,
-    }
+      <a href="${process.env.front_end}/project/scrum/${projectId}" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`,
+    };
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error('Error sending email:', error);
@@ -25,13 +25,13 @@ const sendJoingProjectEmail = (toEmail, username, projectId, projectName, role) 
 };
 const sendJoingcardEmail = (toEmail, username, projectId, boardName, cardName, role) => {
     const mailOptions = {
-        from: 'abdurrayhancse19018@gmail.com',  // Replace with your Gmail email
-        to: toEmail,
-        subject: `Joining request in a card named, ${cardName} as a ${role}`,
-        html: `<p>Congratulations ${username}, you have been assigned for the card named ${cardName}, under the board ${boardName} as a role of ${role}.</p>
+      from: "abdurrayhancse19018@gmail.com", // Replace with your Gmail email
+      to: toEmail,
+      subject: `Joining request in a card named, ${cardName} as a ${role}`,
+      html: `<p>Congratulations ${username}, you have been assigned for the card named ${cardName}, under the board ${boardName} as a role of ${role}.</p>
       <p>Click the button below to check the board:</p>
-      <a href="http://localhost:3000/project/scrum/${projectId}" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`,
-    }
+      <a href="${process.env.front_end}/project/scrum/${projectId}" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`,
+    };
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error('Error sending email:', error);
@@ -42,13 +42,13 @@ const sendJoingcardEmail = (toEmail, username, projectId, boardName, cardName, r
 };
 const sendRemovingcardEmail = (toEmail, username, projectId, boardName, cardName) => {
     const mailOptions = {
-        from: 'abdurrayhancse19018@gmail.com',  // Replace with your Gmail email
-        to: toEmail,
-        subject: `Removing request from a card named, ${cardName}`,
-        html: `<p> Dear ${username}, you have been sacked for the card named ${cardName}, under the board ${boardName} .</p>
+      from: "abdurrayhancse19018@gmail.com", // Replace with your Gmail email
+      to: toEmail,
+      subject: `Removing request from a card named, ${cardName}`,
+      html: `<p> Dear ${username}, you have been sacked for the card named ${cardName}, under the board ${boardName} .</p>
       <p>Stay with us for further update</p>
-      <a href="http://localhost:3000/project/scrum/${projectId}" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`,
-    }
+      <a href="${process.env.front_end}/project/scrum/${projectId}" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`,
+    };
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error('Error sending email:', error);

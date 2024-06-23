@@ -9,7 +9,7 @@ import chatting from "../../Images/chatting.svg";
 import "../../css/main.scss";
 import testing from "../../Images/testing.png";
 import SidebarContext from "../sidebar_context/SidebarContext";
-import conversation from "../../Images/conversation.png"
+import conversation from "../../Images/conversation.png";
 import { checkKanbanRole } from "../../../components/project/kanban/checkKanbanRole";
 import { checkSession } from "../../../components/sessioncheck/session";
 const Sidebar = ({ projectId }) => {
@@ -36,7 +36,7 @@ const Sidebar = ({ projectId }) => {
     console.log(projectId);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/kanban/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/kanban/${projectId}`
       );
       const result = await response.json();
 
@@ -56,18 +56,17 @@ const Sidebar = ({ projectId }) => {
     if (projectId) {
       const getRoles = async () => {
         const userData = await checkSession();
-        if (userData.hasOwnProperty('message')) {
-          const datasend = { message: "Session Expired" }
-          navigate('/login', { state: datasend });
-        }
-        else {
+        if (userData.hasOwnProperty("message")) {
+          const datasend = { message: "Session Expired" };
+          navigate("/login", { state: datasend });
+        } else {
           const projectrole = await checkKanbanRole(projectId, userData.id);
           if (projectrole === "not valid") {
-            navigate('/unauthorized');
+            navigate("/unauthorized");
           }
-          setrole(role = projectrole.role);
+          setrole((role = projectrole.role));
         }
-      }
+      };
       getRoles();
       fetchProjectName();
     }
@@ -223,22 +222,24 @@ const Sidebar = ({ projectId }) => {
               <span className="text-hidden">Issues</span>
             </NavLink>
           </li>
-          {role === "developer" && (<li
-            className={
-              location.pathname === `/project/kanban/${projectId}/tdd`
-                ? "active"
-                : ""
-            }
-          >
-            <NavLink to={`/project/kanban/${projectId}/tdd/requirements`}>
-              <img
-                src={testing}
-                alt="News"
-                style={{ width: "30px", height: "30px" }}
-              />
-              <span className="text-hidden">TDD</span>
-            </NavLink>
-          </li>)}
+          {role === "developer" && (
+            <li
+              className={
+                location.pathname === `/project/kanban/${projectId}/tdd`
+                  ? "active"
+                  : ""
+              }
+            >
+              <NavLink to={`/project/kanban/${projectId}/tdd/requirements`}>
+                <img
+                  src={testing}
+                  alt="News"
+                  style={{ width: "30px", height: "30px" }}
+                />
+                <span className="text-hidden">TDD</span>
+              </NavLink>
+            </li>
+          )}
         </ul>
       </div>
       <Outlet />

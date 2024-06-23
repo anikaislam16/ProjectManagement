@@ -128,18 +128,18 @@ sign.route("/auth/google/callback").get( ///eta 2bar execute hoi.
         let successRedirect;
         switch (origin) {
             case 'signup':
-                successRedirect = "http://localhost:3000/signup/password";
+                successRedirect = `${process.env.front_end}/signup/password`;
                 break;
             case 'login':
-                successRedirect = "http://localhost:3000/login/temp";
+                successRedirect = `${process.env.front_end}/login/temp`;
                 break;
             default:
-                successRedirect = "http://localhost:3000/signup"; // Default redirect
+                successRedirect = `${process.env.front_end}/signup`; // Default redirect
         }
 
         passport.authenticate("google", {
-            successRedirect: successRedirect,
-            failureRedirect: "http://localhost:3000/login",
+          successRedirect: successRedirect,
+          failureRedirect: `${process.env.front_end}/login`,
         })(req, res, next);
     }
 );
@@ -182,7 +182,7 @@ const logingooglematch = async (req, res) => {
     }
 }
 sign.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header("Access-Control-Allow-Origin", `${process.env.front_end}`);
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();

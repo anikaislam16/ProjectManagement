@@ -54,7 +54,7 @@ async function sendNotification(question, sender, type, content) {
     const subject = ` ${type} from ${qName} from ${projectName}`;
     const html = `<p>${type} from <b>${qName}</b> from project ${projectName}</p>
       <p>Click the button below to check Question:</p>
-      <a href="http://localhost:3000/project/${projectType}/${projectId}/chat" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`;
+      <a href="${process.env.front_end}/project/${projectType}/${projectId}/chat" style="display: inline-block; padding: 10px 20px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Check Board</a>`;
     await sendNotificationEmail(
       email,
       subject,html

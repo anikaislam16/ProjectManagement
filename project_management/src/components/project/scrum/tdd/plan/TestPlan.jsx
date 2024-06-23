@@ -12,29 +12,33 @@ const TestPlan = () => {
     const fetchData = async () => {
       try {
         const userData = await checkSession();
-        if (userData.hasOwnProperty('message')) {
+        if (userData.hasOwnProperty("message")) {
           const datasend = { message: "Session Expired" };
-          navigate('/login', { state: datasend });
+          navigate("/login", { state: datasend });
           return;
         } else {
-          setId(id = userData.id);
+          setId((id = userData.id));
         }
 
-        const response = await fetch(`http://localhost:3010/projects/scrum/${projectId}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch project data');
+          throw new Error("Failed to fetch project data");
         }
         const data = await response.json();
         const cards = data.boards[data.boards.length - 1].cards;
         setBoard(data.boards[data.boards.length - 1]._id);
 
-        const filteredCards = await cards.filter(card => {
-          return card.members.some(member => member.member_id === userData.id && card.tddActive);
+        const filteredCards = await cards.filter((card) => {
+          return card.members.some(
+            (member) => member.member_id === userData.id && card.tddActive
+          );
         });
 
         setCards(filteredCards);
       } catch (error) {
-        console.error('Error fetching project data:', error.message);
+        console.error("Error fetching project data:", error.message);
       }
     };
     fetchData();

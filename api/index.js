@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
 
 app.use(
   cors({
-    origin: `http://localhost:${process.env.front_port}`,
+    origin: `${process.env.front_end}`,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
@@ -61,7 +61,7 @@ const PORT = process.env.PORT || 3000;
  // Create HTTP server instance
 const io = socketIO(server, {
   cors: {
-    origin: `http://localhost:${process.env.front_port}`,
+    origin: `${process.env.front_end}`,
     methods: "GET,POST,PUT,DELETE",
   },
 }); // Pass the server instance to Socket.IO

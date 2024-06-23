@@ -40,12 +40,12 @@ const SidebarScrum = ({ projectId }) => {
   const handleReportsClick = () => {
     setShowOptionBar(!showOptionBar); // Toggle option bar visibility
   };
-  const handleOptionClick = (s) => { };
+  const handleOptionClick = (s) => {};
   const fetchProjectName = async () => {
     console.log(projectId);
     try {
       const response = await fetch(
-        `http://localhost:3010/projects/scrum/${projectId}`
+        `${process.env.REACT_APP_HOST}/projects/scrum/${projectId}`
       );
       const result = await response.json();
 
@@ -65,18 +65,17 @@ const SidebarScrum = ({ projectId }) => {
     if (projectId) {
       const getRoles = async () => {
         const userData = await checkSession();
-        if (userData.hasOwnProperty('message')) {
-          const datasend = { message: "Session Expired" }
-          navigate('/login', { state: datasend });
-        }
-        else {
+        if (userData.hasOwnProperty("message")) {
+          const datasend = { message: "Session Expired" };
+          navigate("/login", { state: datasend });
+        } else {
           const projectrole = await checkScrumRole(projectId, userData.id);
           if (projectrole === "not valid") {
-            navigate('/unauthorized');
+            navigate("/unauthorized");
           }
-          setrole(role = projectrole.role);
+          setrole((role = projectrole.role));
         }
-      }
+      };
       getRoles();
       fetchProjectName();
     }
@@ -244,10 +243,10 @@ const SidebarScrum = ({ projectId }) => {
           <li
             className={
               location.pathname === `/project/scrum/${projectId}/chat` ||
-                location.pathname === `/project/scrum/${projectId}/chatbox/You` ||
-                location.pathname ===
+              location.pathname === `/project/scrum/${projectId}/chatbox/You` ||
+              location.pathname ===
                 `/project/scrum/${projectId}/chatbox/others` ||
-                location.pathname === `/project/scrum/${projectId}/chatbox/notice`
+              location.pathname === `/project/scrum/${projectId}/chatbox/notice`
                 ? "active"
                 : ""
             }
@@ -279,22 +278,24 @@ const SidebarScrum = ({ projectId }) => {
               <span className="text-hidden">Review</span>
             </NavLink>
           </li>
-          {role === "Developer" && (<li
-            className={
-              location.pathname === `/project/scrum/${projectId}/tdd`
-                ? "active"
-                : ""
-            }
-          >
-            <NavLink to={`/project/scrum/${projectId}/tdd/requirements`}>
-              <img
-                src={testing}
-                alt="News"
-                style={{ width: "30px", height: "30px" }}
-              />
-              <span className="text-hidden">TDD</span>
-            </NavLink>
-          </li>)}
+          {role === "Developer" && (
+            <li
+              className={
+                location.pathname === `/project/scrum/${projectId}/tdd`
+                  ? "active"
+                  : ""
+              }
+            >
+              <NavLink to={`/project/scrum/${projectId}/tdd/requirements`}>
+                <img
+                  src={testing}
+                  alt="News"
+                  style={{ width: "30px", height: "30px" }}
+                />
+                <span className="text-hidden">TDD</span>
+              </NavLink>
+            </li>
+          )}
         </ul>
       </div>
 
