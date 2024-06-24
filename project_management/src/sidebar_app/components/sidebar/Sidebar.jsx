@@ -206,7 +206,7 @@ const Sidebar = ({ projectId }) => {
               <span className="text-hidden">Members</span>
             </NavLink>
           </li>
-          <li
+          {/* <li
             className={
               location.pathname === `/project/kanban/${projectId}/chat`
                 ? "active"
@@ -221,7 +221,7 @@ const Sidebar = ({ projectId }) => {
               />
               <span className="text-hidden">Issues</span>
             </NavLink>
-          </li>
+          </li> */}
           {role === "developer" && (
             <li
               className={

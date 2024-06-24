@@ -240,7 +240,7 @@ const SidebarScrum = ({ projectId }) => {
               <span className="text-hidden">Members</span>
             </NavLink>
           </li>
-          <li
+          {/* <li
             className={
               location.pathname === `/project/scrum/${projectId}/chat` ||
               location.pathname === `/project/scrum/${projectId}/chatbox/You` ||
@@ -260,7 +260,7 @@ const SidebarScrum = ({ projectId }) => {
 
               <span className="text-hidden">Issues</span>
             </NavLink>
-          </li>
+          </li> */}
           <li
             className={
               location.pathname === `/project/scrum/${projectId}/review`

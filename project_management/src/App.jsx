@@ -3,7 +3,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProjectKanban from "../src/components/project/kanban/ProjectKanban";
 import "./App.css";
-import ChatMain from "./components/project/kanban/Chatting/ChatMain.jsx";
+//import ChatMain from "./components/project/kanban/Chatting/ChatMain.jsx";
 import Home from "./components/home/Home";
 import Navbar1 from "./components/navbar/Navbar1";
 import GanttInitializer from "./components/project/kanban/GranttChart/GanttInitializer.jsx";
@@ -32,7 +32,7 @@ import BurnDown from "./components/project/scrum/reports/BurnDown.jsx";
 import PieChart from "./components/project/scrum/reports/PieChart.jsx";
 import SprintReport from "./components/project/scrum/reports/SprintReport.jsx";
 import GraphScrum from "./components/project/scrum/reports/GraphScrum";
-import ChatList from "./components/project/kanban/Chatting/chatlist/ChatList.jsx";
+//import ChatList from "./components/project/kanban/Chatting/chatlist/ChatList.jsx";
 import ChatContextProvider from "./components/project/kanban/Chatting/context/ChatContextProvider.jsx";
 import Profile_main from "./components/profile/Settings.jsx";
 import MyProject from "./components/profile/MyProject.jsx";
@@ -58,7 +58,9 @@ function App() {
           <Navbar1 />
           <Routes>
             <Route path="/" element={<Home />}></Route>
-            <Route pate="/unauthorized" element={<Unauthorized />} > </Route>
+            <Route pate="/unauthorized" element={<Unauthorized />}>
+              {" "}
+            </Route>
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup/otp" element={<OTP />} />
             <Route path="/signup/password" element={<Password />} />
@@ -84,8 +86,8 @@ function App() {
               <Route index element={<BoardMain />} />
               <Route path="piechart" element={<PieChartKanban />} />
               <Route path="controlchart" element={<ControlChart />} />
-              <Route path="chat" element={<ChatMain />}></Route>
-              <Route path="chatbox/:type" element={<ChatList />} />
+              {/* <Route path="chat" element={<ChatMain />}></Route>
+              <Route path="chatbox/:type" element={<ChatList />} /> */}
               <Route path="recentcretedchart" element={<RecentIssue />} />
               <Route path="resolutionchart" element={<ResolutionTime />} />
             </Route>
@@ -107,8 +109,8 @@ function App() {
               <Route path="burn" element={<BurnDown />} />
               <Route path="report" element={<SprintReport />} />
               <Route path="pie" element={<PieChart />} />
-              <Route path="chat" element={<ChatMain />}></Route>
-              <Route path="chatbox/:type" element={<ChatList />} />
+              {/* <Route path="chat" element={<ChatMain />}></Route>
+              <Route path="chatbox/:type" element={<ChatList />} /> */}
               <Route path="review" element={<ScrumReviewBoard />} />
               <Route path="dailyscrum/:reviewId" element={<DailyScrum />} />
               {/* <Route path="graph" element={<Graph />} /> */}

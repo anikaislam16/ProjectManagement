@@ -1,6 +1,6 @@
 const express = require("express");
  // Import http module
-const socketIO = require("socket.io");
+//const socketIO = require("socket.io");
 const morgan = require("morgan");
 const memberRoute = require("./routes/memberRoute/MemberInfo");
 const TestRoute=require('./routes/testRoute/TestRoute.js')
@@ -59,12 +59,12 @@ const PORT = process.env.PORT || 3000;
   console.log(`Server is running on port ${PORT}`);
 });
  // Create HTTP server instance
-const io = socketIO(server, {
-  cors: {
-    origin: `${process.env.front_end}`,
-    methods: "GET,POST,PUT,DELETE",
-  },
-}); // Pass the server instance to Socket.IO
+// const io = socketIO(server, {
+//   cors: {
+//     origin: `${process.env.front_end}`,
+//     methods: "GET,POST,PUT,DELETE",
+//   },
+// }); // Pass the server instance to Socket.IO
 // Use the memberRoute for paths starting with "/members"
 app.use("/members", memberRoute);
 app.use("/projects/kanban", kanbanRoute);
@@ -94,60 +94,60 @@ app.use("/test", TestRoute);
 //     console.log("User disconnected");
 //   });
 // });
-io.on("connection", (socket) => {
-  console.log("Connected to socket.io");
-  socket.on("setup", (userData) => {
-    socket.join(userData);
-   // console.log("gee ", userData);
-    socket.emit("connected");
-  });
-  socket.on("join chat", (room) => {
-    socket.join(room);
-    console.log("User Joined Room: " + room);
-  });
+// io.on("connection", (socket) => {
+//   console.log("Connected to socket.io");
+//   socket.on("setup", (userData) => {
+//     socket.join(userData);
+//    // console.log("gee ", userData);
+//     socket.emit("connected");
+//   });
+//   socket.on("join chat", (room) => {
+//     socket.join(room);
+//     console.log("User Joined Room: " + room);
+//   });
 
   
-  // });
-  // socket.on("typing", (room) => socket.in(room).emit("typing"));
-  // socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+//   // });
+//   // socket.on("typing", (room) => socket.in(room).emit("typing"));
+//   // socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
- socket.on("new message", (newMessageReceived) => {
-   var chat = newMessageReceived.question;
-   // console.log(chat);
-   if (!chat.users) return console.log("chat.users not defined");
+//  socket.on("new message", (newMessageReceived) => {
+//    var chat = newMessageReceived.question;
+//    // console.log(chat);
+//    if (!chat.users) return console.log("chat.users not defined");
 
-   chat.users.forEach((user) => {
-     console.log("Sending message to user:", newMessageReceived.sender);
-     if (user == newMessageReceived.sender._id) return;
+//    chat.users.forEach((user) => {
+//      console.log("Sending message to user:", newMessageReceived.sender);
+//      if (user == newMessageReceived.sender._id) return;
 
-     // Emit the "message received" event and pass a callback function
-     socket.in(user).emit("message recieved", newMessageReceived, () => {
-       // This callback function will be executed after the event is emitted
-       console.log("Message received by user:", user);
-     });
-   });
- });
-   socket.on("edit message", (newMessageReceived) => {
-     var chat = newMessageReceived.question;
-     // console.log(chat);
-     if (!chat.users) return console.log("chat.users not defined");
+//      // Emit the "message received" event and pass a callback function
+//      socket.in(user).emit("message recieved", newMessageReceived, () => {
+//        // This callback function will be executed after the event is emitted
+//        console.log("Message received by user:", user);
+//      });
+//    });
+//  });
+//    socket.on("edit message", (newMessageReceived) => {
+//      var chat = newMessageReceived.question;
+//      // console.log(chat);
+//      if (!chat.users) return console.log("chat.users not defined");
 
-     chat.users.forEach((user) => {
-       console.log("Sending message to user:", newMessageReceived.sender);
-       if (user == newMessageReceived.sender._id) return;
+//      chat.users.forEach((user) => {
+//        console.log("Sending message to user:", newMessageReceived.sender);
+//        if (user == newMessageReceived.sender._id) return;
 
-       // Emit the "message received" event and pass a callback function
-       socket.in(user).emit("message edited", newMessageReceived, () => {
-         // This callback function will be executed after the event is emitted
-         console.log("Message received by user:", user);
-       });
-     });
-   });
+//        // Emit the "message received" event and pass a callback function
+//        socket.in(user).emit("message edited", newMessageReceived, () => {
+//          // This callback function will be executed after the event is emitted
+//          console.log("Message received by user:", user);
+//        });
+//      });
+//    });
   
 
-  // socket.off("setup", () => {
-  //   console.log("USER DISCONNECTED");
-  //   socket.leave(userData._id);
-  // });
-});
+//   // socket.off("setup", () => {
+//   //   console.log("USER DISCONNECTED");
+//   //   socket.leave(userData._id);
+//   // });
+// });
 

@@ -14,7 +14,9 @@ const Types = () => {
   const [selectedWeekdays, setSelectedWeekdays] = useState([]);
   const [id, setid] = useState(null);
   const [noticeArray, setNoticeArray] = useState([]);
-
+  useEffect(() => {
+    console.log(process.env.REACT_APP_HOST);
+  });
   const weekdays = [
     "Monday",
     "Tuesday",
