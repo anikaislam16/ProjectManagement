@@ -1,15 +1,9 @@
 var express = require('express');
 var sign = express.Router();
 const session = require("express-session");
-const RedisStore = require('connect-redis')(session);
-const redis = require('redis');
+const MongoStore = require('connect-mongo');
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
-const redisClient = redis.createClient({
-    url: 'redis://default:password@localhost:6379', // Update with your Redis server's URL
-    legacyMode: true
-});
-redisClient.connect().catch(console.error);
 const cors = require("cors");
 const nodemailer = require('nodemailer');
 const { Userinfostore, UserinfoUpdate, updateMemberinfo } = require('./storeuser.js');
@@ -19,18 +13,22 @@ var bcrypt = require('bcryptjs');
 let origin = "";
 
 // setup session
-sign.use(session({
-    store: new RedisStore({ client: redisClient }),
-    secret: '12345anika', // Change this secret to a more secure one!
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: 'auto', // Set to 'true' if you're sure your production uses HTTPS
-        httpOnly: true,
-        maxAge: 86400000, // 24 hours
-        sameSite: 'None' // Necessary if your API and client are on different domains
-    }
-}));
+sign.use(
+    session({
+        secret: "12345anika",
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: "mongodb+srv://islamanika252:OkPP7MdnGnyBhEBW@student.4omsy08.mongodb.net/student?retryWrites=true&w=majority&appName=student",
+            collectionName: 'sessions'
+        }),
+        cookie: {
+            secure: true, // Set to true if using HTTPS
+            maxAge: 30 * 24 * 60 * 60000, // Session duration in milliseconds (1 day in this example)
+            httpOnly: true,
+        },
+    })
+);
 
 var signpost = async (req, res) => {
     const { email } = req.body;
