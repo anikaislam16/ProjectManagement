@@ -33,7 +33,7 @@ sign.use(
       collectionName: "sessions",
     }),
     cookie: {
-      secure: true, // Set to true if using HTTPS
+      secure: false, // Set to true if using HTTPS
       maxAge: 30 * 24 * 60 * 60000, // Session duration in milliseconds (1 day in this example)
       httpOnly: true,
     },
