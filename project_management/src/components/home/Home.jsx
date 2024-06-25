@@ -6,6 +6,7 @@ const Home = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
+        console.log(process.env.REACT_APP_HOST);
         const response = await fetch(
           `${process.env.REACT_APP_HOST}/signup/loginmatch`,
           {
@@ -13,9 +14,10 @@ const Home = () => {
             credentials: "include", // Include cookies
           }
         );
-
+        console.log(response);
         if (response.ok) {
           const data = await response.json();
+          console.log(data);
           console.log(data.message);
           if (data.message === "No session found") {
             const response = await fetch(

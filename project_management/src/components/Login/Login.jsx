@@ -59,13 +59,16 @@ const Login = () => {
     loginUser(email, password)
       .then((data) => {
         if (data.message === "Invalid email") {
+          console.log("hello");
           document.getElementById("error").style.display = "block";
           document.getElementById("error").innerHTML = data.message;
         }
         if (data.message === "Successful login") {
+          console.log("hello 5");
           document.getElementById("error").style.display = "none";
           navigate("/");
         } else {
+          console.log("hello 2");
           document.getElementById("error").style.display = "block";
           document.getElementById("error").innerHTML = data.message;
         }
