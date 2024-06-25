@@ -26,13 +26,11 @@ let origin = "";
 // Setup session
 sign.use(
   session({
-    secret: process.env.SESSION_SECRET || "12345anika",
+    secret:"12345anika",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl:
-        process.env.MONGO_URL ||
-        "mongodb+srv://islamanika252:OkPP7MdnGnyBhEBW@student.4omsy08.mongodb.net/student?retryWrites=true&w=majority&appName=student",
+      mongoUrl: "mongodb+srv://islamanika252:OkPP7MdnGnyBhEBW@student.4omsy08.mongodb.net/student?retryWrites=true&w=majority&appName=student",
       collectionName: "sessions",
     }),
     cookie: {
@@ -46,7 +44,7 @@ sign.use(
 // Middleware to handle CORS and Headers
 sign.use(
   cors({
-    origin: process.env.FRONT_END_URL,
+    origin: process.env.front_end,
     credentials: true,
   })
 );
@@ -60,9 +58,10 @@ sign.use(passport.session());
 passport.use(
   new OAuth2Strategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/signup/auth/google/callback",
+      clientID:
+        "347124022820-950l5na0gp4cipq3s01mppe6ns0albal.apps.googleusercontent.com",
+      clientSecret: "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",
+      callbackURL: "/signup/auth/google/callback", // Adjusted callback URL
       scope: ["profile", "email"],
     },
     (accessToken, refreshToken, profile, done) => {
@@ -96,18 +95,18 @@ sign.route("/auth/google/callback").get((req, res, next) => {
   let successRedirect;
   switch (origin) {
     case "signup":
-      successRedirect = `${process.env.FRONT_END_URL}/signup/password`;
+      successRedirect = `${process.env.front_end}/signup/password`;
       break;
     case "login":
-      successRedirect = `${process.env.FRONT_END_URL}/login/temp`;
+      successRedirect = `${process.env.front_end}/login/temp`;
       break;
     default:
-      successRedirect = `${process.env.FRONT_END_URL}/signup`;
+      successRedirect = `${process.env.front_end}/signup`;
   }
 
   passport.authenticate("google", {
     successRedirect: successRedirect,
-    failureRedirect: `${process.env.FRONT_END_URL}/login`,
+    failureRedirect: `${process.env.front_end}/login`,
   })(req, res, next);
 });
 
