@@ -1,41 +1,32 @@
 import React, { useEffect } from "react";
 import Types from "../projectTypes/Types";
 import { useNavigate } from "react-router-dom";
+import { getToken } from "../Login/auth";
 const Home = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const checkSession = async () => {
+      const token = getToken();
+      if (!token) {
+        return;
+      }
+
       try {
-        console.log(process.env.REACT_APP_HOST);
         const response = await fetch(
           `${process.env.REACT_APP_HOST}/signup/loginmatch`,
           {
             method: "GET",
-            credentials: "include", // Include cookies
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
           }
         );
-        console.log(response);
+
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
-          console.log(data.message);
-          if (data.message === "No session found") {
-            const response = await fetch(
-              `${process.env.REACT_APP_HOST}/signup/login`,
-              {
-                method: "PUT",
-                credentials: "include", // Include cookies
-              }
-            );
-
-            if (response.ok) {
-              const data = await response.json();
-              console.log(data.message);
-              if (data.message === "No session found") {
-                const datasend = { message: "Session Expired" };
-                navigate("/login", { state: datasend });
-              }
-            }
+          if (data.message === "Session is present") {
+            navigate("/");
           }
         }
       } catch (error) {

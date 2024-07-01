@@ -2,50 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import "./LoginPage.css"; // Import your custom CSS file for additional styling
-import { port, host } from "../../common_var";
 import Goggle from "../signup/Goggle.jsx";
+import { getToken, setToken, removeToken } from "./auth"; // Import the utility functions
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const location = useLocation();
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_HOST}/signup/loginmatch`,
-          {
-            method: "GET",
-            credentials: "include", // Include cookies
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data.message);
-          if (data.message === "Session is present") navigate("/");
-          else {
-            const response = await fetch(
-              `${process.env.REACT_APP_HOST}/signup/login`,
-              {
-                method: "PUT",
-                credentials: "include", // Include cookies
-              }
-            );
-
-            if (response.ok) {
-              const data = await response.json();
-              console.log(data.message);
-              if (data.message === "Session is present") navigate("/");
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error checking session:", error);
-      }
-    };
-    checkSession();
-  }, [navigate]); // Empty dependency array means it will run only once
 
   useEffect(() => {
     if (location.state) {
@@ -53,29 +17,27 @@ const Login = () => {
       document.getElementById("error").innerHTML = location.state.message;
     }
   }, [location.state]);
-  // Dummy function for handling form submission
-  const handleLogin = (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    loginUser(email, password)
-      .then((data) => {
-        if (data.message === "Invalid email") {
-          console.log("hello");
-          document.getElementById("error").style.display = "block";
-          document.getElementById("error").innerHTML = data.message;
-        }
-        if (data.message === "Successful login") {
-          console.log("hello 5");
-          document.getElementById("error").style.display = "none";
-          navigate("/");
-        } else {
-          console.log("hello 2");
-          document.getElementById("error").style.display = "block";
-          document.getElementById("error").innerHTML = data.message;
-        }
-      })
-      .catch((error) => console.error("Error:", error.message));
-    // Handle login logic here
+    try {
+      const data = await loginUser(email, password);
+      if (data.message === "Invalid email") {
+        document.getElementById("error").style.display = "block";
+        document.getElementById("error").innerHTML = data.message;
+      } else if (data.message === "Successful login") {
+        setToken(data.token); // Store the token using utility function
+        document.getElementById("error").style.display = "none";
+        navigate("/");
+      } else {
+        document.getElementById("error").style.display = "block";
+        document.getElementById("error").innerHTML = data.message;
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
   };
+
   async function loginUser(email, password) {
     try {
       const response = await fetch(
@@ -85,26 +47,56 @@ const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // Include credentials (cookies)
           body: JSON.stringify({ email, password }),
         }
       );
 
       if (!response.ok) {
-        // Handle error response
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
 
-      // Successful response
       const responseData = await response.json();
       return responseData;
     } catch (error) {
-      // Handle network errors or other exceptions
       console.error("Error in loginUser:", error.message);
       throw new Error("Internal server error");
     }
   }
+
+  const checkSession = async () => {
+    const token = getToken();
+    if (!token) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/signup/loginmatch`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.message === "Session is present") {
+          navigate("/");
+        }
+      }
+    } catch (error) {
+      console.error("Error checking session:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, []); // Run only once when the component mounts
+
   return (
     <div className="login-container">
       <div className="login-box">

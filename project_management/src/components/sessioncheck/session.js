@@ -1,45 +1,47 @@
 const checkSession = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_HOST}/signup/loginmatch`,
-      {
-        method: "GET",
-        credentials: "include", // Include cookies
-      }
-    );
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return { message: "No session found" };
+  }
 
-    if (response.ok) {
-        console.log("success");
-        const data = await response.json();
-        console.log(data.message);
-        console.log(data);
-        if (data.message === 'No session found') {
-            const response = await fetch(
-              `${process.env.REACT_APP_HOST}/signup/login`,
-              {
-                method: "PUT",
-                credentials: "include", // Include cookies
-              }
-            );
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data.message)
-                if (data.message === 'No session found') {
-                    const datasend = { message: "Session Expired" }
-                    return datasend;
-                    // navigate('/login', { state: datasend });
-                }
-                else {
-                    console.log(data.user);
-                    return data.user;
-                }
-            }
-        }
-        else {
-            console.log(data.user);
-            const val = data.user;
-            return val;
-        }
+  const response = await fetch(
+    `${process.env.REACT_APP_HOST}/signup/loginmatch`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      credentials: "include",
     }
-}
-module.exports = { checkSession }
+  );
+
+  if (response.ok) {
+    const data = await response.json();
+    if (data.message === "No session found") {
+      const response = await fetch(
+        `${process.env.REACT_APP_HOST}/signup/login`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.message === "No session found") {
+          return { message: "Session Expired" };
+        } else {
+          return data.user;
+        }
+      }
+    } else {
+      return data.user;
+    }
+  }
+  return { message: "No session found" };
+};
+
+module.exports = { checkSession };
