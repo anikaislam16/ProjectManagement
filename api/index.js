@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
 
 app.use(
   cors({
-    origin: 'https://project-management-dcprek1o5-anika-islams-projects.vercel.app',
+    origin: process.env.front_end,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
