@@ -154,7 +154,10 @@ const logingooglematch = async (req, res) => {
 };
 
 sign.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", `${process.env.front_end}`);
+  res.header(
+    "Access-Control-Allow-Origin",
+    `https://project-management-topaz-ten.vercel.app`
+  );
   res.header("Access-Control-Allow-Credentials", true);
   res.header(
     "Access-Control-Allow-Headers",
